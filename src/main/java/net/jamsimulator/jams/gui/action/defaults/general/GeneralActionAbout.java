@@ -50,8 +50,9 @@ public class GeneralActionAbout extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         AboutWindow.open();
+        return true;
     }
 
     @Override

@@ -48,10 +48,12 @@ public class TextEditorActionUndo extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         if (node instanceof CodeFileEditor) {
             ((CodeFileEditor) node).undo();
+            return true;
         }
+        return false;
     }
 
     @Override

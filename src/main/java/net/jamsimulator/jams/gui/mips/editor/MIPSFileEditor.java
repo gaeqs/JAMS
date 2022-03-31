@@ -30,6 +30,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopup;
+import net.jamsimulator.jams.gui.editor.code.autocompletion.view.AutocompletionPopupBasicView;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
@@ -48,8 +50,16 @@ public class MIPSFileEditor extends CodeFileEditor {
         super(tab);
 
         popup = new Popup();
-        autocompletionPopup = new MIPSAutocompletionPopup(this);
-        documentationPopup = new MIPSDocumentationPopup(this, (MIPSAutocompletionPopup) autocompletionPopup);
+        popup.setAutoFix(true);
+        popup.setAutoHide(true);
+        popup.setEventDispatcher(getEventDispatcher());
+
+        autocompletionPopup = new AutocompletionPopup(
+                this,
+                new MIPSAutocompletionPopupController((MIPSProject) tab.getWorkingPane().getProjectTab().getProject()),
+                new AutocompletionPopupBasicView()
+        );
+        documentationPopup = new MIPSDocumentationPopup(this, autocompletionPopup);
 
         applyAutoIndent();
         applyIndentRemoval();
@@ -72,13 +82,13 @@ public class MIPSFileEditor extends CodeFileEditor {
     }
 
     protected void applyAutoIndent() {
-        addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.ENTER) {
+        addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER && !event.isConsumed()) {
                 int caretPosition = getCaretPosition();
                 int currentLine = getCurrentParagraph();
-                if (currentLine < 1) return;
+                int currentColumn = getCaretColumn();
 
-                String previous = getParagraph(currentLine - 1).getText();
+                String previous = getParagraph(currentLine).getText().substring(0, currentColumn);
                 int labelIndex = LabelUtils.getLabelFinishIndex(previous);
                 if (labelIndex != -1) {
                     previous = previous.substring(labelIndex + 1);
@@ -86,34 +96,31 @@ public class MIPSFileEditor extends CodeFileEditor {
 
                 StringBuilder builder = new StringBuilder();
                 for (char c : previous.toCharArray()) {
-                    if (c != '\t' && c != ' ') break;
+                    if (!Character.isWhitespace(c)) break;
                     builder.append(c);
                 }
 
-                Platform.runLater(() -> insertText(caretPosition, builder.toString()));
+                Platform.runLater(() -> insertText(caretPosition + 1, builder.toString()));
             }
         });
     }
 
     private void applyIndentRemoval() {
-        addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+        addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.BACK_SPACE) {
-                int caretPosition = getCaretColumn();
+                if (getSelection().getLength() > 0) return;
+
                 int currentLine = getCurrentParagraph();
-                if(!event.isShiftDown() && currentLine > 0) {
-                    String previous = getParagraph(currentLine - 1).getText();
-                    String current = getParagraph(currentLine).substring(0, caretPosition);
-                    if (current.isBlank()) {
-                        replaceText(currentLine - 1, previous.length(),
-                                currentLine, current.length(), "");
-                    }
-                } else {
-                    String current = getParagraph(currentLine).substring(0, caretPosition);
-                    if (current.isBlank()) {
-                        replaceText(currentLine, 0, currentLine, current.length(), "");
-                    }
+                if (currentLine == 0) return;
+                int caretPosition = getCaretColumn();
+                var text = getParagraph(currentLine).substring(0, caretPosition);
+                if (text.isEmpty() || !text.isBlank()) return;
+                replaceText(currentLine, 0, currentLine, caretPosition, "");
+
+                if (event.isControlDown()) {
+                    // Avoid \n removal.
+                    event.consume();
                 }
-                event.consume();
             }
         });
     }
@@ -145,6 +152,10 @@ public class MIPSFileEditor extends CodeFileEditor {
                     || y > popup.getY() + popup.getHeight() + treshold) {
                 popup.hide();
             }
+        });
+
+        addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            popup.hide();
         });
     }
 

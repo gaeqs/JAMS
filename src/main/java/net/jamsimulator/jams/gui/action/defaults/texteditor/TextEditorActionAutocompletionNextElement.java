@@ -32,31 +32,34 @@ import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
+import net.jamsimulator.jams.gui.util.CodeFileEditorUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
 
-public class TextEditorActionShowAutocompletionPopup extends ContextAction {
+public class TextEditorActionAutocompletionNextElement extends ContextAction {
 
-    public static final String NAME = "TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP";
-    public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.SPACE, KeyCombination.SHORTCUT_DOWN);
+    public static final String NAME = "TEXT_EDITOR_AUTOCOMPLETION_NEXT_ELEMENT";
+    public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.DOWN);
 
-    public TextEditorActionShowAutocompletionPopup(ResourceProvider provider) {
-        super(provider, NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP, DEFAULT_COMBINATION, TextEditorActionRegions.CONTEXT, null, null);
+    public TextEditorActionAutocompletionNextElement(ResourceProvider provider) {
+        super(provider, NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_AUTOCOMPLETION_NEXT_ELEMENT,
+                DEFAULT_COMBINATION, TextEditorActionRegions.AUTOCOMPLETION, null, null);
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         if (node instanceof CodeFileEditor editor) {
-            var popup = editor.getAutocompletionPopup();
-            if (popup != null) {
-                popup.execute(0, true);
-            }
+            if(editor.getAutocompletionPopup() == null || !editor.getAutocompletionPopup().isShowing())
+                return false;
+            editor.getAutocompletionPopup().moveDown();
+            return true;
         }
+        return false;
     }
 
     @Override
     public void runFromMenu() {
-
+        CodeFileEditorUtils.getFocusedCodeFileEditor().ifPresent(it -> it.getAutocompletionPopup().moveDown());
     }
 
     @Override
@@ -66,11 +69,13 @@ public class TextEditorActionShowAutocompletionPopup extends ContextAction {
 
     @Override
     public boolean supportsTextEditorState(CodeFileEditor editor) {
-        return true;
+        return editor.getAutocompletionPopup() != null && editor.getAutocompletionPopup().isShowing();
     }
 
     @Override
     public boolean supportsMainMenuState(MainMenuBar bar) {
-        return false;
+        return CodeFileEditorUtils.getFocusedCodeFileEditor()
+                .map(it -> it.getAutocompletionPopup() != null && it.getAutocompletionPopup().isShowing())
+                .orElse(false);
     }
 }

@@ -41,7 +41,9 @@ import net.jamsimulator.jams.gui.explorer.ExplorerSectionRepresentation;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTextField;
+import net.jamsimulator.jams.utils.StringSearch;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +95,8 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 
         searchbar.textProperty().addListener((obs, old, val) ->
                 actionsExplorer.setFilter(element ->
-                        element.getVisibleName().toLowerCase().startsWith(val.toLowerCase())));
+                        StringSearch.search(val, Collections.singletonList(element.getVisibleName()))
+                                .stream().anyMatch(StringSearch.Result::found)));
 
         scrollPane.prefHeightProperty().bind(box.heightProperty().subtract(searchbar.heightProperty()));
     }

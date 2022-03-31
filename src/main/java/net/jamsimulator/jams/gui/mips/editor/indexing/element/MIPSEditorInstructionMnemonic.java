@@ -29,6 +29,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleab
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
+import net.jamsimulator.jams.language.Messages;
 
 import java.util.Collection;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class MIPSEditorInstructionMnemonic extends EditorIndexedElementImpl impl
 
     public MIPSEditorInstructionMnemonic(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                          int start, String text, boolean pseudo) {
-        super(index, scope, parent, start, text);
+        super(index, scope, parent, start, text, Messages.MIPS_ELEMENT_INSTRUCTION);
         this.pseudo = pseudo;
     }
 
@@ -53,5 +54,10 @@ public class MIPSEditorInstructionMnemonic extends EditorIndexedElementImpl impl
     @Override
     public Collection<String> getStyles() {
         return pseudo ? PSEUDO_STYLE : STYLE;
+    }
+
+    @Override
+    public String getTranslatedTypeName() {
+        return isPseudo() ? Messages.MIPS_ELEMENT_PSEUDOINSTRUCTION : Messages.MIPS_ELEMENT_INSTRUCTION;
     }
 }

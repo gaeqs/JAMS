@@ -26,8 +26,9 @@ package net.jamsimulator.jams.gui.mips.editor;
 
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionElementselectEvent;
+import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopup;
 import net.jamsimulator.jams.gui.editor.code.popup.DocumentationPopup;
-import net.jamsimulator.jams.gui.editor.code.popup.event.AutocompletionPopupSelectElementEvent;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirective;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirectiveMnemonic;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruction;
@@ -38,14 +39,14 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 
 public class MIPSDocumentationPopup extends DocumentationPopup {
 
-    private final MIPSAutocompletionPopup autocompletionPopup;
+    private final AutocompletionPopup autocompletionPopup;
 
     /**
      * Creates the documentation popup.
      *
      * @param display the code display where this popup is displayed.
      */
-    public MIPSDocumentationPopup(CodeFileEditor display, MIPSAutocompletionPopup autocompletionPopup) {
+    public MIPSDocumentationPopup(CodeFileEditor display, AutocompletionPopup autocompletionPopup) {
         super(display);
         this.autocompletionPopup = autocompletionPopup;
         autocompletionPopup.registerListeners(this, true);
@@ -63,8 +64,8 @@ public class MIPSDocumentationPopup extends DocumentationPopup {
     }
 
     @Listener
-    private void onSelect(AutocompletionPopupSelectElementEvent event) {
-        var element = event.getSelectedElement().getElement();
+    private void onSelect(AutocompletionElementselectEvent event) {
+        var element = event.getElement();
         if (element instanceof Instruction) {
             topMessage.setMaxHeight(0);
             StringStyler.style(((Instruction) element).getDocumentation(), content);
@@ -82,28 +83,28 @@ public class MIPSDocumentationPopup extends DocumentationPopup {
 
     public boolean refreshData(int caretOffset) {
         if (autocompletionPopup.isShowing()) {
-            var optional = autocompletionPopup.getSelected();
+            var optional = autocompletionPopup.getView().getSelectedElement();
             if (optional.isEmpty()) return false;
-            if (optional.get().getElement() instanceof Instruction) {
+            if (optional.get() instanceof Instruction i) {
                 topMessage.setMaxHeight(0);
-                StringStyler.style(((Instruction) optional.get().getElement()).getDocumentation(), content);
+                StringStyler.style(i.getDocumentation(), content);
                 return true;
-            } else if (optional.get().getElement() instanceof Directive) {
+            } else if (optional.get() instanceof Directive d) {
                 topMessage.setMaxHeight(0);
-                StringStyler.style(((Directive) optional.get().getElement()).getDocumentation(), content);
+                StringStyler.style(d.getDocumentation(), content);
                 return true;
             }
         } else if (display instanceof MIPSFileEditor) {
             var index = display.getIndex();
             var optional = index.withLockF(false,
-                            i -> i.getElementAt(display.getCaretPosition() + caretOffset - 1));
+                    i -> i.getElementAt(display.getCaretPosition() + caretOffset - 1));
 
             if (optional.isEmpty()) return false;
 
             var element = optional.get();
             if (element instanceof MIPSEditorInstructionMnemonic) {
                 var parent = element.getParentOfType(MIPSEditorInstruction.class).orElse(null);
-                if(parent == null) return false;
+                if (parent == null) return false;
 
                 topMessage.clear();
 
@@ -124,7 +125,7 @@ public class MIPSDocumentationPopup extends DocumentationPopup {
                 return true;
             } else if (element instanceof MIPSEditorDirectiveMnemonic) {
                 var parent = element.getParentOfType(MIPSEditorDirective.class).orElse(null);
-                if(parent == null) return false;
+                if (parent == null) return false;
 
                 topMessage.clear();
 

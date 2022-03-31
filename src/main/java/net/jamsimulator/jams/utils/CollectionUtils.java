@@ -24,10 +24,10 @@
 
 package net.jamsimulator.jams.utils;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import javafx.util.Pair;
+
+import java.util.*;
+import java.util.stream.Stream;
 
 public class CollectionUtils {
 
@@ -55,5 +55,22 @@ public class CollectionUtils {
             } else list.add(value);
         });
         return list;
+    }
+
+    /**
+     * Transforms the given lists into a {@link Stream} of {@link Pair}s, zipping each element
+     * of the keys' list with the element of the values' list at the same index.
+     *
+     * @param keys   the keys' list.
+     * @param values the values' list.
+     * @param <K>    the keys' type.
+     * @param <V>    the values' type.
+     * @return the {@link Stream} of {@link Pair}s.
+     */
+    public static <K, V> Stream<Pair<K, V>> zip(Collection<K> keys, Collection<V> values) {
+        var keyIterator = keys.iterator();
+        var valueIterator = values.iterator();
+        return Stream.generate(() -> new Pair<>(keyIterator.next(), valueIterator.next()))
+                .limit(Math.min(keys.size(), values.size()));
     }
 }

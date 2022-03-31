@@ -48,7 +48,7 @@ public abstract class EditorIndexedLine extends EditorIndexedParentElementImpl {
 
 
     public EditorIndexedLine(EditorIndex index, ElementScope scope, int start, int number, String text) {
-        super(index, scope, null, start, text);
+        super(index, scope, null, start, text, "");
         Validate.isTrue(number >= 0, "Index cannot be negative!");
         this.number = number;
     }

@@ -48,10 +48,12 @@ public class TextEditorActionCut extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         if (node instanceof CodeFileEditor) {
             ((CodeFileEditor) node).cut();
+            return true;
         }
+        return false;
     }
 
     @Override

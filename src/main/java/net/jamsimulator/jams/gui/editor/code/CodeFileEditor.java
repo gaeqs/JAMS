@@ -39,23 +39,26 @@ import javafx.stage.Popup;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
+import net.jamsimulator.jams.gui.action.ActionManager;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.editor.FileEditor;
+import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopup;
 import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorPendingChanges;
 import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexRequestRefreshEvent;
-import net.jamsimulator.jams.gui.editor.code.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.editor.code.popup.DocumentationPopup;
 import net.jamsimulator.jams.gui.editor.code.top.CodeFileEditorReplace;
 import net.jamsimulator.jams.gui.editor.code.top.CodeFileEditorSearch;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
+import net.jamsimulator.jams.gui.util.KeyCombinationBuilder;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.project.GlobalIndexHolder;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.utils.FileUtils;
@@ -342,6 +345,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     public void reformat() {
         pendingChanges.markForReformat();
         setEditable(false);
+        tab.getWorkingPane().getProjectTab().getProject().getTaskExecutor().executeIndexing(this);
     }
 
     @Override
@@ -425,16 +429,39 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     protected void initializeAutocompletionPopupListeners() {
         //AUTOCOMPLETION MOVEMENT
         addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (autocompletionPopup != null) {
-                if (autocompletionPopup.managePressEvent(event)) {
+            try {
+                if (Manager.get(ActionManager.class).executeAction(
+                        new KeyCombinationBuilder(event).build(), this)) {
                     event.consume();
-                    if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
-                        if (documentationPopup != null) documentationPopup.hide();
-                    }
-                } else {
-                    shouldOpenAutocompletionAfterEdit = !event.getText().isBlank();
-                    if (documentationPopup != null) documentationPopup.hide();
                 }
+            } catch (IllegalArgumentException ignore) {
+                return;
+            }
+            var c = event.getCode();
+            if (autocompletionPopup != null && autocompletionPopup.isShowing()) {
+                boolean populate = false;
+                int offset = 0;
+                String extra = "";
+                if (c == KeyCode.LEFT || c == KeyCode.RIGHT) {
+                    populate = true;
+                    offset = c == KeyCode.LEFT ? -1 : 1;
+                } else if (c == KeyCode.BACK_SPACE) {
+                    populate = true;
+                    offset = -1;
+                } else if (!c.isArrowKey() && !c.isKeypadKey()
+                        && !c.isFunctionKey() && !c.isMediaKey() && !c.isModifierKey() && !c.isNavigationKey()) {
+                    shouldOpenAutocompletionAfterEdit = true;
+                }
+                if (populate) {
+                    if (autocompletionPopup.populate(offset, false)) {
+                        autocompletionPopup.showPopup();
+                    } else {
+                        autocompletionPopup.hide();
+                    }
+                }
+            } else {
+                shouldOpenAutocompletionAfterEdit = !event.getText().isBlank();
+                if (documentationPopup != null) documentationPopup.hide();
             }
         });
 
@@ -503,7 +530,11 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             if (shouldOpenAutocompletionAfterEdit) {
                 shouldOpenAutocompletionAfterEdit = false;
                 if (autocompletionPopup != null) {
-                    autocompletionPopup.execute(0, false);
+                    if (autocompletionPopup.populate(0, false)) {
+                        autocompletionPopup.showPopup();
+                    } else {
+                        autocompletionPopup.hide();
+                    }
                 }
             }
         });

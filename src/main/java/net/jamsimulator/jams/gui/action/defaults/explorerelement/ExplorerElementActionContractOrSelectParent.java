@@ -41,17 +41,17 @@ public class ExplorerElementActionContractOrSelectParent extends Action {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.LEFT);
 
     public ExplorerElementActionContractOrSelectParent(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.EXPLORER_ELEMENT, Messages.ACTION_EXPLORER_ELEMENT_CONTRACT_OR_SELECT_PARENT, DEFAULT_COMBINATION);
+        super(provider, NAME, RegionTags.EXPLORER_ELEMENT, Messages.ACTION_EXPLORER_ELEMENT_CONTRACT_OR_SELECT_PARENT, DEFAULT_COMBINATION);
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof ExplorerElement element)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof ExplorerElement element)) return false;
 
         if (element instanceof ExplorerSection) {
             if (((ExplorerSection) element).isExpanded()) {
                 ((ExplorerSection) element).contract();
-                return;
+                return false;
             }
         }
 
@@ -62,6 +62,6 @@ public class ExplorerElementActionContractOrSelectParent extends Action {
             explorer.selectElementAlone(target);
             explorer.updateScrollPosition(target);
         });
-
+        return true;
     }
 }

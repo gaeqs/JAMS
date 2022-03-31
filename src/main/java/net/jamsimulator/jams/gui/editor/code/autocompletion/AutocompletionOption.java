@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,20 +22,21 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.popup.event;
+package net.jamsimulator.jams.gui.editor.code.autocompletion;
 
-import net.jamsimulator.jams.event.Event;
-import net.jamsimulator.jams.gui.editor.code.popup.AutocompletionPopupElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
+import net.jamsimulator.jams.utils.StringSearch;
 
-public class AutocompletionPopupSelectElementEvent extends Event {
-
-    private final AutocompletionPopupElement selectedElement;
-
-    public AutocompletionPopupSelectElementEvent(AutocompletionPopupElement selectedElement) {
-        this.selectedElement = selectedElement;
-    }
-
-    public AutocompletionPopupElement getSelectedElement() {
-        return selectedElement;
-    }
+/**
+ * Represents a valid candidated returned by the method
+ * {@link AutocompletionPopupController#searchOptions(EditorIndexedElement, String)}.
+ *
+ * @param candidate    the candidate of this option.
+ * @param searchResult the result data of this option.
+ * @param <T>          the type of the candidate.
+ */
+public record AutocompletionOption<T>(
+        AutocompletionCandidate<T> candidate,
+        StringSearch.Result searchResult
+) {
 }

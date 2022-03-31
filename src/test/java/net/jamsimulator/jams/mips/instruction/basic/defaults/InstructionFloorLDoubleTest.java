@@ -56,7 +56,7 @@ class InstructionFloorLDoubleTest {
                 """
                         .text
                         li $s0, 5
-                        lid $f0, 5.5
+                        li.d $f0, 5.5
                         floor.l.d $f0, $f0
                         mfc1 $s1, $f0
                         tne $s0, $s1
@@ -80,7 +80,7 @@ class InstructionFloorLDoubleTest {
                 """
                         .text
                         li $s0, -6
-                        lid $f0, -5.5
+                        li.d $f0, -5.5
                         floor.l.d $f0, $f0
                         mfc1 $s1, $f0
                         tne $s0, $s1

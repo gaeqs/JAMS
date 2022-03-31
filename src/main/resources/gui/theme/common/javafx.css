@@ -219,12 +219,12 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
-.list-view .list-cell {
+.list-cell {
     -fx-text-fill: -theme-foreground;
     -fx-background-color: -theme-background;
 }
 
-.list-view .list-cell:hover:filled {
+.list-cell:hover:filled {
     -fx-text-fill: -theme-foreground;
     -fx-background-color: -theme-background-pressed;
 }

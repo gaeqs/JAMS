@@ -45,8 +45,8 @@ public class ExplorerElementActionSelectNext extends Action {
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof ExplorerElement element)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof ExplorerElement element)) return false;
 
         Explorer explorer = element.getExplorer();
         explorer.startKeyboardSelection();
@@ -54,5 +54,7 @@ public class ExplorerElementActionSelectNext extends Action {
             explorer.selectElementAlone(target);
             explorer.updateScrollPosition(target);
         });
+
+        return true;
     }
 }

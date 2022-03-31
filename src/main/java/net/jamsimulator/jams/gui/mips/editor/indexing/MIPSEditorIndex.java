@@ -119,7 +119,7 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
                     } else if (element instanceof MIPSEditorDirectiveParameter parameter) {
                         if (i == 1) builder.append(afterDirective);
                         else if (i > 1) builder.append(afterDirectiveParameter);
-                        builder.append(parameter.getIdentifier());
+                        builder.append(parameter.getText());
                     }
                     i++;
                 }

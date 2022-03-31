@@ -52,8 +52,9 @@ public class GeneralActionCreateProject extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         CreateProjectWindow.open();
+        return true;
     }
 
     @Override

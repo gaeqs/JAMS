@@ -29,6 +29,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -95,19 +96,15 @@ public class BindActionWindow extends VBox {
         HBox.setHgrow(hRegion, Priority.ALWAYS);
         getChildren().add(box);
 
-        setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ESCAPE) {
-                stage.close();
+        addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.CONTROL || event.getCode() == KeyCode.SHIFT
+                    || event.getCode() == KeyCode.ALT || event.getCode() == KeyCode.META
+                    || event.getCode() == KeyCode.SHORTCUT) return;
+            try {
+                combination = new KeyCombinationBuilder(event).build();
+                combinationDisplay.setText(combination.toString());
                 event.consume();
-            } else {
-                if (event.getCode() == KeyCode.CONTROL || event.getCode() == KeyCode.SHIFT
-                        || event.getCode() == KeyCode.ALT || event.getCode() == KeyCode.META
-                        || event.getCode() == KeyCode.SHORTCUT) return;
-                try {
-                    combination = new KeyCombinationBuilder(event).build();
-                    combinationDisplay.setText(combination.toString());
-                } catch (IllegalArgumentException ignore) {
-                }
+            } catch (IllegalArgumentException ignore) {
             }
         });
     }

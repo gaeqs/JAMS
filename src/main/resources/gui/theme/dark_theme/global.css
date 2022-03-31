@@ -21,7 +21,6 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
 -theme-foreground: #ECECEC;
 -theme-foreground-darker: derive(-theme-foreground, -20%);
 -theme-foreground-darker-2: derive(-theme-foreground, -40%);
@@ -43,6 +42,7 @@
 -theme-explorer-file-to-assemble: #323F2D;
 -theme-explorer-selected-file-to-assemble: #2C3B43;
 
+-theme-text-match: #589df6;
 -theme-text-selected: #214182;
 -theme-text-comment: #8b8b8b;
 -theme-text-label: -theme-foreground;

@@ -31,6 +31,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParen
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroParameter;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveEqv;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveGlobl;
@@ -48,7 +49,7 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
 
     public MIPSEditorDirective(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                int start, String text) {
-        super(index, scope, parent, start, text);
+        super(index, scope, parent, start, text, Messages.MIPS_ELEMENT_DIRECTIVE);
         parseText();
     }
 

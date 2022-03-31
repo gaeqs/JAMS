@@ -39,11 +39,15 @@ public class EditorActionSave extends Action {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
 
     public EditorActionSave(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.EDITOR, Messages.ACTION_EDITOR_SAVE, DEFAULT_COMBINATION);
+        super(provider, NAME, RegionTags.EDITOR, Messages.ACTION_EDITOR_SAVE, DEFAULT_COMBINATION);
     }
 
     @Override
-    public void run(Object node) {
-        if (node instanceof FileEditor editor) editor.save();
+    public boolean run(Object node) {
+        if (node instanceof FileEditor editor) {
+            editor.save();
+            return true;
+        }
+        return false;
     }
 }

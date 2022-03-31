@@ -29,9 +29,9 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParen
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroParameter;
+import net.jamsimulator.jams.language.Messages;
 
 import java.util.Collection;
-import java.util.Set;
 
 public class MIPSEditorDirectiveMacroParameter extends MIPSEditorDirectiveParameter
         implements EditorElementMacroParameter {
@@ -43,5 +43,10 @@ public class MIPSEditorDirectiveMacroParameter extends MIPSEditorDirectiveParame
     @Override
     public Collection<String> getStyles() {
         return EditorElementMacro.PARAMETER_STYLE;
+    }
+
+    @Override
+    public String getTypeLanguageNode() {
+        return Messages.ELEMENT_MACRO_PARAMETER;
     }
 }

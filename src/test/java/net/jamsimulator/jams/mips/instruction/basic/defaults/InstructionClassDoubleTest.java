@@ -55,7 +55,7 @@ class InstructionClassDoubleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lid $f0, NaN
+                        li.d $f0, NaN
                         class.d $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b10
@@ -79,7 +79,7 @@ class InstructionClassDoubleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lid $f0, -Infinity
+                        li.d $f0, -Infinity
                         class.d $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b100
@@ -103,7 +103,7 @@ class InstructionClassDoubleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lid $f0, -5.3448
+                        li.d $f0, -5.3448
                         class.d $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b1000
@@ -127,7 +127,7 @@ class InstructionClassDoubleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lid $f0, -2.22507385850720088902458687609E-308
+                        li.d $f0, -2.22507385850720088902458687609E-308
                         class.d $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b10000
@@ -150,7 +150,7 @@ class InstructionClassDoubleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lid $f0, -0.0
+                        li.d $f0, -0.0
                         class.d $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b100000
@@ -173,7 +173,7 @@ class InstructionClassDoubleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lid $f0, Infinity
+                        li.d $f0, Infinity
                         class.d $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b1000000
@@ -197,7 +197,7 @@ class InstructionClassDoubleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lid $f0, 865.65
+                        li.d $f0, 865.65
                         class.d $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b10000000
@@ -221,7 +221,7 @@ class InstructionClassDoubleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lid $f0, 2.22507385850720088902458687609E-308
+                        li.d $f0, 2.22507385850720088902458687609E-308
                         class.d $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b100000000
@@ -244,7 +244,7 @@ class InstructionClassDoubleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lid $f0, 0.0
+                        li.d $f0, 0.0
                         class.d $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b1000000000

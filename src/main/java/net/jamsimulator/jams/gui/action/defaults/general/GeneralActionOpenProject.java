@@ -58,14 +58,15 @@ public class GeneralActionOpenProject extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         DirectoryChooser chooser = new DirectoryChooser();
         File folder = chooser.showDialog(JamsApplication.getStage());
-        if (folder == null || JamsApplication.getProjectsTabPane().isProjectOpen(folder)) return;
+        if (folder == null || JamsApplication.getProjectsTabPane().isProjectOpen(folder)) return false;
 
         var type = Manager.get(ProjectTypeManager.class)
                 .getByProjectfolder(folder).orElse(MIPSProjectType.INSTANCE);
         JamsApplication.getProjectsTabPane().openProject(type.loadProject(folder));
+        return true;
     }
 
     @Override

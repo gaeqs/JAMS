@@ -48,10 +48,12 @@ public class TextEditorActionPaste extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         if (node instanceof CodeFileEditor) {
             ((CodeFileEditor) node).paste();
+            return true;
         }
+        return false;
     }
 
     @Override

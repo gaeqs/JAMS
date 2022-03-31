@@ -56,7 +56,7 @@ class InstructionFloorWSimpleTest {
                 """
                         .text
                         li $s0, 5
-                        lif $f0, 5.5
+                        li.s $f0, 5.5
                         floor.w.s $f0, $f0
                         mfc1 $s1, $f0
                         tne $s0, $s1
@@ -80,7 +80,7 @@ class InstructionFloorWSimpleTest {
                 """
                         .text
                         li $s0, -6
-                        lif $f0, -5.5
+                        li.s $f0, -5.5
                         floor.w.s $f0, $f0
                         mfc1 $s1, $f0
                         tne $s0, $s1

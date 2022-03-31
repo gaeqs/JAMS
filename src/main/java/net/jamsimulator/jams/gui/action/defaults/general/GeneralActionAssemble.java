@@ -81,8 +81,9 @@ public class GeneralActionAssemble extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         runFromMenu();
+        return true;
     }
 
     @Override

@@ -53,8 +53,8 @@ public class MIPSLabelsReferenceActionShowInInstructionViewer extends ContextAct
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof LabelTableReference reference)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof LabelTableReference reference)) return false;
         var explorer = (LabelTable) reference.getExplorer();
 
         var instructionGroup = explorer.getSimulationPane().getInstructionTableGroup();
@@ -67,6 +67,7 @@ public class MIPSLabelsReferenceActionShowInInstructionViewer extends ContextAct
                 instructionGroup.selectKernel();
             }
         }
+        return true;
     }
 
     @Override

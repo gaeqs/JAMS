@@ -42,14 +42,15 @@ public class FilesToAssembleActionRemove extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
     public FilesToAssembleActionRemove(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.FILES_TO_ASSEMBLE, Messages.ACTION_FILES_TO_ASSEMBLE_REMOVE,
+        super(provider, NAME, RegionTags.FILES_TO_ASSEMBLE, Messages.ACTION_FILES_TO_ASSEMBLE_REMOVE,
                 DEFAULT_COMBINATION, FolderActionRegions.ASSEMBLER, null, null);
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof GlobalIndexSidebarElement element)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof GlobalIndexSidebarElement element)) return false;
         element.getDisplay().getGlobalIndex().removeFile(element.getItem());
+        return true;
     }
 
     @Override

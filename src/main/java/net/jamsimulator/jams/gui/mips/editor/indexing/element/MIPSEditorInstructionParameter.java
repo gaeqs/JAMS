@@ -28,17 +28,21 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.parameter.ParameterPartType;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MIPSEditorInstructionParameter extends EditorIndexedParentElementImpl {
 
     public MIPSEditorInstructionParameter(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                           int start, String text, ParameterType hint) {
-        super(index, scope, parent, start, text);
+        super(index, scope, parent, start, text, Messages.MIPS_ELEMENT_INSTRUCTION);
         if (hint != null) parseWithHint(hint);
         else parseWithoutHint();
     }

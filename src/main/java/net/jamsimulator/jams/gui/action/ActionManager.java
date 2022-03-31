@@ -290,8 +290,7 @@ public final class ActionManager extends Manager<Action> {
 
         for (Map.Entry<String, Action> entry : actions.entrySet()) {
             if (entry.getKey().equals(RegionTags.GENERAL) || node.supportsActionRegion(entry.getKey())) {
-                entry.getValue().run(node);
-                return true;
+                return entry.getValue().run(node);
             }
         }
         return false;
@@ -319,6 +318,12 @@ public final class ActionManager extends Manager<Action> {
         add(new GeneralActionAbout(ResourceProvider.JAMS));
 
         //TEXT EDITOR
+        add(new TextEditorActionAutocompletionShow(ResourceProvider.JAMS));
+        add(new TextEditorActionAutocompletionPeviousElement(ResourceProvider.JAMS));
+        add(new TextEditorActionAutocompletionNextElement(ResourceProvider.JAMS));
+        add(new TextEditorActionAutocompletionExit(ResourceProvider.JAMS));
+        add(new TextEditorActionAutocomplete(ResourceProvider.JAMS));
+
         add(new GeneralActionAssemble(ResourceProvider.JAMS));
         add(new TextEditorActionCopy(ResourceProvider.JAMS));
         add(new TextEditorActionCut(ResourceProvider.JAMS));
@@ -333,7 +338,6 @@ public final class ActionManager extends Manager<Action> {
         add(new TextEditorActionReplace(ResourceProvider.JAMS));
         add(new EditorActionSave(ResourceProvider.JAMS));
         add(new TextEditorActionSelectAll(ResourceProvider.JAMS));
-        add(new TextEditorActionShowAutocompletionPopup(ResourceProvider.JAMS));
         add(new TextEditorActionShowDocumentationPopup(ResourceProvider.JAMS));
         add(new TextEditorActionUndo(ResourceProvider.JAMS));
         add(new TextEditorActionDeleteLine(ResourceProvider.JAMS));
