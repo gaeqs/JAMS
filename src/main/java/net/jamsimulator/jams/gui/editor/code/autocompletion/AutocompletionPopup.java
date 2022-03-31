@@ -193,7 +193,7 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
      * <p>
      * Make sure to invoke {@link #populate(int, boolean)} before using this method.
      *
-     * @see #populate(int, boolean).
+     * @see #populate(int, boolean)
      */
     public void showPopup() {
         var bounds = editor.getCaretBounds().orElse(null);
