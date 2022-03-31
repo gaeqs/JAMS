@@ -34,12 +34,12 @@ import java.util.Objects;
 /**
  * Represents an element that may be represented in a {@link AutocompletionPopup}.
  *
- * @param element the represented element.
- * @param key
- * @param replacement
- * @param displayStrings
- * @param icon
- * @param <T>
+ * @param element        the represented element.
+ * @param key            the key of the element.
+ * @param replacement    the text that will override the query.
+ * @param displayStrings a list with extra names of the candidates.
+ * @param icon           the icon of the candidate.
+ * @param <T>            the type of the element.
  */
 public record AutocompletionCandidate<T>(
         T element,
