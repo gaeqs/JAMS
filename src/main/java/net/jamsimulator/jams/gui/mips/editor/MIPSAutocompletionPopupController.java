@@ -180,18 +180,27 @@ public class MIPSAutocompletionPopupController extends AutocompletionPopupContro
                     if (hasRegisters) break;
                     Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();
                     Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
+                    var firstStart = starts.stream().findFirst().orElse('$');
 
+                    var preParts = parameter.getText().substring(0, partStartIndex.get());
                     for (var name : names) {
                         for (var start : starts) {
                             var key = start + name;
                             candidates.add(new AutocompletionCandidate<>(
                                     key,
-                                    key,
-                                    key,
+                                    preParts + key,
+                                    preParts + key,
                                     Collections.emptyList(),
                                     Icons.AUTOCOMPLETION_REGISTER
                             ));
                         }
+                        candidates.add(new AutocompletionCandidate<>(
+                                name,
+                                preParts + name,
+                                preParts + firstStart + name,
+                                Collections.emptyList(),
+                                Icons.AUTOCOMPLETION_REGISTER
+                        ));
                     }
                     hasRegisters = true;
                 }
