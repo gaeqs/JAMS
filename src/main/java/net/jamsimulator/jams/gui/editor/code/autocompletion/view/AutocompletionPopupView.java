@@ -28,22 +28,67 @@ import javafx.scene.Node;
 import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionOption;
 import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopup;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Represents the visual node of an {@link AutocompletionPopup}.
+ */
 public interface AutocompletionPopupView {
 
+    /**
+     * Populates this view with the given options.
+     *
+     * @param popup   the {@link AutocompletionPopup} requesting the operation.
+     * @param options the options.
+     */
     void showContents(AutocompletionPopup popup, List<AutocompletionOption<?>> options);
 
+    /**
+     * Returns this view as a JavaFX's {@link Node}.
+     *
+     * @return this view as a {@link Node}.
+     */
     Node asNode();
 
+    /**
+     * Returns the selected element's replacement if present.
+     *
+     * @return the selected element's replacement.
+     */
     Optional<String> getSelected();
 
+    /**
+     * Returns the selected element of this view if present.
+     *
+     * @return the selected eleent.
+     */
     Optional<Object> getSelectedElement();
 
+    /**
+     * Selects the previous element of this popup.
+     * <p>
+     * This method invokes a cyclic selection.
+     * <p>
+     * This method must create a {@link
+     * net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionElementselectEvent
+     * AutocompletionElementselectEvent}.
+     *
+     * @param popup the {@link AutocompletionPopup} requesting this operation.
+     */
     void moveUp(AutocompletionPopup popup);
 
+    /**
+     * Selects the next element of this popup.
+     * <p>
+     * This method invokes a cyclic selection.
+     * <p>
+     * This method must create a {@link
+     * net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionElementselectEvent
+     * AutocompletionElementselectEvent}.
+     *
+     * @param popup the {@link AutocompletionPopup} requesting this operation.
+     */
     void moveDown(AutocompletionPopup popup);
 
 }

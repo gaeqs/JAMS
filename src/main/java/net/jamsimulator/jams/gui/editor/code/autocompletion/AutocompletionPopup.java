@@ -37,6 +37,25 @@ import net.jamsimulator.jams.utils.Validate;
 
 import java.lang.reflect.Method;
 
+/**
+ * Represents the tool that allow users to autocomplete their code.
+ * <p>
+ * An autocompletion popup contains two important components:
+ * <ul>
+ *     <li>
+ *         <strong>The controller:</strong> generates the candidates each time the user opens the autocompletion popup.
+ *     </li>
+ *     <li>
+ *         <strong>The view:</strong> represents the JavaFX node showing all candidates.
+ *         It is also responsible of invoking the selection event.
+ *     </li>
+ * </ul>
+ * <p>
+ * You must provide both componets to the popup for this tool to work.
+ * <p>
+ * You can use the view {@link net.jamsimulator.jams.gui.editor.code.autocompletion.view.AutocompletionPopupBasicView
+ * used by JAMS by default}.
+ */
 public class AutocompletionPopup extends Popup implements EventBroadcast {
 
     private final SimpleEventBroadcast broadcast = new SimpleEventBroadcast();
@@ -48,6 +67,15 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
     private EditorIndexedElement context;
     private String key;
 
+    /**
+     * Creates a new AutocompletionPopup.
+     * <p>
+     * None of the parameters may be null.
+     *
+     * @param editor     the editor of this popup.
+     * @param controller the controller.
+     * @param view       the view.
+     */
     public AutocompletionPopup(
             CodeFileEditor editor,
             AutocompletionPopupController controller,
@@ -73,23 +101,48 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
         });
     }
 
+    /**
+     * Returns the editor of this popup.
+     *
+     * @return the {@link CodeFileEditor editor}.
+     */
     public CodeFileEditor getEditor() {
         return editor;
     }
 
+    /**
+     * Returns the current {@link AutocompletionPopupController controller} of this popup.
+     *
+     * @return the {@link AutocompletionPopupController controller}.
+     */
     public AutocompletionPopupController getController() {
         return controller;
     }
 
+    /**
+     * Sets the {@link AutocompletionPopupController controller} of this popup.
+     *
+     * @param controller the new controller. It can't be null.
+     */
     public void setController(AutocompletionPopupController controller) {
         Validate.notNull(controller, "Controller cannot be null!");
         this.controller = controller;
     }
 
+    /**
+     * Returs the curret {@link AutocompletionPopupView view} of this popup.
+     *
+     * @return the {@link AutocompletionPopupView view}.
+     */
     public AutocompletionPopupView getView() {
         return view;
     }
 
+    /**
+     * Sets the {@link AutocompletionPopupView view} of this popup.
+     *
+     * @param view the new view. It can't be null.
+     */
     public void setView(AutocompletionPopupView view) {
         Validate.notNull(view, "View cannot be null!");
         this.view = view;
@@ -97,6 +150,16 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
         getContent().add(view.asNode());
     }
 
+    /**
+     * Populates this autocompletion popup using the current context of this popup's editor.
+     * <p>
+     * This method must be invoked before {@link #showPopup()} and only if this method returns {@code true}.
+     *
+     * @param caretOffset       the offset of the caret.
+     * @param autocompleteIfOne whether this autocompletion popup should autocomplete automatically
+     *                          if the candidates' list contains only one element.
+     * @return whether this popup may use the method {@link #showPopup()}.
+     */
     public boolean populate(int caretOffset, boolean autocompleteIfOne) {
         int caretPosition = editor.getCaretPosition() + caretOffset;
         if (caretPosition <= 0) return false;
@@ -125,20 +188,44 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
         return true;
     }
 
+    /**
+     * Shows this popup.
+     * <p>
+     * Make sure to invoke {@link #populate(int, boolean)} before using this method.
+     *
+     * @see #populate(int, boolean).
+     */
     public void showPopup() {
         var bounds = editor.getCaretBounds().orElse(null);
         if (bounds == null) return;
         show(editor, bounds.getMinX(), bounds.getMaxY());
     }
 
+    /**
+     * Selects the previous element of this popup.
+     * <p>
+     * This method invokes a cyclic selection.
+     */
     public void moveUp() {
         view.moveUp(this);
     }
 
+    /**
+     * Selects the next element of this popup.
+     * <p>
+     * This method invokes a cyclic selection.
+     */
     public void moveDown() {
         view.moveDown(this);
     }
 
+    /**
+     * Invokes the autocompletion.
+     * <p>
+     * This method can only be invoked when this popup is being shown and there's a selected element.
+     *
+     * @return whether the operation was sucessfull.
+     */
     public boolean autocomplete() {
         if (!isShowing()) return false;
         var selected = view.getSelected();

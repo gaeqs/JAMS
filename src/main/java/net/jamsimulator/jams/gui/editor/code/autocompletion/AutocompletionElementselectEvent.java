@@ -28,21 +28,40 @@ import net.jamsimulator.jams.event.Event;
 
 /**
  * Event triggered when an autocompletion element is selected.
+ * <p>
+ * This event must be invoked by the
+ * {@link net.jamsimulator.jams.gui.editor.code.autocompletion.view.AutocompletionPopupView autocompletion popup view}.
  */
 public class AutocompletionElementselectEvent extends Event {
 
     private final AutocompletionPopup popup;
     private final Object element;
 
+    /**
+     * Creates a new select event.
+     *
+     * @param popup   the popup invoking this event.
+     * @param element the selected element.
+     */
     public AutocompletionElementselectEvent(AutocompletionPopup popup, Object element) {
         this.popup = popup;
         this.element = element;
     }
 
+    /**
+     * Returns the popup invoking this event.
+     *
+     * @return the {@link AutocompletionPopup}.
+     */
     public AutocompletionPopup getPopup() {
         return popup;
     }
 
+    /**
+     * Returns the new selected element.
+     *
+     * @return the selected element.
+     */
     public Object getElement() {
         return element;
     }
