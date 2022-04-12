@@ -24,14 +24,12 @@
 
 package net.jamsimulator.jams.language;
 
-import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.ManagerResource;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Represents a language. A language contains can be interpreted as a map that links language nodes
@@ -44,74 +42,31 @@ import java.util.stream.Collectors;
  */
 public class Language implements ManagerResource {
 
-    private final ResourceProvider resourceProvider;
-    private final String name;
-    private final Map<String, String> baseMessages;
-    private final SortedSet<LanguageAttachment> attachments;
+    private final Map<String, String> messages = new HashMap<>();
+    private final SortedSet<LanguageAttachment> attachments = new TreeSet<>();
 
-    private Map<String, String> messages;
+    private final String name;
     private boolean dirty;
 
     /**
      * Creates a language.
      *
-     * @param resourceProvider the provider of the language.
-     * @param name             the name of the language.
-     * @param baseMessages     the base messages of the language, as a {@link Configuration}.
+     * @param name the name of the language.
      */
-    public Language(ResourceProvider resourceProvider, String name, Configuration baseMessages) {
-        Validate.notNull(resourceProvider, "Resource provider cannot be null!");
+    public Language(String name) {
         Validate.notNull(name, "Name cannot be null!");
-        Validate.notNull(baseMessages, "Base data cannot be null!");
-        this.resourceProvider = resourceProvider;
         this.name = name;
-        this.baseMessages = baseMessages.getAll(true).entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().toString()));
-        this.attachments = new TreeSet<>();
-
-        this.messages = this.baseMessages;
-        this.dirty = false;
-    }
-
-    /**
-     * Creates a language.
-     *
-     * @param resourceProvider the provider of the language.
-     * @param name             the name of the language.
-     * @param baseMessages     the base messages of the language, as a {@link Map}.
-     */
-    public Language(ResourceProvider resourceProvider, String name, Map<String, String> baseMessages) {
-        Validate.notNull(resourceProvider, "Resource provider cannot be null!");
-        Validate.notNull(name, "Name cannot be null!");
-        Validate.notNull(baseMessages, "Base data cannot be null!");
-        this.resourceProvider = resourceProvider;
-        this.name = name;
-        this.baseMessages = Map.copyOf(baseMessages);
-        this.attachments = new TreeSet<>();
-
-        this.messages = this.baseMessages;
         this.dirty = false;
     }
 
     @Override
     public ResourceProvider getResourceProvider() {
-        return resourceProvider;
+        return ResourceProvider.JAMS;
     }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    /**
-     * Returns a {@link Map} with all the messages without attachments of this language.
-     * <p>
-     * This {@link Map} is unmodifiable.
-     *
-     * @return the {@link Map}.
-     */
-    public Map<String, String> getBaseMessages() {
-        return baseMessages;
     }
 
     /**
@@ -124,7 +79,7 @@ public class Language implements ManagerResource {
      */
     public Map<String, String> getMessages() {
         refresh();
-        return messages;
+        return Collections.unmodifiableMap(messages);
     }
 
     /**
@@ -225,14 +180,8 @@ public class Language implements ManagerResource {
 
     private void refresh() {
         if (!dirty) return;
-        if (attachments.isEmpty()) {
-            messages = baseMessages;
-            return;
-        }
-
-        var map = new HashMap<>(baseMessages);
-        attachments.forEach(attachment -> map.putAll(attachment.attachment()));
-        messages = Collections.unmodifiableMap(map);
+        messages.clear();
+        attachments.forEach(attachment -> messages.putAll(attachment.attachment()));
         dirty = false;
     }
 

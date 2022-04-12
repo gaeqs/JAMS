@@ -54,8 +54,8 @@ public class LanguageTest {
         assertNotNull(english, "English language not found.");
         assertNotNull(spanish, "Spanish language not found.");
 
-        var englishKeys = english.getBaseMessages().keySet();
-        var spanishKeys = spanish.getBaseMessages().keySet();
+        var englishKeys = english.getMessages().keySet();
+        var spanishKeys = spanish.getMessages().keySet();
 
         System.out.println("Found " + englishKeys.size() + " elements in English.");
         System.out.println("Found " + spanishKeys.size() + " elements in Spanish.");
@@ -113,10 +113,7 @@ public class LanguageTest {
         var jarResource = Jams.class.getResource("/test/language");
         try {
             var map = manager.loadLanguagesInDirectory(
-                    ResourceProvider.TEST,
-                    Path.of(jarResource.toURI()),
-                    true
-            );
+                    ResourceProvider.TEST, Path.of(jarResource.toURI()));
             map.forEach((path, e) -> fail(e));
         } catch (Exception e) {
             fail(e);
