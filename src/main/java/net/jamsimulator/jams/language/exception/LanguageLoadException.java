@@ -50,7 +50,6 @@ public class LanguageLoadException extends Exception {
         INVALID_HEADER("Invalid header."),
         ALREADY_LOADED("Language already loaded."),
         NOT_LOADED("Language not loaded."),
-        ALREADY_EXIST("Language already exist and attach is disabled."),
         UNKNOWN("Unknown.");
 
         private final String message;

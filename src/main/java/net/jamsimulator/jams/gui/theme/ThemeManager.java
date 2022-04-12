@@ -59,11 +59,11 @@ import java.util.Map;
  * <p>
  * The default theme will act as the common data for all themes.
  * <p>
- * You can load new themes using {@link #loadTheme(ResourceProvider, Path, boolean)}. This method will
+ * You can load new themes using {@link #loadTheme(ResourceProvider, Path)}. This method will
  * load the theme at the given Path. The path can be a .ZIP file or a folder. The path may be
  * a path inside a plugin's .JAR.
  * <p>
- * The method {@link #loadThemesInDirectory(ResourceProvider, Path, boolean)} loads all the themes inside a directory.
+ * The method {@link #loadThemesInDirectory(ResourceProvider, Path)} loads all the themes inside a directory.
  * Just like the previous method, the path may be a path inside a plugin's .JAR. See these methods'
  * documentation for more information.
  */
@@ -183,11 +183,6 @@ public final class ThemeManager extends SelectableManager<Theme> {
     /**
      * Loads all themes inside the given directory path.
      * <p>
-     * If 'attach' is true and some of these themes have the same name as one of the themes already loaded,
-     * the new theme will be considered an attachment to the already loaded theme. If 'attach' is false and
-     * one of these cases occurs, a {@link ThemeLoadException} with the type
-     * {@link ThemeLoadException.Type#ALREADY_EXIST} will be thrown.
-     * <p>
      * You may need to refresh the selected theme after all loading operations are finished. See {@link #refresh()}
      * for more information.
      * <p>
@@ -196,17 +191,16 @@ public final class ThemeManager extends SelectableManager<Theme> {
      *
      * @param provider the provider of the themes.
      * @param path     the path of the directory where the themes are. This path may be inside a plugin's .JAR.
-     * @param attach   whether the themes should be attached to already loaded themes.
      * @throws IOException if there's something wrong with the given path.
      * @see #refresh()
      */
-    public Map<Path, ThemeLoadException> loadThemesInDirectory(ResourceProvider provider, Path path, boolean attach) throws IOException {
+    public Map<Path, ThemeLoadException> loadThemesInDirectory(ResourceProvider provider, Path path) throws IOException {
         Validate.notNull(path, "Path cannot be null!");
         var exceptions = new HashMap<Path, ThemeLoadException>();
         Files.walk(path, 1).forEach(it -> {
             try {
                 if (Files.isSameFile(path, it)) return;
-                loadTheme(provider, it, attach);
+                loadTheme(provider, it);
             } catch (IOException e) {
                 exceptions.put(path, new ThemeLoadException(e, ThemeLoadException.Type.INVALID_RESOURCE));
             } catch (ThemeLoadException e) {
@@ -219,39 +213,30 @@ public final class ThemeManager extends SelectableManager<Theme> {
     /**
      * Loads the theme located at the given path. The theme may be a folder or a .ZIP file.
      * <p>
-     * If 'attach' is true and some the theme have the same name as one of the themes already loaded,
-     * the new theme will be considered an attachment to the already loaded theme. If 'attach' is false and
-     * one of these cases occurs, a {@link ThemeLoadException} with the type
-     * {@link ThemeLoadException.Type#ALREADY_EXIST} will be thrown.
-     * <p>
      * You may need to refresh the selected theme after all loading operations are finished. See {@link #refresh()}
      * for more information.
      *
      * @param provider the provider of the theme to load.
      * @param path     the path of the theme. This path may be inside a plugin's .JAR.
-     * @param attach   whether the theme should be attached to an already loaded theme with the same name.
      * @throws ThemeLoadException if something went wrong while the theme is loading.
      * @see #refresh()
      */
-    public void loadTheme(ResourceProvider provider, Path path, boolean attach) throws ThemeLoadException {
+    public void loadTheme(ResourceProvider provider, Path path) throws ThemeLoadException {
         var loader = new ThemeLoader(provider, path);
         loader.load();
 
         if (loader.getHeader().name().equals(COMMON_THEME)) {
             if (defaultValue == null) {
-                defaultValue = loader.createTheme();
-            } else {
-                if (!attach) throw new ThemeLoadException(ThemeLoadException.Type.ALREADY_EXIST);
-                attach(defaultValue, loader);
+                defaultValue = new Theme(loader.getHeader());
             }
+            attach(defaultValue, loader);
         } else {
-            var optional = get(loader.getHeader().name());
-            if (optional.isPresent()) {
-                if (!attach) throw new ThemeLoadException(ThemeLoadException.Type.ALREADY_EXIST);
-                attach(optional.get(), loader);
-            } else {
-                add(loader.createTheme());
+            var theme = get(loader.getHeader().name()).orElse(null);
+            if (theme == null) {
+                theme = new Theme(loader.getHeader());
+                add(theme);
             }
+            attach(theme, loader);
         }
     }
 
@@ -287,10 +272,10 @@ public final class ThemeManager extends SelectableManager<Theme> {
         try {
             var jarResource = Jams.class.getResource("/gui/theme");
             if (jarResource != null) {
-                loadThemesInDirectory(ResourceProvider.JAMS, Path.of(jarResource.toURI()), true)
+                loadThemesInDirectory(ResourceProvider.JAMS, Path.of(jarResource.toURI()))
                         .forEach(ThemeManager::manageException);
             }
-            loadThemesInDirectory(ResourceProvider.JAMS, folder.toPath(), true)
+            loadThemesInDirectory(ResourceProvider.JAMS, folder.toPath())
                     .forEach(ThemeManager::manageException);
         } catch (IOException | URISyntaxException | ProviderNotFoundException e) {
             e.printStackTrace();
@@ -326,12 +311,19 @@ public final class ThemeManager extends SelectableManager<Theme> {
         // Let's remove the attachments too!
 
         boolean refresh = false;
-        for (var theme : this) {
+
+        var iterator = iterator();
+        while (iterator.hasNext()) {
+            var theme = iterator.next();
             boolean u1 = theme.getGlobalAttachments().removeIf(attachment -> attachment.provider().equals(provider));
             boolean u2 = theme.getFilesAttachments().removeIf(attachment -> attachment.provider().equals(provider));
 
             if (theme == selected || theme.getName().equals(COMMON_THEME)) {
                 refresh |= u1 || u2;
+            }
+
+            if ((u1 || u2) && theme.getFilesAttachments().isEmpty() && theme.getGlobalAttachments().isEmpty()) {
+                iterator.remove();
             }
         }
 

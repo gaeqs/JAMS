@@ -121,17 +121,6 @@ public class LanguageLoader {
         }
     }
 
-    /**
-     * Creates a new instance of the loaded language.
-     *
-     * @return the {@link Language}.
-     * @throws LanguageLoadException if the language was not loaded.
-     */
-    public Language createLanguage() throws LanguageLoadException {
-        if (!loaded) throw new LanguageLoadException(LanguageLoadException.Type.NOT_LOADED);
-        return new Language(header.provider(), header.name(), filesData);
-    }
-
     private LanguageHeader loadHeader() throws LanguageLoadException {
         var headerPath = path.resolve(HEADER_FILE);
         try {

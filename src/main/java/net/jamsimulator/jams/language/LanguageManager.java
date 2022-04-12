@@ -80,11 +80,6 @@ public final class LanguageManager extends SelectableManager<Language> {
     /**
      * Loads all languages inside the given directory path.
      * <p>
-     * If 'attach' is true and some of these languages have the same name as one of the languages already loaded,
-     * the new languages will be considered an attachment to the already loaded languages. If 'attach' is false and
-     * one of these cases occurs, a {@link LanguageLoadException} with the type
-     * {@link LanguageLoadException.Type#ALREADY_EXIST} will be thrown.
-     * <p>
      * You may need to refresh the selected language after all loading operations are finished. See {@link #refresh()}
      * for more information.
      * <p>
@@ -93,19 +88,17 @@ public final class LanguageManager extends SelectableManager<Language> {
      *
      * @param provider the provider of the language.
      * @param path     the path of the directory where the languages are. This path may be inside a plugin's .JAR.
-     * @param attach   whether the languages should be attached to already loaded languages.
-     * @throws IOException if there's something wrong with the given path.
      * @return a map with all exceptions occured when loading the languages.
+     * @throws IOException if there's something wrong with the given path.
      * @see #refresh()
      */
-    public Map<Path, LanguageLoadException> loadLanguagesInDirectory(
-            ResourceProvider provider, Path path, boolean attach) throws IOException {
+    public Map<Path, LanguageLoadException> loadLanguagesInDirectory(ResourceProvider provider, Path path) throws IOException {
         Validate.notNull(path, "Path cannot be null!");
         var exceptions = new HashMap<Path, LanguageLoadException>();
         Files.walk(path, 1).forEach(it -> {
             try {
                 if (Files.isSameFile(path, it)) return;
-                loadLanguage(provider, it, attach);
+                loadLanguage(provider, it);
             } catch (IOException e) {
                 exceptions.put(path, new LanguageLoadException(e, LanguageLoadException.Type.INVALID_RESOURCE));
             } catch (LanguageLoadException e) {
@@ -118,32 +111,25 @@ public final class LanguageManager extends SelectableManager<Language> {
     /**
      * Loads the language located at the given path. The language may be a folder or a .ZIP file.
      * <p>
-     * If 'attach' is true and some the language have the same name as one of the languages already loaded,
-     * the new language will be considered an attachment to the already loaded language. If 'attach' is false and
-     * one of these cases occurs, a {@link LanguageLoadException} with the type
-     * {@link LanguageLoadException.Type#ALREADY_EXIST} will be thrown.
-     * <p>
      * You may need to refresh the selected language after all loading operations are finished. See {@link #refresh()}
      * for more information.
      *
      * @param provider the provider of the language to load.
      * @param path     the path of the language. This path may be inside a plugin's .JAR.
-     * @param attach   whether the language should be attached to an already loaded language with the same name.
      * @throws LanguageLoadException if something went wrong while the language is loading.
      * @see #refresh()
      */
-    public void loadLanguage(ResourceProvider provider, Path path, boolean attach) throws LanguageLoadException {
+    public void loadLanguage(ResourceProvider provider, Path path) throws LanguageLoadException {
         var loader = new LanguageLoader(provider, path);
         loader.load();
 
 
-        var optional = get(loader.getHeader().name());
-        if (optional.isPresent()) {
-            if (!attach) throw new LanguageLoadException(LanguageLoadException.Type.ALREADY_EXIST);
-            attach(optional.get(), loader);
-        } else {
-            add(loader.createLanguage());
+        var language = get(loader.getHeader().name()).orElse(null);
+        if (language == null) {
+            language = new Language(loader.getHeader().name());
+            add(language);
         }
+        attach(language, loader);
     }
 
     @Override
@@ -175,17 +161,10 @@ public final class LanguageManager extends SelectableManager<Language> {
         try {
             var jarResource = Jams.class.getResource("/language");
             if (jarResource != null) {
-                loadLanguagesInDirectory(
-                        ResourceProvider.JAMS,
-                        Path.of(jarResource.toURI()),
-                        true
-                ).forEach(LanguageManager::manageException);
+                loadLanguagesInDirectory(ResourceProvider.JAMS, Path.of(jarResource.toURI()))
+                        .forEach(LanguageManager::manageException);
             }
-            loadLanguagesInDirectory(
-                    ResourceProvider.JAMS,
-                    folder.toPath(),
-                    true
-            ).forEach(LanguageManager::manageException);
+            loadLanguagesInDirectory(ResourceProvider.JAMS, folder.toPath()).forEach(LanguageManager::manageException);
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
@@ -231,10 +210,16 @@ public final class LanguageManager extends SelectableManager<Language> {
         // Let's remove the attachments too!
 
         boolean refresh = false;
-        for (var language : this) {
+
+        var iterator = iterator();
+        while (iterator.hasNext()) {
+            var language = iterator.next();
             boolean bool = language.removeAttachmentsOf(provider);
             if (language == selected || language == defaultValue) {
                 refresh |= bool;
+            }
+            if(bool && language.getAttachments().isEmpty()) {
+                iterator.remove();
             }
         }
 
