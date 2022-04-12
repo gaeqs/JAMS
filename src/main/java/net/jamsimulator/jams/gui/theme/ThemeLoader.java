@@ -130,17 +130,6 @@ public class ThemeLoader {
         }
     }
 
-    /**
-     * Creates a new instance of the loaded theme.
-     *
-     * @return the {@link Theme}.
-     * @throws ThemeLoadException if the theme was not loaded.
-     */
-    public Theme createTheme() throws ThemeLoadException {
-        if (!loaded) throw new ThemeLoadException(ThemeLoadException.Type.NOT_LOADED);
-        return new Theme(header, globalData, filesData);
-    }
-
     private ThemeHeader loadHeader() throws ThemeLoadException {
         var headerPath = path.resolve(HEADER_FILE);
         try {

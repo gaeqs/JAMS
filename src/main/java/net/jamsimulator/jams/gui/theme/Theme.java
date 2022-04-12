@@ -86,8 +86,6 @@ import java.util.Set;
 public class Theme implements ManagerResource {
 
     private final ThemeHeader header;
-    private final String globalData;
-    private final String filesData;
 
     private final List<ThemeAttachment> globalAttachments;
     private final List<ThemeAttachment> filesAttachments;
@@ -96,15 +94,10 @@ public class Theme implements ManagerResource {
      * Creates a theme.
      *
      * @param header     the header representing the 'theme.json' file.
-     * @param globalData the global CSS code.
-     * @param filesData  the merged CSS code in the theme's files.
      */
-    public Theme(ThemeHeader header, String globalData, String filesData) {
+    public Theme(ThemeHeader header) {
         Validate.notNull(header, "Header cannot be null!");
         this.header = header;
-        this.globalData = globalData == null ? "" : globalData;
-        this.filesData = filesData == null ? "" : filesData;
-
         this.globalAttachments = new LinkedList<>();
         this.filesAttachments = new LinkedList<>();
     }
@@ -145,15 +138,6 @@ public class Theme implements ManagerResource {
     }
 
     /**
-     * Returns the global data of this theme without attachments or dependencies.
-     *
-     * @return the global data.
-     */
-    public String getGlobalData() {
-        return globalData;
-    }
-
-    /**
      * Returns the global data of this theme with attachments and dependencies.
      *
      * @param manager the {@link ThemeManager} where the dependencies are loccated.
@@ -161,15 +145,6 @@ public class Theme implements ManagerResource {
      */
     public String getFinalGlobalData(ThemeManager manager) {
         return buildFinalGlobalData(manager, new HashSet<>());
-    }
-
-    /**
-     * Returns the files' data of this theme without attachments or dependencies.
-     *
-     * @return the files' data.
-     */
-    public String getFilesData() {
-        return filesData;
     }
 
     /**
@@ -239,7 +214,6 @@ public class Theme implements ManagerResource {
                     }
                 });
 
-        builder.append(globalData);
         globalAttachments.forEach(it -> builder.append(it.data()));
         return builder.toString();
     }
@@ -260,7 +234,6 @@ public class Theme implements ManagerResource {
                     }
                 });
 
-        builder.append(filesData);
         filesAttachments.forEach(it -> builder.append(it.data()));
         return builder.toString();
     }
