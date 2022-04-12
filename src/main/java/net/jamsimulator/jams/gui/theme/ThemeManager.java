@@ -311,12 +311,19 @@ public final class ThemeManager extends SelectableManager<Theme> {
         // Let's remove the attachments too!
 
         boolean refresh = false;
-        for (var theme : this) {
+
+        var iterator = iterator();
+        while (iterator.hasNext()) {
+            var theme = iterator.next();
             boolean u1 = theme.getGlobalAttachments().removeIf(attachment -> attachment.provider().equals(provider));
             boolean u2 = theme.getFilesAttachments().removeIf(attachment -> attachment.provider().equals(provider));
 
             if (theme == selected || theme.getName().equals(COMMON_THEME)) {
                 refresh |= u1 || u2;
+            }
+
+            if ((u1 || u2) && theme.getFilesAttachments().isEmpty() && theme.getGlobalAttachments().isEmpty()) {
+                iterator.remove();
             }
         }
 
