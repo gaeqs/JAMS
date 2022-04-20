@@ -50,7 +50,7 @@ import java.util.stream.Stream;
  * Represents the indexing system of a {@link net.jamsimulator.jams.gui.editor.code.CodeFileEditor CodeFileEditor}.
  *
  * <h2>Philosophy:</h2>
- * The index if based in several points:
+ * The index is based in several points:
  * - Element based. Elements must be almost immutables: only its inspections, scope and start can be changed.
  * - Elements are recreated when its line is edited.
  * - Elements store the minimum informaiton possible. This information must be searched using the searching methods.
