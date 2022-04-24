@@ -57,12 +57,12 @@ public class SyscallExecutionRandomRangedInteger implements SyscallExecution {
     public void execute(MIPSSimulation<?> simulation) {
         Register genRegister = simulation.getRegisters().getRegister(this.generatorRegister).orElse(null);
         if (genRegister == null) throw new IllegalStateException("Register " + this.generatorRegister + " not found");
-        Register rangeRegister = simulation.getRegisters().getRegister(this.generatorRegister).orElse(null);
+        Register rangeRegister = simulation.getRegisters().getRegister(this.rangeRegister).orElse(null);
         if (rangeRegister == null) throw new IllegalStateException("Register " + this.generatorRegister + " not found");
         Register valueRegister = simulation.getRegisters().getRegister(this.valueRegister).orElse(null);
         if (valueRegister == null) throw new IllegalStateException("Register " + this.valueRegister + " not found");
 
-        var generator = simulation.getNumberGenerators().getGenerator(genRegister.getValue());
+        var generator = simulation.getNumberGenerators().getGenerator(genRegister.getValue() & 0x7FFFFFFF);
         valueRegister.setValue(generator.nextInt(rangeRegister.getValue()));
     }
 
