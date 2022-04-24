@@ -49,6 +49,7 @@ import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorPendingChanges;
+import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexFinishEditEvent;
 import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexRequestRefreshEvent;
 import net.jamsimulator.jams.gui.editor.code.popup.DocumentationPopup;
 import net.jamsimulator.jams.gui.editor.code.top.CodeFileEditorReplace;
@@ -119,6 +120,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     protected final Subscription subscription;
     protected final AnimationTimer styleTimer;
 
+    protected int modificationCount = 0;
     protected boolean shouldOpenAutocompletionAfterEdit = false;
 
     public CodeFileEditor(FileEditorTab tab) {
@@ -158,6 +160,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         subscription = plainTextChanges()
                 .conditionOn(editableProperty())
                 .reduceSuccessions(it -> {
+                    modificationCount++;
                     var list = new LinkedList<EditorLineChange>();
                     EditorLineChange.of(it, this, list);
                     return list;
@@ -223,6 +226,17 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     /**
+     * Executes the autocompletion if this editor is not being modified.
+     *
+     * @return whether the autocompletion has not been modified.
+     */
+    public boolean tryToAutocomplete() {
+        if (!autocompletionPopup.isShowing()) return false;
+        if (isIndexBeingModified()) return false;
+        return autocompletionPopup.autocomplete();
+    }
+
+    /**
      * Returns the {@link Popup} showing the current documentation.
      *
      * @return the popup.
@@ -247,6 +261,15 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
      */
     public EditorIndex getIndex() {
         return index;
+    }
+
+    /**
+     * Returns whether this editor's index is being modififed.
+     *
+     * @return whether this editor's index is being modififed.
+     */
+    public boolean isIndexBeingModified() {
+        return index != null && modificationCount > 0;
     }
 
     /**
@@ -539,6 +562,17 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             }
         });
     }
+
+    @Listener
+    private void onModificationFinish(IndexFinishEditEvent event) {
+        Platform.runLater(() -> {
+            modificationCount--;
+            if (modificationCount < 0) {
+                modificationCount = 0;
+            }
+        });
+    }
+
 
     private void accept(LinkedList<EditorLineChange> list) {
         pendingChanges.addAll(list);

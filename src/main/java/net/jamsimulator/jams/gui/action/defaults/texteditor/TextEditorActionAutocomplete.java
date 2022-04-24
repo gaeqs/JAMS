@@ -49,16 +49,16 @@ public class TextEditorActionAutocomplete extends ContextAction {
     @Override
     public boolean run(Object node) {
         if (node instanceof CodeFileEditor editor) {
-            if(editor.getAutocompletionPopup() == null || !editor.getAutocompletionPopup().isShowing())
+            if (editor.getAutocompletionPopup() == null || !editor.getAutocompletionPopup().isShowing())
                 return false;
-            return editor.getAutocompletionPopup().autocomplete();
+            return editor.tryToAutocomplete();
         }
         return false;
     }
 
     @Override
     public void runFromMenu() {
-        CodeFileEditorUtils.getFocusedCodeFileEditor().ifPresent(it -> it.getAutocompletionPopup().autocomplete());
+        CodeFileEditorUtils.getFocusedCodeFileEditor().ifPresent(CodeFileEditor::tryToAutocomplete);
     }
 
     @Override
