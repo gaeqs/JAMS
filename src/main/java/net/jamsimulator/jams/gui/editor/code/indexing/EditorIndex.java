@@ -53,7 +53,7 @@ import java.util.stream.Stream;
  * The index is based in several points:
  * - Element based. Elements must be almost immutables: only its inspections, scope and start can be changed.
  * - Elements are recreated when its line is edited.
- * - Elements store the minimum informaiton possible. This information must be searched using the searching methods.
+ * - Elements store the minimum information possible. This information must be searched using the searching methods.
  * - Searching methods must be fast as possible.
  * <p>
  * There are two classes that extends {@link EditorIndexedElement} used to fulfill these requirements:

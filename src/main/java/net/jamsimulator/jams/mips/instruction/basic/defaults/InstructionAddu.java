@@ -113,7 +113,7 @@ public class InstructionAddu extends BasicRInstruction<InstructionAddu.Assembled
         @Override
         public void execute() {
             register(instruction.getDestinationRegister()).setValue(
-                    value(instruction.getTargetRegister()) + valueCOP0(instruction.getSourceRegister())
+                    value(instruction.getTargetRegister()) + value(instruction.getSourceRegister())
             );
         }
     }
@@ -135,7 +135,7 @@ public class InstructionAddu extends BasicRInstruction<InstructionAddu.Assembled
 
         @Override
         public void execute() {
-            result = value(instruction.getTargetRegister()) + valueCOP0(instruction.getSourceRegister());
+            result = value(instruction.getTargetRegister()) + value(instruction.getSourceRegister());
             forward(instruction.getTargetRegister(), result);
         }
 
