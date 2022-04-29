@@ -311,7 +311,7 @@ public abstract class LanguageTask<E> extends Task<E> {
         }
 
 
-        super.updateTitle(title);
+        super.updateTitle(parsed);
     }
 
     /**
