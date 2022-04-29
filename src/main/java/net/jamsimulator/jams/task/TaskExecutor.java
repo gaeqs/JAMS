@@ -187,7 +187,7 @@ public class TaskExecutor {
         tasks.add(task);
     }
 
-    public synchronized void executeIndexing(EditorIndex index, String text) {
+    public synchronized void executeIndexing(EditorIndex index, String fileName, String text) {
         tasks.removeIf(FutureTask::isDone);
         var task = LanguageTask.of(Messages.EDITOR_INDEXING, () -> {
             try {
@@ -196,7 +196,7 @@ public class TaskExecutor {
                 ex.printStackTrace();
             }
             return null;
-        });
+        }).setTitleReplacements(new String[]{"{FILE}", fileName});
         indexingExecutor.submit(task);
         tasks.add(task);
     }
@@ -224,7 +224,7 @@ public class TaskExecutor {
                 ex.printStackTrace();
             }
             return null;
-        });
+        }).setTitleReplacements(new String[]{"{FILE}", editor.getTab().getFile().getName()});
         indexingExecutor.submit(task);
         tasks.add(task);
     }

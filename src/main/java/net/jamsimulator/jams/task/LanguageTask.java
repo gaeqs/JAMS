@@ -29,8 +29,8 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
-import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
+import net.jamsimulator.jams.utils.StringUtils;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
@@ -255,6 +255,8 @@ public abstract class LanguageTask<E> extends Task<E> {
 
     private String titleLanguageNode;
     private String messageLanguageNode;
+    private String[] titleReplacements = new String[0];
+    private String[] messageReplacements = new String[0];
 
     /**
      * Creates the language task.
@@ -295,7 +297,21 @@ public abstract class LanguageTask<E> extends Task<E> {
     @Override
     public void updateTitle(String title) {
         titleLanguageNode = title;
-        super.updateTitle(title == null ? null : Manager.ofD(Language.class).getDefault().getOrDefault(title));
+
+        if (title == null) {
+            super.updateTitle(null);
+            return;
+        }
+
+        var parsed = StringUtils.parseEscapeCharacters(Manager.ofD(Language.class)
+                .getDefault().getOrDefault(title));
+
+        for (int i = 0; i < titleReplacements.length - 1; i += 2) {
+            parsed = parsed.replace(titleReplacements[i], titleReplacements[i + 1]);
+        }
+
+
+        super.updateTitle(title);
     }
 
     /**
@@ -309,7 +325,49 @@ public abstract class LanguageTask<E> extends Task<E> {
     @Override
     public void updateMessage(String message) {
         messageLanguageNode = message;
-        super.updateMessage(message == null ? null : Manager.ofD(Language.class).getDefault().getOrDefault(message));
+        if (message == null) {
+            super.updateMessage(null);
+            return;
+        }
+
+        var parsed = StringUtils.parseEscapeCharacters(Manager.ofD(Language.class)
+                .getDefault().getOrDefault(message));
+
+        for (int i = 0; i < messageReplacements.length - 1; i += 2) {
+            parsed = parsed.replace(messageReplacements[i], messageReplacements[i + 1]);
+        }
+
+        super.updateMessage(parsed);
+    }
+
+    /**
+     * Sets the replacements for the title.
+     * <p>
+     * This method will refresh the title.
+     *
+     * @param titleReplacements the replacements.
+     * @return this language task.
+     */
+    public LanguageTask<E> setTitleReplacements(String[] titleReplacements) {
+        Validate.notNull(titleReplacements, "Replacements cannot be null!");
+        this.titleReplacements = titleReplacements;
+        updateTitle(titleLanguageNode);
+        return this;
+    }
+
+    /**
+     * Sets the replacements for the message.
+     * <p>
+     * This method will refresh the message.
+     *
+     * @param messageReplacements the replacements.
+     * @return this language task.
+     */
+    public LanguageTask<E> setMessageReplacements(String[] messageReplacements) {
+        Validate.notNull(messageReplacements, "Replacements cannot be null!");
+        this.messageReplacements = messageReplacements;
+        updateMessage(messageLanguageNode);
+        return this;
     }
 
     @Override

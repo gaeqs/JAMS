@@ -343,8 +343,9 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
             return;
         }
 
-        project.getTaskExecutor().executeOnIndexingThread(LanguageTask.of(Messages.EDITOR_INDEXING, () -> {
+        project.getTaskExecutor().executeOnIndexingThread(LanguageTask.of(Messages.EDITOR_INDEXING, task -> {
             indices.forEach((file, index) -> {
+                task.setTitleReplacements(new String[]{"{FILE}", file.getName()});
                 index.withLock(true, i -> {
                     try {
                         i.indexAll(Files.readString(file.toPath()));
@@ -357,7 +358,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
             });
             refreshAll(null);
             return null;
-        }));
+        }).setTitleReplacements(new String[]{"{FILE}", ""}));
     }
 
     protected abstract EditorIndex generateIndexForFile(File file);

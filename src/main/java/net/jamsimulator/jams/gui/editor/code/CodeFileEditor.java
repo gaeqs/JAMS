@@ -444,7 +444,8 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             }
         }
         var index = generateIndex();
-        tab.getWorkingPane().getProjectTab().getProject().getTaskExecutor().executeIndexing(index, getText());
+        tab.getWorkingPane().getProjectTab().getProject().getTaskExecutor()
+                .executeIndexing(index, tab.getFile().getName(), getText());
         return index;
     }
 
