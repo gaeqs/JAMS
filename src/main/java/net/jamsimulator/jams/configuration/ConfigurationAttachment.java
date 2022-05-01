@@ -40,7 +40,7 @@ public record ConfigurationAttachment(ResourceProvider provider, Configuration c
 
     @Override
     public int compareTo(@NotNull ConfigurationAttachment o) {
-        int p = priority - o.priority;
-        return p == 0 ? id - o.id : p;
+        int p = o.priority - priority;
+        return p == 0 ? o.id - id : p;
     }
 }

@@ -32,15 +32,11 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.explorer.LanguageExplorerSection;
-import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.plugin.Plugin;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ConfigurationWindowSection extends LanguageExplorerSection {
 
-    protected Configuration configuration, meta;
     protected List<ConfigurationWindowNode> nodes;
     protected Map<String, Integer> regions;
 
@@ -52,16 +48,21 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
      * @param name           the name of the section.
      * @param hierarchyLevel the hierarchy level, used by the spacing.
      */
-    public ConfigurationWindowSection(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
-                                      String languageNode, int hierarchyLevel, Configuration configuration,
-                                      Configuration meta, Map<String, Integer> regions) {
+    public ConfigurationWindowSection(
+            ConfigurationWindowExplorer explorer,
+            ExplorerSection parent,
+            String name,
+            String languageNode,
+            int hierarchyLevel,
+            Configuration data,
+            Configuration meta,
+            Map<String, Integer> regions
+    ) {
         super(explorer, parent, name, hierarchyLevel, Comparator.comparing(ExplorerElement::getName), languageNode);
-        this.configuration = configuration;
-        this.meta = meta;
 
         this.nodes = new ArrayList<>();
         this.regions = regions;
-        loadChildren();
+        loadChildren(data, meta);
         refreshAllElements();
         representation.refreshStatusIcon();
     }
@@ -73,7 +74,8 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
      * @return the unmodifiable {@link List}.
      */
     public List<ConfigurationWindowNode> getNodes() {
-        nodes.sort(Comparator.comparingInt(o -> o.getRegion() == null ? Integer.MAX_VALUE : regions.getOrDefault(o.getRegion(), Integer.MAX_VALUE)));
+        nodes.sort(Comparator.comparingInt(o -> o.getMetadata().getRegion() == null ?
+                Integer.MAX_VALUE : regions.getOrDefault(o.getMetadata().getRegion(), Integer.MAX_VALUE)));
         return Collections.unmodifiableList(nodes);
     }
 
@@ -100,71 +102,50 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
         setOnMouseClickedEvent(event -> getExplorer().getConfigurationWindow().display(this));
     }
 
-    protected void loadChildren() {
-        Map<String, Object> map = configuration.getAll(false);
-        map.forEach(this::manageChildrenAddition);
+    protected void loadChildren(Configuration data, Configuration meta) {
+        meta.getAll(false).forEach((name, value) -> manageChildrenAddition(data, name, value));
     }
 
-    protected void manageChildrenAddition(String name, Object value) {
-        var plugins = Manager.of(Plugin.class).stream().map(Plugin::getName).collect(Collectors.toSet());
-        if (value instanceof Configuration) {
-            if (!name.equals("invisible")) {
-                manageSectionAddition(name, (Configuration) value, plugins);
-            }
+    protected void manageChildrenAddition(Configuration data, String name, Object value) {
+        if (name.equals("meta") || !(value instanceof Configuration config)) return;
+        var metaNode = (Configuration) config.get("meta").orElse(null);
+        if (metaNode == null) {
+            // Basic object
+            manageBasicObjectAddition(data, name, config);
         } else {
-            manageBasicObjectAddition(name, value, plugins);
+            manageSectionAddition(name, data, config, metaNode);
         }
     }
 
-    protected void manageSectionAddition(String name, Configuration value, Set<String> plugins) {
-        Optional<Configuration> metaConfig = this.meta == null ? Optional.empty() : this.meta.get(name);
-        String languageNode = null;
-        String special = null;
-        Map<String, Integer> regions = new HashMap<>();
+    protected void manageSectionAddition(String name,
+                                         Configuration parentDataNode,
+                                         Configuration metaNode,
+                                         Configuration sectionMeta) {
 
-        if (metaConfig.isPresent()) {
-            Optional<Configuration> metaOptional = metaConfig.get().get("meta");
-            if (metaOptional.isPresent()) {
-                ConfigurationMetadata meta = new ConfigurationMetadata(metaOptional.get());
-                languageNode = meta.getLanguageNode();
-                special = meta.getType();
-                regions = meta.getRegions();
-                if(!plugins.containsAll(meta.getRequiresPlugins())) return;
-            }
-        }
+        var dataNode = parentDataNode.getOrCreateConfiguration(name);
+        var meta = new ConfigurationMetadata(sectionMeta);
 
-        if (special != null) {
-            var builder = ConfigurationWindowSpecialSectionBuilders.getByName(special);
-
+        if (meta.getType() != null) {
+            // SPECIAL
+            var builder = ConfigurationWindowSpecialSectionBuilders.getByName(meta.getType());
             if (builder.isPresent()) {
-                ExplorerElement element = builder.get().create(getExplorer(), this, name, languageNode,
-                        hierarchyLevel + 1, value, metaConfig.orElse(null), regions);
+                var element = builder.get().create(getExplorer(),
+                        this, name, meta.getLanguageNode(),
+                        hierarchyLevel + 1, dataNode, metaNode, regions);
                 elements.add(element);
                 filteredElements.add(element);
                 return;
             }
         }
-        ExplorerElement element = new ConfigurationWindowSection(getExplorer(), this, name, languageNode,
-                hierarchyLevel + 1, value, metaConfig.orElse(null), regions);
+
+        ExplorerElement element = new ConfigurationWindowSection(getExplorer(), this, name,
+                meta.getLanguageNode(), hierarchyLevel + 1, dataNode, metaNode, regions);
         elements.add(element);
         filteredElements.add(element);
+
     }
 
-    protected void manageBasicObjectAddition(String name, Object value, Set<String> plugins) {
-        Optional<Configuration> metaOptional = meta == null ? Optional.empty() : meta.get(name);
-        String languageNode = null;
-        String region = null;
-        String type = "string";
-
-        if (metaOptional.isPresent()) {
-            ConfigurationMetadata meta = new ConfigurationMetadata(metaOptional.get());
-            languageNode = meta.getLanguageNode();
-            region = meta.getRegion();
-            type = meta.getType();
-            if(!plugins.containsAll(meta.getRequiresPlugins())) return;
-        }
-
-        var node = new ConfigurationWindowNode(configuration, name, languageNode, region, type);
-        nodes.add(node);
+    protected void manageBasicObjectAddition(Configuration data, String name, Configuration metaNode) {
+        nodes.add(new ConfigurationWindowNode(data, name, new ConfigurationMetadata(metaNode)));
     }
 }

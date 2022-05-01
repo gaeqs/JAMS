@@ -100,7 +100,7 @@ public class ConfigurationWindowSectionPlugins extends ConfigurationWindowSectio
     }
 
     @Override
-    protected void loadChildren() {
+    protected void loadChildren(Configuration data, Configuration meta) {
     }
 
     public static class Builder implements ConfigurationWindowSpecialSectionBuilder {
