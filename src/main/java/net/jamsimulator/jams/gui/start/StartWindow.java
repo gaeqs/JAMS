@@ -169,7 +169,7 @@ public class StartWindow extends AnchorPane {
             stage.setOnHidden(event -> {
                 // We are saving the configuration because it may be edited in the start window!
                 try {
-                    Jams.getMainConfiguration().save(
+                    Jams.getMainConfiguration().data().save(
                             Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME),
                             true
                     );

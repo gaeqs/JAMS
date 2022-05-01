@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,30 +22,25 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.start;
+package net.jamsimulator.jams.configuration.event;
 
-import javafx.scene.Node;
-import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
-import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.configuration.AttachmentConfiguration;
+import net.jamsimulator.jams.event.Event;
 
-public class StartWindowSectionConfiguration implements StartWindowSection {
+/**
+ * This event is called when a
+ * {@link net.jamsimulator.jams.configuration.AttachmentConfiguration AttachmentConfiguration}
+ * has been modified.
+ */
+public class AttachmentConfigurationRefreshEvent extends Event {
 
-    public StartWindowSectionConfiguration() {
+    private final AttachmentConfiguration configuration;
+
+    public AttachmentConfigurationRefreshEvent(AttachmentConfiguration configuration) {
+        this.configuration = configuration;
     }
 
-    @Override
-    public String getLanguageNode() {
-        return Messages.CONFIG;
-    }
-
-    @Override
-    public Node toNode() {
-        return new ConfigurationWindow(Jams.getMainConfiguration());
-    }
-
-    @Override
-    public String getName() {
-        return "configuration";
+    public AttachmentConfiguration getConfiguration() {
+        return configuration;
     }
 }

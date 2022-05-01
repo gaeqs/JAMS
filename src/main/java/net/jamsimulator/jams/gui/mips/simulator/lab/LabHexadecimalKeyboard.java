@@ -60,7 +60,7 @@ public class LabHexadecimalKeyboard extends GridPane {
     public void refresh(boolean upperByte) {
         simulation.runSynchronized(() -> {
             var node = upperByte ? CONFIG_NODE_2 : CONFIG_NODE_1;
-            var number = Jams.getMainConfiguration().getNumber(node).orElse(0);
+            var number = Jams.getMainConfiguration().data().getNumber(node).orElse(0);
             simulation.getMemory().setByte(number.intValue(), generateByte(upperByte));
             simulation.requestHardwareInterrupt(3);
         });

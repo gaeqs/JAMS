@@ -123,7 +123,7 @@ public final class PluginManager extends Manager<Plugin> {
     public boolean remove(Object o) {
         if (o instanceof Plugin plugin) {
             if (parallelStream().anyMatch(other -> other.getDependencies().contains(plugin)
-                    || other.getEnabledSoftDepenedencies().contains(plugin))) return false;
+                    || other.getEnabledSoftDependencies().contains(plugin))) return false;
             if (!super.contains(o)) return false;
             try {
                 System.out.println("Disabling plugin " + plugin.getName() + ".");
@@ -220,10 +220,10 @@ public final class PluginManager extends Manager<Plugin> {
      * Unregisters and unloads the given {@link Plugin} and deletes its file.
      *
      * @param plugin the {@link Plugin}.
-     * @return whether the operation was sucessfull.
+     * @return whether the operation was successful.
      * @see #remove(Object)
      */
-    public boolean unistallPlugin(Plugin plugin) {
+    public boolean uninstallPlugin(Plugin plugin) {
         // Unregisters
         if (contains(plugin)) {
             if (!remove(plugin)) return false;
@@ -250,7 +250,7 @@ public final class PluginManager extends Manager<Plugin> {
      * @param file the file of the {@link Plugin}.
      * @return whether the operation was sucessful.
      */
-    public boolean installPLugin(File file) {
+    public boolean installPlugin(File file) {
         try {
             var header = loadPluginHeader(file);
             if (stream().anyMatch(plugin -> plugin.getHeader().name().equals(header.name())))

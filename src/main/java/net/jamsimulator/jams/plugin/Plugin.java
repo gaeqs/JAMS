@@ -26,11 +26,11 @@ package net.jamsimulator.jams.plugin;
 
 import javafx.application.Platform;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.ManagerResource;
 import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.manager.event.ProviderUnloadEvent;
 import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 import net.jamsimulator.jams.utils.ProtectedFileSystem;
 
@@ -69,7 +69,7 @@ public class Plugin implements ResourceProvider, ManagerResource {
     private PluginClassLoader classLoader;
     private PluginHeader header;
     private boolean enabled;
-    private Set<Plugin> dependencies, enabledSoftDepenedencies;
+    private Set<Plugin> dependencies, enabledSoftDependencies;
     private IconData favicon;
     private FileSystem fileSystem;
     private ProtectedFileSystem fileSystemWrapper;
@@ -92,7 +92,7 @@ public class Plugin implements ResourceProvider, ManagerResource {
 
     @Override
     public ResourceProvider getResourceProvider() {
-        // Plugins should be ALWAYS be provided by JAMS.
+        // JAMS must ALWAYS provide plugins.
         return ResourceProvider.JAMS;
     }
 
@@ -158,10 +158,9 @@ public class Plugin implements ResourceProvider, ManagerResource {
         } else {
             onDisable();
             dependencies.clear();
-            enabledSoftDepenedencies.clear();
+            enabledSoftDependencies.clear();
             Jams.getGeneralEventBroadcast().unregisterListeners(this);
-            Jams.REGISTRY.removeProvidedBy(this);
-            JamsApplication.getProjectsTabPane().closeProjectsProvidedBy(this);
+            Jams.getGeneralEventBroadcast().callEvent(new ProviderUnloadEvent(this));
         }
     }
 
@@ -181,8 +180,8 @@ public class Plugin implements ResourceProvider, ManagerResource {
      *
      * @return the soft dependencies.
      */
-    public Set<Plugin> getEnabledSoftDepenedencies() {
-        return Collections.unmodifiableSet(enabledSoftDepenedencies);
+    public Set<Plugin> getEnabledSoftDependencies() {
+        return Collections.unmodifiableSet(enabledSoftDependencies);
     }
 
     public Optional<IconData> getFavicon() {
@@ -262,7 +261,7 @@ public class Plugin implements ResourceProvider, ManagerResource {
                 .map(target -> Manager.of(Plugin.class).get(target).orElse(null))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
-        this.enabledSoftDepenedencies = header.softDependencies().stream()
+        this.enabledSoftDependencies = header.softDependencies().stream()
                 .map(target -> Manager.of(Plugin.class).get(target).orElse(null))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());

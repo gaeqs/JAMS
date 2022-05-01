@@ -35,9 +35,11 @@ public class ZoomUtils {
 
     public static void applyZoomListener(Node node, ScaledVirtualized<?> zoom) {
         node.addEventFilter(ScrollEvent.SCROLL, event -> {
-            double sensibility = Jams.getMainConfiguration().getNumber("editor.zoom_sensibility").orElse(0.2).doubleValue();
+            double sensibility = Jams.getMainConfiguration().data().getNumber("editor.zoom_sensibility")
+                    .orElse(0.2).doubleValue();
             if (event.isControlDown()
-                    && (boolean) Jams.getMainConfiguration().get("editor.zoom_using_mouse_wheel").orElse(true)) {
+                    && (boolean) Jams.getMainConfiguration().data().get("editor.zoom_using_mouse_wheel")
+                    .orElse(true)) {
 
                 double current = zoom.getZoom().getX();
                 double value = Math.max(0.4, current + sensibility * event.getDeltaY());
@@ -50,7 +52,8 @@ public class ZoomUtils {
         //RESET
         node.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.isControlDown() && event.getButton() == MouseButton.MIDDLE
-                    && (boolean) Jams.getMainConfiguration().get("editor.reset_zoom_using_middle_button").orElse(true)) {
+                    && (boolean) Jams.getMainConfiguration().data().get("editor.reset_zoom_using_middle_button")
+                    .orElse(true)) {
                 zoom.getZoom().setX(1);
                 zoom.getZoom().setY(1);
                 zoom.getZoom().setZ(1);

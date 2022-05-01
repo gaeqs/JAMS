@@ -63,7 +63,7 @@ public class GeneralActionAssemble extends ContextAction {
             var pane = tab.getProjectTabPane().getWorkingPane();
             pane.saveAllOpenedFiles();
 
-            if (Jams.getMainConfiguration().getOrElse("simulation.open_log_on_assemble", true)) {
+            if (Jams.getMainConfiguration().data().getOrElse("simulation.open_log_on_assemble", true)) {
                 Platform.runLater(() -> pane.getBarMap().searchButton("log").ifPresent(BarButton::show));
             }
             var log = pane.getBarMap().getSnapshotNodeOfType(Log.class);

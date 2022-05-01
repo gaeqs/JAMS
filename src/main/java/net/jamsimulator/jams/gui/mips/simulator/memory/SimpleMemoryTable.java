@@ -112,8 +112,8 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
 
         entries = new HashMap<>();
 
-        rows = (int) Jams.getMainConfiguration().get(MEMORY_ROWS_CONFIGURATION_NODE).orElse(47);
-        Jams.getMainConfiguration().registerListeners(this, true);
+        rows = (int) Jams.getMainConfiguration().data().get(MEMORY_ROWS_CONFIGURATION_NODE).orElse(47);
+        Jams.getMainConfiguration().data().registerListeners(this, true);
 
         populate();
 

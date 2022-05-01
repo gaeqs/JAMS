@@ -208,7 +208,7 @@ public class Bar {
             button.getBar().remove(button.getSnapshot());
             add(button.getSnapshot());
             // Leaves the management to the BarPaneSnapshot
-            Jams.getMainConfiguration().set(String.format(BarSnapshot.CONFIGURATION_NODE_POSITION, name), position);
+            Jams.getMainConfiguration().data().set(String.format(BarSnapshot.CONFIGURATION_NODE_POSITION, name), position);
         }
     }
 

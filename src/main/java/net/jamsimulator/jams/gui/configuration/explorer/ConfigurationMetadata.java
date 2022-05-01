@@ -40,7 +40,6 @@ public class ConfigurationMetadata {
     private final String type;
     private final String languageNode;
     private final String region;
-    private final List<String> requiresPlugins;
     private final Map<String, Integer> regions;
 
     public ConfigurationMetadata(Configuration configuration) {
@@ -48,9 +47,6 @@ public class ConfigurationMetadata {
         this.type = configuration.getString(TYPE_KEY).orElse(null);
         this.languageNode = configuration.getString(LANGUAGE_NODE_KEY).orElse(null);
         this.region = configuration.getString(REGION_KEY).orElse(null);
-        this.requiresPlugins = (List<String>) configuration.get(REQUIRES_PLUGINS)
-                .filter(it -> it instanceof List)
-                .orElse(Collections.emptyList());
 
         this.regions = new HashMap<>();
 
@@ -76,10 +72,6 @@ public class ConfigurationMetadata {
 
     public String getRegion() {
         return region;
-    }
-
-    public List<String> getRequiresPlugins() {
-        return requiresPlugins;
     }
 
     public Map<String, Integer> getRegions() {

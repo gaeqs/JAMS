@@ -114,7 +114,7 @@ public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements Mem
             rows++;
         }
 
-        Jams.getMainConfiguration().registerListeners(this, true);
+        Jams.getMainConfiguration().data().registerListeners(this, true);
 
         populate();
 

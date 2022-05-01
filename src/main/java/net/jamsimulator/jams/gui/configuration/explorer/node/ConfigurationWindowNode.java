@@ -29,6 +29,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.configuration.Configuration;
+import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationMetadata;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.value.ValueEditor;
 import net.jamsimulator.jams.gui.util.value.ValueEditors;
@@ -43,25 +44,22 @@ public class ConfigurationWindowNode extends HBox {
 
     protected Configuration configuration;
     protected String relativeNode;
-    protected String languageNode;
-    protected String region;
+    protected ConfigurationMetadata metadata;
 
     protected ValueEditor<?> editor;
     protected ValueConverter<?> converter;
 
 
-    public ConfigurationWindowNode(Configuration configuration, String relativeNode,
-                                   String languageNode, String region, String type) {
+    public ConfigurationWindowNode(Configuration configuration, String relativeNode, ConfigurationMetadata metadata) {
         getStyleClass().add(STYLE_CLASS);
         this.configuration = configuration;
         this.relativeNode = relativeNode;
-        this.languageNode = languageNode;
-        this.region = region;
+        this.metadata = metadata;
 
-        editor = ValueEditors.getByName(type).map(ValueEditor.Builder::build).orElse(null);
-        Validate.notNull(editor, "Editor cannot be null! Type: " + type);
+        editor = ValueEditors.getByName(metadata.getType()).map(ValueEditor.Builder::build).orElse(null);
+        Validate.notNull(editor, "Editor cannot be null! Type: " + metadata.getType());
         converter = editor.getLinkedConverter();
-        Validate.notNull(converter, "Converter cannot be null! Type: " + type);
+        Validate.notNull(converter, "Converter cannot be null! Type: " + metadata.getType());
 
         init();
 
@@ -79,16 +77,14 @@ public class ConfigurationWindowNode extends HBox {
         return relativeNode;
     }
 
-    public String getLanguageNode() {
-        return languageNode;
-    }
-
-    public String getRegion() {
-        return region;
+    public ConfigurationMetadata getMetadata() {
+        return metadata;
     }
 
     protected void init() {
         setAlignment(Pos.CENTER_LEFT);
+
+        var languageNode = metadata.getLanguageNode();
         var label = languageNode == null ? new Label(relativeNode) : new LanguageLabel(languageNode);
         if (languageNode != null) {
             label.setTooltip(new LanguageTooltip(languageNode + "_TOOLTIP", LanguageTooltip.DEFAULT_DELAY));

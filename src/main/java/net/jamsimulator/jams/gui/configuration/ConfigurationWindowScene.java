@@ -29,6 +29,8 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.configuration.Configuration;
+import net.jamsimulator.jams.configuration.MainConfiguration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
 import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
@@ -89,12 +91,12 @@ public class ConfigurationWindowScene extends ThemedScene {
     }
 
     public static void open() {
-        open(Jams.getMainConfiguration(), Jams.getMainConfigurationMetadata());
+        open(Jams.getMainConfiguration());
     }
 
-    public static void open(RootConfiguration configuration, RootConfiguration configurationMeta) {
+    public static void open(MainConfiguration configuration) {
         var stage = new Stage();
-        var scene = new ConfigurationWindowScene(new ConfigurationWindow(configuration, configurationMeta), stage);
+        var scene = new ConfigurationWindowScene(new ConfigurationWindow(configuration), stage);
         stage.initOwner(JamsApplication.getStage());
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
@@ -115,7 +117,7 @@ public class ConfigurationWindowScene extends ThemedScene {
 
         stage.setOnCloseRequest(event -> {
             try {
-                configuration.save(
+                configuration.data().save(
                         Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME),
                         true
                 );

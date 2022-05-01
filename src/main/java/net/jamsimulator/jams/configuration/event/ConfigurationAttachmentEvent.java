@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,30 +22,33 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.start;
+package net.jamsimulator.jams.configuration.event;
 
-import javafx.scene.Node;
-import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
-import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.configuration.AttachmentConfiguration;
+import net.jamsimulator.jams.configuration.ConfigurationAttachment;
+import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.utils.Validate;
 
-public class StartWindowSectionConfiguration implements StartWindowSection {
+/**
+ * Represents an event related to a {@link  ConfigurationAttachment}.
+ */
+public class ConfigurationAttachmentEvent extends Event {
 
-    public StartWindowSectionConfiguration() {
+    protected final AttachmentConfiguration configuration;
+    protected ConfigurationAttachment attachment;
+
+    public ConfigurationAttachmentEvent(AttachmentConfiguration configuration, ConfigurationAttachment attachment) {
+        Validate.notNull(configuration, "Configuration cannot be null!");
+        Validate.notNull(attachment, "Attachment cannot be null!");
+        this.configuration = configuration;
+        this.attachment = attachment;
     }
 
-    @Override
-    public String getLanguageNode() {
-        return Messages.CONFIG;
+    public AttachmentConfiguration getConfiguration() {
+        return configuration;
     }
 
-    @Override
-    public Node toNode() {
-        return new ConfigurationWindow(Jams.getMainConfiguration());
-    }
-
-    @Override
-    public String getName() {
-        return "configuration";
+    public ConfigurationAttachment getAttachment() {
+        return attachment;
     }
 }

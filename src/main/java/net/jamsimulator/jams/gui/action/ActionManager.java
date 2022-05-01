@@ -86,7 +86,7 @@ public final class ActionManager extends Manager<Action> {
             save();
 
             try {
-                Jams.getMainConfiguration().save(
+                Jams.getMainConfiguration().data().save(
                         Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME),
                         true
                 );
@@ -303,7 +303,7 @@ public final class ActionManager extends Manager<Action> {
      * to save this configuration inside a file.
      */
     public void save() {
-        Configuration root = Jams.getMainConfiguration().getOrCreateConfiguration(ACTIONS_SECTION);
+        Configuration root = Jams.getMainConfiguration().data().getOrCreateConfiguration(ACTIONS_SECTION);
         root.clear();
         forEach(action -> root.set(action.getName(), getBindCombinations(action.getName()).stream()
                 .map(KeyCombination::getName).collect(Collectors.toList())));
@@ -394,7 +394,7 @@ public final class ActionManager extends Manager<Action> {
 
     private List<Action> loadBinds() {
         List<Action> presentActions = new ArrayList<>();
-        Optional<Configuration> optional = Jams.getMainConfiguration().get(ACTIONS_SECTION);
+        Optional<Configuration> optional = Jams.getMainConfiguration().data().get(ACTIONS_SECTION);
         if (optional.isEmpty()) return presentActions;
         Configuration configuration = optional.get();
 

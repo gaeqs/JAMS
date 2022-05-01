@@ -101,7 +101,7 @@ public abstract class FlowTable extends AnchorPane implements ActionRegion {
 
         scalableNode = new ScalableNode(anchorScrollPane, scrollPane);
 
-        maxItems = (int) Jams.getMainConfiguration().get("simulation.mips.flow_max_items").orElse(100);
+        maxItems = (int) Jams.getMainConfiguration().data().get("simulation.mips.flow_max_items").orElse(100);
         sizeSlider.setValue(stepSize);
         sizeSlider.valueProperty().addListener((obs, old, val) -> setStepSize(val.doubleValue()));
         sizeSlider.setPrefHeight(20);
@@ -121,7 +121,7 @@ public abstract class FlowTable extends AnchorPane implements ActionRegion {
 
         cycleVisualizer.toFront();
 
-        Jams.getMainConfiguration().registerListeners(this, true);
+        Jams.getMainConfiguration().data().registerListeners(this, true);
     }
 
     /**

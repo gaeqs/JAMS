@@ -134,7 +134,7 @@ public class PluginExplorerDisplay extends AnchorPane {
             var message = Manager.ofS(Language.class).getSelected()
                     .getOrDefault(Messages.CONFIG_PLUGIN_UNINSTALL_CONFIRM)
                     .replace("{PLUGIN}", selected.getName());
-            ConfirmationWindow.open(message, () -> Manager.get(PluginManager.class).unistallPlugin(plugin),
+            ConfirmationWindow.open(message, () -> Manager.get(PluginManager.class).uninstallPlugin(plugin),
                     () -> {
                     });
         });

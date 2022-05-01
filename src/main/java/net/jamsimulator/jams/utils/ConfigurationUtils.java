@@ -25,8 +25,12 @@
 package net.jamsimulator.jams.utils;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.configuration.AttachmentConfiguration;
+import net.jamsimulator.jams.configuration.ConfigurationAttachment;
+import net.jamsimulator.jams.configuration.MainConfiguration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,13 +39,25 @@ import java.io.InputStreamReader;
 public class ConfigurationUtils {
 
     public static final String CONFIGURATION_FOLDER = "configuration";
-    public static final String MAIN_CONFIGURATION = "config.jconfig";
-    public static final String DEFAULT_MAIN_CONFIGURATION_PATH = "/configuration/main_config.jconfig";
-    public static final String MAIN_CONFIGURATION_META_PATH = "/configuration/main_config_meta.jconfig";
+    public static final String MAIN_CONFIGURATION = "config.json";
+    public static final String DEFAULT_MAIN_CONFIGURATION_PATH = "/configuration/main_config.json";
+    public static final String MAIN_CONFIGURATION_META_PATH = "/configuration/main_config_meta.json";
 
     private static File configurationFolder = null;
 
-    public static RootConfiguration loadMainConfiguration() {
+
+    public static MainConfiguration loadMainConfiguration() {
+        var mainConfiguration = new MainConfiguration(loadMainConfigurationData(),
+                new AttachmentConfiguration());
+        mainConfiguration.metadata().addAttachment(new ConfigurationAttachment(
+                ResourceProvider.JAMS,
+                loadMainConfigurationMetadata(),
+                0
+        ));
+        return mainConfiguration;
+    }
+
+    private static RootConfiguration loadMainConfigurationData() {
 
         File file = new File(getConfigurationFolder(), MAIN_CONFIGURATION);
 
@@ -76,7 +92,7 @@ public class ConfigurationUtils {
         return config;
     }
 
-    public static RootConfiguration loadMainConfigurationMetadata() {
+    private static RootConfiguration loadMainConfigurationMetadata() {
         // We can't use managers yet!
         var format = ConfigurationFormatJSON.INSTANCE;
         try (var resource = Jams.class.getResourceAsStream(MAIN_CONFIGURATION_META_PATH)) {

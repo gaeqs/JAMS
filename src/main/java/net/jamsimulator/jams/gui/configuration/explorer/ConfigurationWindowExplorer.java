@@ -25,15 +25,12 @@
 package net.jamsimulator.jams.gui.configuration.explorer;
 
 import javafx.scene.control.ScrollPane;
+import net.jamsimulator.jams.configuration.event.AttachmentConfigurationRefreshEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
-import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
-import net.jamsimulator.jams.plugin.Plugin;
 
 import java.util.HashMap;
 
@@ -46,12 +43,13 @@ public class ConfigurationWindowExplorer extends Explorer {
     /**
      * Creates a settings explorer.
      */
-    public ConfigurationWindowExplorer(ConfigurationWindow configurationWindow, ScrollPane scrollPane) {
+    public ConfigurationWindowExplorer(ConfigurationWindow configurationWindow,
+                                       ScrollPane scrollPane) {
         super(scrollPane, false, false);
         getStyleClass().add(STYLE_CLASS);
         this.configurationWindow = configurationWindow;
         generateMainSection();
-        Manager.of(Plugin.class).registerListeners(this, true);
+        configurationWindow.getConfiguration().metadata().registerListeners(this, true);
     }
 
     public ConfigurationWindow getConfigurationWindow() {
@@ -66,8 +64,8 @@ public class ConfigurationWindowExplorer extends Explorer {
                 "Configuration",
                 Messages.CONFIG,
                 0,
-                configurationWindow.getConfiguration(),
-                configurationWindow.getConfigurationMeta(),
+                configurationWindow.getConfiguration().data(),
+                configurationWindow.getConfiguration().metadata(),
                 new HashMap<>()
         );
         getChildren().add(mainSection);
@@ -83,18 +81,11 @@ public class ConfigurationWindowExplorer extends Explorer {
         }
     }
 
-    private void refresh() {
+
+    @Listener
+    private void onAttachmentConfigurationRefresh(AttachmentConfigurationRefreshEvent event) {
         getChildren().clear();
         generateMainSection();
     }
 
-    @Listener
-    private void onPluginLoad(ManagerElementRegisterEvent.After<Plugin> event) {
-        refresh();
-    }
-
-    @Listener
-    private void onPluginUnload(ManagerElementUnregisterEvent.After<Plugin> event) {
-        refresh();
-    }
 }

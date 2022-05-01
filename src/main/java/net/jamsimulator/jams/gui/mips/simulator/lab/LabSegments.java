@@ -70,7 +70,7 @@ public class LabSegments extends HBox {
         public Segment(Simulation<?> simulation, Memory memory, String node) {
             this.node = node;
             this.memory = memory;
-            this.address = Jams.getMainConfiguration().getNumber(node).orElse(0).intValue();
+            this.address = Jams.getMainConfiguration().data().getNumber(node).orElse(0).intValue();
             rectangles[0] = new Rectangle(10, 0, 40, 10);
             rectangles[1] = new Rectangle(50, 10, 10, 40);
             rectangles[2] = new Rectangle(50, 60, 10, 40);
@@ -83,7 +83,7 @@ public class LabSegments extends HBox {
 
             memory.getBottomMemory().registerListeners(this, true);
             simulation.registerListeners(this, true);
-            Jams.getMainConfiguration().registerListeners(this, true);
+            Jams.getMainConfiguration().data().registerListeners(this, true);
 
             for (Rectangle rectangle : rectangles) {
                 rectangle.getStyleClass().add(SEGMENT_STYLE);

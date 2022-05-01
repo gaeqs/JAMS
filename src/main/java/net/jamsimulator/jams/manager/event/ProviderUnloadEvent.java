@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,30 +22,36 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.start;
+package net.jamsimulator.jams.manager.event;
 
-import javafx.scene.Node;
-import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
-import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.utils.Validate;
 
-public class StartWindowSectionConfiguration implements StartWindowSection {
+/**
+ * This event is invoked in the main event broadcast
+ * when a resource provider is unloaded.
+ */
+public class ProviderUnloadEvent extends Event {
 
-    public StartWindowSectionConfiguration() {
+    private final ResourceProvider provider;
+
+    /**
+     * Creates the event.
+     *
+     * @param provider the unloaded provider.
+     */
+    public ProviderUnloadEvent(ResourceProvider provider) {
+        Validate.notNull(provider, "Provider cannot be null!");
+        this.provider = provider;
     }
 
-    @Override
-    public String getLanguageNode() {
-        return Messages.CONFIG;
-    }
-
-    @Override
-    public Node toNode() {
-        return new ConfigurationWindow(Jams.getMainConfiguration());
-    }
-
-    @Override
-    public String getName() {
-        return "configuration";
+    /**
+     * Returns the unloaded provider.
+     *
+     * @return the unloaded provider.
+     */
+    public ResourceProvider getProvider() {
+        return provider;
     }
 }
