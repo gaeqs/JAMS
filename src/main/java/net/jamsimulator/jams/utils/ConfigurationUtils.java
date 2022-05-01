@@ -39,9 +39,9 @@ import java.io.InputStreamReader;
 public class ConfigurationUtils {
 
     public static final String CONFIGURATION_FOLDER = "configuration";
-    public static final String MAIN_CONFIGURATION = "config.jconfig";
-    public static final String DEFAULT_MAIN_CONFIGURATION_PATH = "/configuration/main_config.jconfig";
-    public static final String MAIN_CONFIGURATION_META_PATH = "/configuration/main_config_meta.jconfig";
+    public static final String MAIN_CONFIGURATION = "config.json";
+    public static final String DEFAULT_MAIN_CONFIGURATION_PATH = "/configuration/main_config.json";
+    public static final String MAIN_CONFIGURATION_META_PATH = "/configuration/main_config_meta.json";
 
     private static File configurationFolder = null;
 
