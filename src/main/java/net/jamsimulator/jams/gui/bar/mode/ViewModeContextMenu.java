@@ -88,7 +88,7 @@ public class ViewModeContextMenu extends ContextMenu {
             super(viewMode.getLanguageNode());
             this.viewMode = viewMode;
 
-            setOnAction(event -> Jams.getMainConfiguration().set(
+            setOnAction(event -> Jams.getMainConfiguration().data().set(
                     String.format(BarSnapshot.CONFIGURATION_NODE_VIEW_MODE, snapshot.getName()),
                     viewMode.getName()));
         }

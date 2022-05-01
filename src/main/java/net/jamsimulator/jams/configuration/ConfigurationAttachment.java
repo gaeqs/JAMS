@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,30 +22,25 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.start;
+package net.jamsimulator.jams.configuration;
 
-import javafx.scene.Node;
-import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
-import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
+import org.jetbrains.annotations.NotNull;
 
-public class StartWindowSectionConfiguration implements StartWindowSection {
+import java.util.concurrent.atomic.AtomicInteger;
 
-    public StartWindowSectionConfiguration() {
+public record ConfigurationAttachment(ResourceProvider provider, Configuration configuration, int priority, int id)
+        implements Comparable<ConfigurationAttachment> {
+
+    private static final AtomicInteger ID_GENERATOR = new AtomicInteger();
+
+    public ConfigurationAttachment(ResourceProvider provider, Configuration configuration, int priority) {
+        this(provider, configuration, priority, ID_GENERATOR.getAndIncrement());
     }
 
     @Override
-    public String getLanguageNode() {
-        return Messages.CONFIG;
-    }
-
-    @Override
-    public Node toNode() {
-        return new ConfigurationWindow(Jams.getMainConfiguration());
-    }
-
-    @Override
-    public String getName() {
-        return "configuration";
+    public int compareTo(@NotNull ConfigurationAttachment o) {
+        int p = priority - o.priority;
+        return p == 0 ? id - o.id : p;
     }
 }

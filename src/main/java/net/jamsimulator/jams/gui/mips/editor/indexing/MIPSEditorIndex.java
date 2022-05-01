@@ -60,7 +60,7 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
     public String reformat() {
         var builder = new StringBuilder();
 
-        var config = Jams.getMainConfiguration();
+        var config = Jams.getMainConfiguration().data();
         var afterInstruction = config.getEnum(MIPSSpaces.class, NODE_SPACE_AFTER_INSTRUCTION)
                 .map(MIPSSpaces::getValue).orElse(" ");
         var afterDirective = config.getEnum(MIPSSpaces.class, NODE_SPACE_AFTER_DIRECTIVE)

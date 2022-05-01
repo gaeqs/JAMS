@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams;
 
-import net.jamsimulator.jams.configuration.RootConfiguration;
+import net.jamsimulator.jams.configuration.MainConfiguration;
 import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
 import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
@@ -57,27 +57,20 @@ import java.util.Map;
 
 public class Jams {
 
+    private final static SimpleEventBroadcast GENERAL_EVENT_BROADCAST = new SimpleEventBroadcast();
     public final static Registry REGISTRY = new Registry(true);
+    private final static TaskExecutor TASK_EXECUTOR = new TaskExecutor();
 
-    private static String VERSION;
-
+    private static String version;
     private static File mainFolder = FolderUtils.checkMainFolder();
-
-    private static RootConfiguration mainConfiguration;
-    private static RootConfiguration mainConfigurationMetadata;
-
+    private static MainConfiguration mainConfiguration;
     private static RecentProjects recentProjects;
-    private static TaskExecutor taskExecutor;
-    private static SimpleEventBroadcast generalEventBroadcast;
-
     private static FileSystem fileSystem;
     private static ProtectedFileSystem fileSystemWrapper;
 
     //JAMS main method.
     public static void main(String[] args) {
         var data = new ArgumentsData(args);
-        generalEventBroadcast = new SimpleEventBroadcast();
-        taskExecutor = new TaskExecutor();
 
         loadVersion();
         System.out.println("Loading JAMS version " + getVersion());
@@ -99,12 +92,11 @@ public class Jams {
 
         loadPluginsFromArguments(data);
 
-        generalEventBroadcast.callEvent(new JAMSPreInitEvent());
+        GENERAL_EVENT_BROADCAST.callEvent(new JAMSPreInitEvent());
         mainConfiguration = ConfigurationUtils.loadMainConfiguration();
-        mainConfigurationMetadata = ConfigurationUtils.loadMainConfigurationMetadata();
         REGISTRY.loadJAMSManagers();
         recentProjects = new RecentProjects();
-        generalEventBroadcast.callEvent(new JAMSPostInitEvent());
+        GENERAL_EVENT_BROADCAST.callEvent(new JAMSPostInitEvent());
 
         JamsApplication.main(args);
 
@@ -116,9 +108,6 @@ public class Jams {
 
     public static void initForTests() {
         if (testInit) return;
-
-        generalEventBroadcast = new SimpleEventBroadcast();
-        taskExecutor = new TaskExecutor();
 
         loadVersion();
         System.out.println("Loading JAMS version " + getVersion());
@@ -140,12 +129,11 @@ public class Jams {
         REGISTRY.loadPluginManager();
 
         fileSystemWrapper = new ProtectedFileSystem(fileSystem);
-        generalEventBroadcast.callEvent(new JAMSPreInitEvent());
+        GENERAL_EVENT_BROADCAST.callEvent(new JAMSPreInitEvent());
         mainConfiguration = ConfigurationUtils.loadMainConfiguration();
-        mainConfigurationMetadata = ConfigurationUtils.loadMainConfigurationMetadata();
         REGISTRY.loadJAMSManagers();
         recentProjects = new RecentProjects();
-        generalEventBroadcast.callEvent(new JAMSPostInitEvent());
+        GENERAL_EVENT_BROADCAST.callEvent(new JAMSPostInitEvent());
 
         testInit = true;
     }
@@ -156,7 +144,7 @@ public class Jams {
      * @return the version of JAMS.
      */
     public static String getVersion() {
-        return VERSION;
+        return version;
     }
 
     /**
@@ -186,19 +174,8 @@ public class Jams {
      *
      * @return JAMS's main configuration.
      */
-    public static RootConfiguration getMainConfiguration() {
+    public static MainConfiguration getMainConfiguration() {
         return mainConfiguration;
-    }
-
-    /**
-     * Returns the metadata of JAMS's main configuration.
-     * <p>
-     * This configuration gives information about the nodes inside the main configuration.
-     *
-     * @return the metadata.
-     */
-    public static RootConfiguration getMainConfigurationMetadata() {
-        return mainConfigurationMetadata;
     }
 
     /**
@@ -218,7 +195,7 @@ public class Jams {
      * @return the general event broadcast.
      */
     public static SimpleEventBroadcast getGeneralEventBroadcast() {
-        return generalEventBroadcast;
+        return GENERAL_EVENT_BROADCAST;
     }
 
     /**
@@ -229,17 +206,17 @@ public class Jams {
      * @return the net.jamsimulator.jams.task executor.
      */
     public static TaskExecutor getTaskExecutor() {
-        return taskExecutor;
+        return TASK_EXECUTOR;
     }
 
     private static void loadVersion() {
         InputStream stream = Jams.class.getResourceAsStream("/info.json");
         try {
             JSONObject object = new JSONObject(FileUtils.readAll(stream));
-            VERSION = object.getString("version");
+            version = object.getString("version");
         } catch (Exception e) {
             e.printStackTrace();
-            VERSION = "NULL";
+            version = "NULL";
         }
     }
 
@@ -251,7 +228,7 @@ public class Jams {
         getGeneralEventBroadcast().callEvent(new JAMSShutdownEvent.Before());
         //Save main configuration.
         try {
-            getMainConfiguration().save(
+            getMainConfiguration().data().save(
                     Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME),
                     true
             );

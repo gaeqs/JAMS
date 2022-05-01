@@ -47,7 +47,7 @@ public class ExplorerSeparatorRegion extends Region {
         this.hierarchyLevel = hierarchyLevel;
         this.hasHierarchyLevel = true;
         setHierarchyLevel(hierarchyLevel);
-        Jams.getMainConfiguration().registerListeners(this, true);
+        Jams.getMainConfiguration().data().registerListeners(this, true);
     }
 
     public ExplorerSeparatorRegion(double width) {
@@ -59,7 +59,7 @@ public class ExplorerSeparatorRegion extends Region {
 
     public void setHierarchyLevel(int hierarchyLevel) {
         if (!hasHierarchyLevel) {
-            Jams.getMainConfiguration().registerListeners(this, true);
+            Jams.getMainConfiguration().data().registerListeners(this, true);
         }
 
         hasHierarchyLevel = true;
@@ -69,7 +69,7 @@ public class ExplorerSeparatorRegion extends Region {
     }
 
     private void updateLevel() {
-        var config = Jams.getMainConfiguration();
+        var config = Jams.getMainConfiguration().data();
 
         double width;
 

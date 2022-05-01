@@ -138,8 +138,7 @@ public final class LanguageManager extends SelectableManager<Language> {
         if (!FolderUtils.checkFolder(folder)) throw new RuntimeException("Couldn't create language folder!");
 
         super.load();
-        Jams.getMainConfiguration()
-                .registerListeners(this, true);
+        Jams.getMainConfiguration().data().registerListeners(this, true);
     }
 
     @Override
@@ -178,7 +177,7 @@ public final class LanguageManager extends SelectableManager<Language> {
     @Override
     protected Language loadDefaultElement() {
         var config = Jams.getMainConfiguration();
-        var selected = config.getString(DEFAULT_LANGUAGE_NODE)
+        var selected = config.data().getString(DEFAULT_LANGUAGE_NODE)
                 .orElse("English");
         var language = get(selected).orElseGet(() ->
                 get("English").orElse(null));
@@ -192,7 +191,7 @@ public final class LanguageManager extends SelectableManager<Language> {
     @Override
     protected Language loadSelectedElement() {
         var config = Jams.getMainConfiguration();
-        var selected = config.getString(SELECTED_LANGUAGE_NODE)
+        var selected = config.data().getString(SELECTED_LANGUAGE_NODE)
                 .orElse("English");
         var language = get(selected).orElseGet(() ->
                 get("English").orElse(null));

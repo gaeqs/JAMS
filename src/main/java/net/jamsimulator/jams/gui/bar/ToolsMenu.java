@@ -73,7 +73,7 @@ public class ToolsMenu extends LanguageMenu {
             getItems().add(item);
 
             item.selectedProperty().addListener((obs, old, val) -> Jams.getMainConfiguration()
-                    .set(String.format(BarSnapshot.CONFIGURATION_NODE_ENABLED, snapshot.getName()), val));
+                    .data().set(String.format(BarSnapshot.CONFIGURATION_NODE_ENABLED, snapshot.getName()), val));
         });
 
         // An empty item should be added for the menu to work.

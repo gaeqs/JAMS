@@ -82,7 +82,7 @@ public class PluginExplorerList extends VBox {
             chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Plugin", "*.jar"));
             var file = chooser.showOpenDialog(getScene().getWindow());
             if (file != null) {
-                Manager.get(PluginManager.class).installPLugin(file);
+                Manager.get(PluginManager.class).installPlugin(file);
             }
         });
 

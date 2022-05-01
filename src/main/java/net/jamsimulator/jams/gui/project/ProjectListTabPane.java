@@ -31,12 +31,14 @@ import javafx.scene.control.TabPane;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.event.EventBroadcast;
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.project.event.ProjectOpenEvent;
 import net.jamsimulator.jams.gui.start.StartWindow;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.manager.event.ProviderUnloadEvent;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.ProjectTypeManager;
 import net.jamsimulator.jams.utils.FileUtils;
@@ -77,6 +79,8 @@ public class ProjectListTabPane extends TabPane implements EventBroadcast {
                 }
             }
         }));
+
+        Jams.getGeneralEventBroadcast().registerListeners(this, true);
     }
 
     /**
@@ -214,5 +218,10 @@ public class ProjectListTabPane extends TabPane implements EventBroadcast {
     @Override
     public void transferListenersTo(EventBroadcast broadcast) {
         this.broadcast.transferListenersTo(broadcast);
+    }
+
+    @Listener
+    private void onProviderUnload (ProviderUnloadEvent event) {
+        closeProjectsProvidedBy(event.getProvider());
     }
 }

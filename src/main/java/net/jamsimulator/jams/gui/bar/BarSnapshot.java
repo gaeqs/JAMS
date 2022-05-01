@@ -82,18 +82,18 @@ public class BarSnapshot {
         this.languageNode = languageNode;
 
         this.position = Jams.getMainConfiguration()
-                .getEnum(BarPosition.class, String.format(CONFIGURATION_NODE_POSITION, name))
+                .data().getEnum(BarPosition.class, String.format(CONFIGURATION_NODE_POSITION, name))
                 .orElse(defaultPosition);
 
         this.viewMode = Jams.getMainConfiguration()
-                .getString(String.format(CONFIGURATION_NODE_VIEW_MODE, name))
+                .data().getString(String.format(CONFIGURATION_NODE_VIEW_MODE, name))
                 .flatMap(JamsApplication.getBarSnapshotViewModeManager()::get)
                 .orElse(defaultViewMode);
 
         this.enabled = (boolean) Jams.getMainConfiguration()
-                .get(String.format(CONFIGURATION_NODE_ENABLED, name)).orElse(defaultEnable);
+                .data().get(String.format(CONFIGURATION_NODE_ENABLED, name)).orElse(defaultEnable);
 
-        Jams.getMainConfiguration().registerListeners(this, true);
+        Jams.getMainConfiguration().data().registerListeners(this, true);
     }
 
 

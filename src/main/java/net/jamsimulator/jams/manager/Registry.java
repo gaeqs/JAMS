@@ -24,7 +24,9 @@
 
 package net.jamsimulator.jams.manager;
 
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.format.ConfigurationFormatManager;
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.file.FileTypeManager;
 import net.jamsimulator.jams.gui.action.ActionManager;
 import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModeManager;
@@ -32,6 +34,7 @@ import net.jamsimulator.jams.gui.mips.editor.indexing.inspection.MIPSInspectorMa
 import net.jamsimulator.jams.gui.mips.simulator.information.SimulationInformationBuilderManager;
 import net.jamsimulator.jams.gui.theme.ThemeManager;
 import net.jamsimulator.jams.language.LanguageManager;
+import net.jamsimulator.jams.manager.event.ProviderUnloadEvent;
 import net.jamsimulator.jams.mips.architecture.ArchitectureManager;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilderManager;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSetManager;
@@ -46,7 +49,10 @@ import net.jamsimulator.jams.plugin.PluginManager;
 import net.jamsimulator.jams.project.ProjectTypeManager;
 import net.jamsimulator.jams.utils.NumberRepresentationManager;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * The registry class stores all {@link Manager}s JAMS is currently using.
@@ -71,10 +77,10 @@ import java.util.*;
  */
 public class Registry {
 
-    private final Map<String, Manager<?>> managers;
-    private final Map<String, Boolean> primary;
-    private final Map<Class<? extends Manager<?>>, Manager<?>> primaryManagersByClass;
-    private final Map<Class<? extends ManagerResource>, Manager<?>> primaryManagersByManaged;
+    private final Map<String, Manager<?>> managers = new LinkedHashMap<>();
+    private final Map<String, Boolean> primary = new LinkedHashMap<>();
+    private final Map<Class<? extends Manager<?>>, Manager<?>> primaryManagersByClass = new LinkedHashMap<>();
+    private final Map<Class<? extends ManagerResource>, Manager<?>> primaryManagersByManaged = new LinkedHashMap<>();
 
     private boolean normalManagersLoaded = false;
     private boolean fxManagersLoaded = false;
@@ -83,13 +89,8 @@ public class Registry {
      * Creates a registry.
      */
     public Registry(boolean loadDefaultManagers) {
-        managers = new LinkedHashMap<>();
-        primary = new LinkedHashMap<>();
-        primaryManagersByClass = new LinkedHashMap<>();
-        primaryManagersByManaged = new LinkedHashMap<>();
-        if (loadDefaultManagers) {
-            addDefaultManagers();
-        }
+        if (loadDefaultManagers) addDefaultManagers();
+        Jams.getGeneralEventBroadcast().registerListeners(this, true);
     }
 
     /**
@@ -371,6 +372,11 @@ public class Registry {
         registerPrimary(MIPSInspectorManager.INSTANCE);
         registerPrimary(ALUTypeManager.INSTANCE);
         registerPrimary(SimulationInformationBuilderManager.INSTANCE);
+    }
+
+    @Listener
+    private void onProviderUnload(ProviderUnloadEvent event) {
+        removeProvidedBy(event.getProvider());
     }
 
 }

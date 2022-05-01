@@ -25,8 +25,12 @@
 package net.jamsimulator.jams.utils;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.configuration.AttachmentConfiguration;
+import net.jamsimulator.jams.configuration.ConfigurationAttachment;
+import net.jamsimulator.jams.configuration.MainConfiguration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +45,19 @@ public class ConfigurationUtils {
 
     private static File configurationFolder = null;
 
-    public static RootConfiguration loadMainConfiguration() {
+
+    public static MainConfiguration loadMainConfiguration() {
+        var mainConfiguration = new MainConfiguration(loadMainConfigurationData(),
+                new AttachmentConfiguration());
+        mainConfiguration.metadata().addAttachment(new ConfigurationAttachment(
+                ResourceProvider.JAMS,
+                loadMainConfigurationMetadata(),
+                0
+        ));
+        return mainConfiguration;
+    }
+
+    private static RootConfiguration loadMainConfigurationData() {
 
         File file = new File(getConfigurationFolder(), MAIN_CONFIGURATION);
 
@@ -76,7 +92,7 @@ public class ConfigurationUtils {
         return config;
     }
 
-    public static RootConfiguration loadMainConfigurationMetadata() {
+    private static RootConfiguration loadMainConfigurationMetadata() {
         // We can't use managers yet!
         var format = ConfigurationFormatJSON.INSTANCE;
         try (var resource = Jams.class.getResourceAsStream(MAIN_CONFIGURATION_META_PATH)) {

@@ -247,7 +247,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
 
         super.load();
 
-        Jams.getMainConfiguration().registerListeners(this, true);
+        Jams.getMainConfiguration().data().registerListeners(this, true);
     }
 
     @Override
@@ -295,7 +295,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
     @Override
     protected Theme loadSelectedElement() {
         var config = Jams.getMainConfiguration();
-        var selected = config.getString(SELECTED_THEME_NODE).orElse("Dark Theme");
+        var selected = config.data().getString(SELECTED_THEME_NODE).orElse("Dark Theme");
         var theme = get(selected).orElseGet(() -> get("Dark Theme").orElse(null));
         if (theme == null) {
             System.err.println("Dark Theme not found! Using the first found theme instead.");
@@ -336,8 +336,8 @@ public final class ThemeManager extends SelectableManager<Theme> {
 
     private void loadFonts() {
         var config = Jams.getMainConfiguration();
-        generalFont = config.getString(GENERAL_FONT_NODE).orElse("Noto Sans");
-        codeFont = config.getString(CODE_FONT_NODE).orElse("JetBrains Mono");
+        generalFont = config.data().getString(GENERAL_FONT_NODE).orElse("Noto Sans");
+        codeFont = config.data().getString(CODE_FONT_NODE).orElse("JetBrains Mono");
     }
 
     private void attach(Theme theme, ThemeLoader attachment) {

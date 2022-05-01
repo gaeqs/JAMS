@@ -60,7 +60,7 @@ public class LabCounter extends VBox {
 
     public LabCounter(MIPSSimulation<?> simulation) {
         this.simulation = simulation;
-        this.address = Jams.getMainConfiguration().getNumber(CONFIG_NODE).orElse(0).intValue();
+        this.address = Jams.getMainConfiguration().data().getNumber(CONFIG_NODE).orElse(0).intValue();
 
         getChildren().add(new RegionDisplay(Messages.LAB_COUNTER));
         setSpacing(5);
@@ -75,7 +75,7 @@ public class LabCounter extends VBox {
 
         simulation.registerListeners(this, true);
         simulation.getMemory().registerListeners(this, true);
-        Jams.getMainConfiguration().registerListeners(this, true);
+        Jams.getMainConfiguration().data().registerListeners(this, true);
     }
 
     public void setCounterValue(byte value) {

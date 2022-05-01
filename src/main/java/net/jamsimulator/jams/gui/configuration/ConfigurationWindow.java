@@ -31,6 +31,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.configuration.Configuration;
+import net.jamsimulator.jams.configuration.MainConfiguration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowExplorer;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
@@ -46,18 +47,15 @@ public class ConfigurationWindow extends SplitPane {
     public static final String DISPLAY_STYLE_CLASS = "display";
     public static final String DISPLAY_CONTENTS_STYLE_CLASS = "contents";
 
-    private final RootConfiguration configuration;
-    private final Configuration configurationMeta;
-
+    private final MainConfiguration configuration;
 
     private final SectionTreeDisplay sectionTreeDisplay;
     private final AnchorPane sectionDisplay;
     private final ScrollPane basicSectionContentsScroll;
     private final VBox basicSectionContents;
 
-    public ConfigurationWindow(RootConfiguration configuration, Configuration configurationMeta) {
+    public ConfigurationWindow(MainConfiguration configuration) {
         this.configuration = configuration;
-        this.configurationMeta = configurationMeta;
 
         getStyleClass().add(STYLE_CLASS);
 
@@ -90,12 +88,8 @@ public class ConfigurationWindow extends SplitPane {
         Platform.runLater(() -> setDividerPosition(0, 0.2));
     }
 
-    public Configuration getConfiguration() {
+    public MainConfiguration getConfiguration() {
         return configuration;
-    }
-
-    public Configuration getConfigurationMeta() {
-        return configurationMeta;
     }
 
     public void display(ConfigurationWindowSection section) {

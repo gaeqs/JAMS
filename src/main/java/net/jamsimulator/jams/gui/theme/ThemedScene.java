@@ -50,7 +50,7 @@ public class ThemedScene extends Scene {
     }
 
     private static SceneAntialiasing getSceneAntialiasing() {
-        return (boolean) Jams.getMainConfiguration().get("appearance.antialiasing").orElse(false)
+        return (boolean) Jams.getMainConfiguration().data().get("appearance.antialiasing").orElse(false)
                 ? SceneAntialiasing.BALANCED : SceneAntialiasing.DISABLED;
     }
 

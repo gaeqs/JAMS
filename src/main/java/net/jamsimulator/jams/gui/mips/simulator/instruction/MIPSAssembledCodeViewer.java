@@ -110,7 +110,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
         simulation.registerListeners(this, true);
         simulation.getMemory().getBottomMemory().registerListeners(this, true);
 
-        Jams.getMainConfiguration().registerListeners(this, true);
+        Jams.getMainConfiguration().data().registerListeners(this, true);
     }
 
     public static void registerViewer(Architecture architecture,
@@ -178,7 +178,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
 
         var registerStart = String.valueOf(simulation.getRegisters()
                 .getValidRegistersStarts().stream().findFirst().orElse('$'));
-        var order = Jams.getMainConfiguration()
+        var order = Jams.getMainConfiguration().data()
                 .getAndConvertOrElse(VIEWER_ELEMENTS_ORDER_NODE, MIPSAssembledInstructionViewerOrder.DEFAULT);
         var originals = simulation.getSource().instructions();
 
@@ -349,8 +349,8 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     private void addElements(MIPSSimulation<?> simulation) {
         assembledLines.clear();
         var order = Jams.getMainConfiguration()
-                .getAndConvertOrElse(VIEWER_ELEMENTS_ORDER_NODE, MIPSAssembledInstructionViewerOrder.DEFAULT);
-        boolean showLabels = Jams.getMainConfiguration().getOrElse(SHOW_LABELS_NODE, false);
+                .data().getAndConvertOrElse(VIEWER_ELEMENTS_ORDER_NODE, MIPSAssembledInstructionViewerOrder.DEFAULT);
+        boolean showLabels = Jams.getMainConfiguration().data().getOrElse(SHOW_LABELS_NODE, false);
 
         var memory = simulation.getMemory();
         var labels = simulation.getSource().labels();

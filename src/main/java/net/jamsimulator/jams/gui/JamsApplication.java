@@ -173,7 +173,7 @@ public class JamsApplication extends Application {
 
         primaryStage.setTitle("JAMS (Just Another MIPS Simulator)");
 
-        Optional<Boolean> useBorderless = Jams.getMainConfiguration().get("appearance.hide_top_bar");
+        Optional<Boolean> useBorderless = Jams.getMainConfiguration().data().get("appearance.hide_top_bar");
         boolean transparent = useBorderless.orElse(false);
         mainAnchorPane = new MainAnchorPane(stage, transparent);
 
@@ -201,7 +201,7 @@ public class JamsApplication extends Application {
         stage.setY(y);
 
         Icons.LOGO.getImage().ifPresent(primaryStage.getIcons()::add);
-        Jams.getMainConfiguration().registerListeners(this, true);
+        Jams.getMainConfiguration().data().registerListeners(this, true);
 
         Jams.getGeneralEventBroadcast().callEvent(new JAMSApplicationPostInitEvent());
 
