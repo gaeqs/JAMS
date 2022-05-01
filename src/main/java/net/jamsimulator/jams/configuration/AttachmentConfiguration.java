@@ -141,8 +141,8 @@ public class AttachmentConfiguration extends RootConfiguration {
 
     private void recalculateMap() {
         map.clear();
-        attachments.forEach(attachment -> addNotPresentValues(attachment.configuration()));
         dirty = false;
+        attachments.forEach(attachment -> addNotPresentValues(attachment.configuration()));
     }
 
     @Listener
