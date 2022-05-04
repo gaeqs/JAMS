@@ -42,6 +42,7 @@ import net.jamsimulator.jams.gui.editor.holder.FileEditorHolderHolder;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.task.LanguageTask;
+import net.jamsimulator.jams.utils.FileUtils;
 import net.jamsimulator.jams.utils.Validate;
 import org.json.JSONArray;
 
@@ -348,7 +349,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
                 task.setTitleReplacements(new String[]{"{FILE}", file.getName()});
                 index.withLock(true, i -> {
                     try {
-                        i.indexAll(Files.readString(file.toPath()));
+                        i.indexAll(FileUtils.readAll(file));
                     } catch (Exception e) {
                         System.err.println("Errror while indexing file " + file + "!");
                         e.printStackTrace();
