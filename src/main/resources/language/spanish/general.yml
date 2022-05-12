@@ -23,4 +23,6 @@ NUMBER_FORMAT_RGBA: RGBA
 NUMBER_FORMAT_ENGLISH: Texto inglés
 NUMBER_FORMAT_ROMAN: Romano
 
-ABOUT: JAMS\nVersion {VERSION}\n\nCopyright 2020-{YEAR}\nMade by Gael Rial Costas
+ABOUT_SECTION_INFORMATION: "Información"
+ABOUT_SECTION_LICENSE: "Licencia"
+ABOUT_INFORMATION: JAMS\nVersión {VERSION}\n\nCopyright 2020-{YEAR}\nMade by Gael Rial Costas

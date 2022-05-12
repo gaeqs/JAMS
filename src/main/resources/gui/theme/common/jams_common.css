@@ -141,6 +141,10 @@
     -fx-padding: 7px 0px 0px 0px;
 }
 
+.about {
+
+}
+
 .about-text {
     -fx-font-size: 18px;
     -fx-text-alignment: center;
