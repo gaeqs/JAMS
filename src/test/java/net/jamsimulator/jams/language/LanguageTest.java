@@ -71,31 +71,31 @@ public class LanguageTest {
         var english = manager.get("English").orElse(null);
         assertNotNull(english, "English language not found.");
 
-        var message = english.get(Messages.ABOUT).orElse(null);
+        var message = english.get(Messages.ABOUT_INFORMATION).orElse(null);
         assertNotNull(message, "Message ABOUT is null in English.");
 
-        var attachment = new LanguageAttachment(ResourceProvider.JAMS, Map.of(Messages.ABOUT, "test"), 0);
+        var attachment = new LanguageAttachment(ResourceProvider.JAMS, Map.of(Messages.ABOUT_INFORMATION, "test"), 0);
 
         assertTrue(english.addAttachment(attachment), "Couldn't add attachment");
         assertFalse(english.addAttachment(attachment),
                 "Test was able to add attachment when it should have been already present.");
 
-        assertEquals("test", english.getOrDefault(Messages.ABOUT),
+        assertEquals("test", english.getOrDefault(Messages.ABOUT_INFORMATION),
                 "Attachment not working when using getOrDefault()");
-        assertEquals("test", english.getOrEmpty(Messages.ABOUT),
+        assertEquals("test", english.getOrEmpty(Messages.ABOUT_INFORMATION),
                 "Attachment not working when using getOrEmpty()");
-        assertEquals("test", english.get(Messages.ABOUT).orElse(null),
+        assertEquals("test", english.get(Messages.ABOUT_INFORMATION).orElse(null),
                 "Attachment not working when using get()");
 
         assertTrue(english.removeAttachment(attachment), "Couldn't remove attachment.");
         assertFalse(english.removeAttachment(attachment),
                 "removeAttachment() returned true when he attachmen should have been not found.");
 
-        assertEquals(message, english.getOrDefault(Messages.ABOUT),
+        assertEquals(message, english.getOrDefault(Messages.ABOUT_INFORMATION),
                 "Deattachment not working when using getOrDefault()");
-        assertEquals(message, english.getOrEmpty(Messages.ABOUT),
+        assertEquals(message, english.getOrEmpty(Messages.ABOUT_INFORMATION),
                 "Deattachment not working when using getOrEmpty()");
-        assertEquals(message, english.get(Messages.ABOUT).orElse(null),
+        assertEquals(message, english.get(Messages.ABOUT_INFORMATION).orElse(null),
                 "Deattachment not working when using get()");
     }
 
@@ -107,7 +107,7 @@ public class LanguageTest {
         var english = manager.get("English").orElse(null);
         assertNotNull(english, "English language not found.");
 
-        var message = english.get(Messages.ABOUT).orElse(null);
+        var message = english.get(Messages.ABOUT_INFORMATION).orElse(null);
         assertNotNull(message, "Message ABOUT is null in English.");
 
         var jarResource = Jams.class.getResource("/test/language");
@@ -119,20 +119,20 @@ public class LanguageTest {
             fail(e);
         }
 
-        assertEquals("sourcetest", english.getOrDefault(Messages.ABOUT),
+        assertEquals("sourcetest", english.getOrDefault(Messages.ABOUT_INFORMATION),
                 "Attachment not working when using getOrDefault()");
-        assertEquals("sourcetest", english.getOrEmpty(Messages.ABOUT),
+        assertEquals("sourcetest", english.getOrEmpty(Messages.ABOUT_INFORMATION),
                 "Attachment not working when using getOrEmpty()");
-        assertEquals("sourcetest", english.get(Messages.ABOUT).orElse(null),
+        assertEquals("sourcetest", english.get(Messages.ABOUT_INFORMATION).orElse(null),
                 "Attachment not working when using get()");
 
         manager.removeProvidedBy(ResourceProvider.TEST);
 
-        assertEquals(message, english.getOrDefault(Messages.ABOUT),
+        assertEquals(message, english.getOrDefault(Messages.ABOUT_INFORMATION),
                 "Deattachment not working when using getOrDefault()");
-        assertEquals(message, english.getOrEmpty(Messages.ABOUT),
+        assertEquals(message, english.getOrEmpty(Messages.ABOUT_INFORMATION),
                 "Deattachment not working when using getOrEmpty()");
-        assertEquals(message, english.get(Messages.ABOUT).orElse(null),
+        assertEquals(message, english.get(Messages.ABOUT_INFORMATION).orElse(null),
                 "Deattachment not working when using get()");
     }
 }
