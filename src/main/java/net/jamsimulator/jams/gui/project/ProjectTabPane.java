@@ -28,6 +28,8 @@ import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.project.event.ProjectPaneCreateEvent;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 
 import java.util.function.BiConsumer;
@@ -85,12 +87,15 @@ public class ProjectTabPane extends TabPane {
         });
     }
 
-    public <E extends ProjectPane> E createProjectPane(BiFunction<Tab, ProjectTab, E> creator, boolean closeable) {
+    public <E extends ProjectPane> E createProjectPane(
+            BiFunction<Tab, ProjectTab, E> creator, boolean closeable) {
         LanguageTab tab = new LanguageTab("");
         tab.setClosable(closeable);
 
         E pane = creator.apply(tab, projectTab);
         if (!(pane instanceof Pane)) throw new IllegalArgumentException("Pane must be a Pane!");
+
+        JamsApplication.getProjectsTabPane().callEvent(new ProjectPaneCreateEvent(pane));
 
         tab.setNode(pane.getLanguageNode());
         tab.setContent((Pane) pane);

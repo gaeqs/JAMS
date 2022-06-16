@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,38 +22,30 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.project;
+package net.jamsimulator.jams.gui.project.event;
 
-import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.project.Project;
+import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.project.ProjectPane;
 
-public interface ProjectPane {
+/**
+ * This event is called when a {@link ProjectPane} is created.
+ * This event will be called in the {@link JamsApplication#getProjectsTabPane()}'s event broadcast.
+ */
+public class ProjectPaneCreateEvent extends Event {
+
+    private final ProjectPane pane;
+
+    public ProjectPaneCreateEvent(ProjectPane pane) {
+        this.pane = pane;
+    }
 
     /**
-     * Returns the project of this project pane.
+     * The created {@link ProjectPane}.
      *
-     * @return the project.
+     * @return the {@link ProjectPane}.
      */
-    Project getProject();
-
-    /**
-     * Returns the language node of the tab
-     * that represents this project pane.
-     *
-     * @return the language node.
-     */
-    String getLanguageNode();
-
-    /**
-     * Populates the {@link ProjectTab}'s buttons h-box.
-     *
-     * @param buttonsHBox the buttons h-box.
-     */
-    void populateHBox(HBox buttonsHBox);
-
-    /**
-     * Method invoked when this project pane is closed.
-     */
-    void onClose();
-
+    public ProjectPane getPane() {
+        return pane;
+    }
 }

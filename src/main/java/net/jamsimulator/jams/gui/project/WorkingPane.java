@@ -36,6 +36,7 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.general.JAMSShutdownEvent;
 import net.jamsimulator.jams.gui.bar.*;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
+import net.jamsimulator.jams.project.Project;
 
 /**
  * The default working pane. This pane contains a central {@link SplitPane},
@@ -68,6 +69,11 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
         }
     }
 
+    @Override
+    public Project getProject() {
+        return projectTab.getProject();
+    }
+
     /**
      * Returns the {@link Tab} that contains this pane, or null.
      *
@@ -98,7 +104,7 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 
     /**
      * Returns the {@link BarMap} of this working pane.
-     * The bar map stores all sidebars and bottolm bars of the pane.
+     * The bar map stores all sidebars and bottom bars of the pane.
      *
      * @return the {@link BarMap}.
      */
