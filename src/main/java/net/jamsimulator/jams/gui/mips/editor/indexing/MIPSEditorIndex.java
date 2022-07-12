@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.mips.editor.indexing;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroCallMnemonic;
@@ -35,6 +36,8 @@ import net.jamsimulator.jams.gui.mips.editor.indexing.element.*;
 import net.jamsimulator.jams.gui.mips.editor.indexing.inspection.MIPSInspectorManager;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveMacro;
 import net.jamsimulator.jams.project.Project;
+
+import java.util.Comparator;
 
 public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
 
@@ -144,7 +147,12 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
 
             if (line.macroCall != null) {
                 int i = 0;
-                for (var element : line.macroCall.getElements()) {
+
+                var elements = line.macroCall.getElements()
+                        .stream()
+                        .sorted(Comparator.comparingInt(EditorIndexedElement::getStart))
+                        .toList();
+                for (var element : elements) {
                     if (element instanceof EditorElementMacroCallMnemonic mnemonic) {
                         builder.append(mnemonic.getText()).append(" (");
                     } else if (element instanceof EditorElementMacroCallParameter parameter) {
