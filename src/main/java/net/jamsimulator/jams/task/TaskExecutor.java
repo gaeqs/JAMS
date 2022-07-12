@@ -215,7 +215,15 @@ public class TaskExecutor {
                         var text = index.reformat();
 
                         Platform.runLater(() -> index.withLock(false, in -> {
+                            var line = editor.getCurrentParagraph();
+                            var column = editor.getCaretColumn();
+
                             editor.replaceText(text);
+
+                            line = Math.min(line, editor.getParagraphs().size());
+                            column = Math.min(column, editor.getParagraphLength(line));
+
+                            editor.moveTo(line, column);
                             editor.setEditable(!pendingChanges.isMarkedForReformat(false));
                         }));
                     }
