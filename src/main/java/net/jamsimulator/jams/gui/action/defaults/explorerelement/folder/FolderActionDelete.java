@@ -36,9 +36,14 @@ import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
+import net.jamsimulator.jams.gui.popup.ConfirmationWindow;
+import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.utils.FileUtils;
+
+import java.util.Collection;
 
 public class FolderActionDelete extends ContextAction {
 
@@ -47,17 +52,28 @@ public class FolderActionDelete extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.DELETE);
 
     public FolderActionDelete(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_DELETE,
+        super(provider, NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_DELETE,
                 DEFAULT_COMBINATION, FolderActionRegions.CLIPBOARD, null, null);
     }
 
     @Override
     public boolean run(Object node) {
         if (!(node instanceof ExplorerElement)) return false;
-        Explorer explorer = ((ExplorerElement) node).getExplorer();
+        var explorer = ((ExplorerElement) node).getExplorer();
         if (!(explorer instanceof FolderExplorer)) return false;
 
-        for (ExplorerElement element : explorer.getSelectedElements()) {
+        var message = Manager.ofS(Language.class).getSelected()
+                .getOrDefault(Messages.EDITOR_DELETION_CONFIRMATION);
+        ConfirmationWindow.open(message, () -> {
+            delete(explorer.getSelectedElements());
+            ((ExplorerElement) node).getParentSection().ifPresent(explorer::selectElementAlone);
+        }, null);
+
+        return true;
+    }
+
+    private void delete(Collection<ExplorerElement> elements) {
+        for (ExplorerElement element : elements) {
             if (element instanceof ExplorerFile) {
                 if (!((ExplorerFile) element).getFile().delete()) {
                     System.err.println("Error deleting file " + ((ExplorerFile) element).getFile());
@@ -68,8 +84,6 @@ public class FolderActionDelete extends ContextAction {
                 }
             }
         }
-        ((ExplorerElement) node).getParentSection().ifPresent(explorer::selectElementAlone);
-        return true;
     }
 
     @Override

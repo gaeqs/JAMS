@@ -356,9 +356,16 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     public void deleteCurrentLine() {
-        int start = getCaretPosition() - getCaretColumn();
+        int column = getCaretColumn();
+        int line = getCurrentParagraph();
+
+        int start = getCaretPosition() - column;
         int end = start + getParagraphLength(getCurrentParagraph());
         replaceText(start == 0 ? 0 : start - 1, end, "");
+
+        // Move caret
+        if (getParagraphs().size() <= line) return;
+        moveTo(line, Math.min(column, getParagraphLength(line)));
     }
 
     /**
