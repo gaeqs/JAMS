@@ -57,7 +57,7 @@ public class MIPSEditorInstructionMnemonic extends EditorIndexedElementImpl impl
     }
 
     @Override
-    public String getTranslatedTypeName() {
+    public String getTypeLanguageNode() {
         return isPseudo() ? Messages.MIPS_ELEMENT_PSEUDOINSTRUCTION : Messages.MIPS_ELEMENT_INSTRUCTION;
     }
 }

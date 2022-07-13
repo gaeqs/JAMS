@@ -237,6 +237,17 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     /**
+     * Returns whether this editor will open the autocompletion after
+     * this editor finish indexing.
+     *
+     * @return whether this editor will open the autocompletion after
+     * this editor finish indexing.
+     */
+    public boolean willOpenAutocompletionAfterEdit() {
+        return shouldOpenAutocompletionAfterEdit;
+    }
+
+    /**
      * Returns the {@link Popup} showing the current documentation.
      *
      * @return the popup.
@@ -356,9 +367,16 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     public void deleteCurrentLine() {
-        int start = getCaretPosition() - getCaretColumn();
+        int column = getCaretColumn();
+        int line = getCurrentParagraph();
+
+        int start = getCaretPosition() - column;
         int end = start + getParagraphLength(getCurrentParagraph());
         replaceText(start == 0 ? 0 : start - 1, end, "");
+
+        // Move caret
+        if (getParagraphs().size() <= line) return;
+        moveTo(line, Math.min(column, getParagraphLength(line)));
     }
 
     /**
@@ -435,6 +453,8 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
 
     protected abstract EditorIndex generateIndex();
 
+    protected abstract boolean useTabCharacter();
+
     protected EditorIndex getOrGenerateIndex() {
         var data = getProject().getData();
         if (data instanceof GlobalIndexHolder holder) {
@@ -484,6 +504,12 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
                     }
                 }
             } else {
+
+                if (c == KeyCode.TAB && !useTabCharacter()) {
+                    event.consume();
+                    insert(getCaretPosition(), "    ", "");
+                }
+
                 shouldOpenAutocompletionAfterEdit = !event.getText().isBlank();
                 if (documentationPopup != null) documentationPopup.hide();
             }

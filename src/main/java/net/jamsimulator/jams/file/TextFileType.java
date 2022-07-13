@@ -53,6 +53,11 @@ public class TextFileType extends FileType {
             protected EditorIndex generateIndex() {
                 return null;
             }
+
+            @Override
+            protected boolean useTabCharacter() {
+                return true;
+            }
         };
     }
 }

@@ -53,13 +53,13 @@ public class ConfirmationWindow extends VBox {
         ok.setOnAction(event -> {
             stage.close();
             event.consume();
-            onOk.run();
+            if (onOk != null) onOk.run();
         });
 
         cancel.setOnAction(event -> {
             stage.close();
             event.consume();
-            onCancel.run();
+            if (onCancel != null) onCancel.run();
         });
 
         HBox box = new HBox();
@@ -81,7 +81,7 @@ public class ConfirmationWindow extends VBox {
             if (event.getCode() == KeyCode.ESCAPE) {
                 stage.close();
                 event.consume();
-                onCancel.run();
+                if (onCancel != null) onCancel.run();
             }
         });
 

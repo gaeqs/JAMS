@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.mips.editor.indexing;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroCallMnemonic;
@@ -35,6 +36,8 @@ import net.jamsimulator.jams.gui.mips.editor.indexing.element.*;
 import net.jamsimulator.jams.gui.mips.editor.indexing.inspection.MIPSInspectorManager;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveMacro;
 import net.jamsimulator.jams.project.Project;
+
+import java.util.Comparator;
 
 public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
 
@@ -70,7 +73,7 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
         var afterDirectiveParameter = config.getEnum(MIPSSpaces.class, NODE_SPACE_AFTER_DIRECTIVE_PARAMETER)
                 .map(MIPSSpaces::getValue).orElse(", ");
         int maxBlankLines = (int) config.get(NODE_MAX_BLANK_LINES).orElse(2);
-        var tabText = (boolean) config.get(NODE_USE_TABS).orElse(false) ? "\t" : "    ";
+        var useTabs = (boolean) config.get(NODE_USE_TABS).orElse(false);
 
         boolean tabsAfterLabel = (boolean) config.get(NODE_PRESERVE_TABS_AFTER_LABEL).orElse(false);
         boolean tabsBeforeLabel = (boolean) config.get(NODE_PRESERVE_TABS_BEFORE_LABEL).orElse(false);
@@ -92,15 +95,15 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
 
             if (line.label != null) {
                 if (tabsBeforeLabel || tabsAfterLabel) {
-                    calculateTabsBeforeLabel(line.label, builder, tabAcumulator, tabsBeforeLabel);
+                    calculateTabsBeforeLabel(line.label, builder, tabAcumulator, tabsBeforeLabel, useTabs);
                 }
                 builder.append(line.label.getIdentifier()).append(':');
             }
 
             if (tabsAfterLabel) {
-                calculateTabsAfterLabel(line, builder, tabAcumulator);
+                calculateTabsAfterLabel(line, builder, tabAcumulator, useTabs);
             } else {
-                builder.append(tabText);
+                builder.append(useTabs ? "\t" : "    ");
             }
 
             if (line.directive != null) {
@@ -123,7 +126,7 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
                     }
                     i++;
                 }
-                if(macro && line.directive.size() == 2) {
+                if (macro && line.directive.size() == 2) {
                     builder.append(afterDirectiveParameter).append("()");
                 }
             }
@@ -144,7 +147,12 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
 
             if (line.macroCall != null) {
                 int i = 0;
-                for (var element : line.macroCall.getElements()) {
+
+                var elements = line.macroCall.getElements()
+                        .stream()
+                        .sorted(Comparator.comparingInt(EditorIndexedElement::getStart))
+                        .toList();
+                for (var element : elements) {
                     if (element instanceof EditorElementMacroCallMnemonic mnemonic) {
                         builder.append(mnemonic.getText()).append(" (");
                     } else if (element instanceof EditorElementMacroCallParameter parameter) {
@@ -158,7 +166,7 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
 
             if (line.comment != null) {
                 if (line.directive != null || line.instruction != null || line.macroCall != null) {
-                    builder.append(tabText);
+                    builder.append(useTabs ? "\t" : "    ");
                 }
                 builder.append(line.comment.getIdentifier());
             }
@@ -171,9 +179,18 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
     }
 
     private void calculateTabsBeforeLabel(EditorElementLabel label, StringBuilder builder,
-                                          StringBuilder tabAccumulator, boolean tabsBeforeLabel) {
+                                          StringBuilder tabAccumulator, boolean tabsBeforeLabel,
+                                          boolean useTabs) {
         var text = label.getText();
         var sub = text.substring(0, text.indexOf(label.getIdentifier()));
+
+        if (useTabs) {
+            int spaceCount = (int) sub.chars().filter(it -> it == ' ').count();
+            sub = "\t".repeat(sub.length() - spaceCount + Math.round(spaceCount / 4.0f));
+        } else {
+            sub = sub.replace("\t", "    ");
+        }
+
         if (tabsBeforeLabel) {
             builder.append(sub);
         } else {
@@ -181,7 +198,8 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
         }
     }
 
-    private void calculateTabsAfterLabel(MIPSEditorLine line, StringBuilder builder, StringBuilder tabAccumulator) {
+    private void calculateTabsAfterLabel(MIPSEditorLine line, StringBuilder builder,
+                                         StringBuilder tabAccumulator, boolean useTabs) {
         int dataStart = 0;
         if (line.directive != null) dataStart = line.directive.getStart() - line.getStart();
         else if (line.instruction != null) dataStart = line.instruction.getStart() - line.getStart();
@@ -191,6 +209,14 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
 
         int tabsStart = line.label == null ? 0 : line.label.getEnd() - line.getStart();
         var afterLabel = line.getText().substring(tabsStart, dataStart);
+
+        if (useTabs) {
+            int spaceCount = (int) afterLabel.chars().filter(it -> it == ' ').count();
+            afterLabel = "\t".repeat(afterLabel.length() - spaceCount + Math.round(spaceCount / 4.0f));
+        } else {
+            afterLabel = afterLabel.replace("\t", "    ");
+        }
+
         builder.append(tabAccumulator);
         builder.append(afterLabel);
     }

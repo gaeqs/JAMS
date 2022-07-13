@@ -142,69 +142,84 @@ public class MIPSAutocompletionPopupController extends AutocompletionPopupContro
         var compatibleInstructions = ins.getCompatibleInstructions(parameterIndex);
         boolean hasLabels = false, hasRegisters = false;
 
-        for (Instruction instruction : compatibleInstructions) {
-            var partStartIndex = new AtomicInteger();
+        switch (context.getType()) {
+            case REGISTER -> {
+                // The element WILL be a register and only a register
+                addRegisterCandidates(parameter, "");
+            }
+            case LABEL -> {
+                // The element may be a label or a combination of parameter parts
+                for (Instruction instruction : compatibleInstructions) {
+                    var partStartIndex = new AtomicInteger();
 
-            var partType = instruction.getParameters()[parameterIndex]
-                    .getPartAt(caretPosition - parameter.getStart(), parameter.getText(), partStartIndex);
+                    var partType = instruction.getParameters()[parameterIndex]
+                            .getPartAt(caretPosition - parameter.getStart(), parameter.getText(), partStartIndex);
 
-            switch (partType) {
-                case LABEL -> {
-                    if (hasLabels) break;
 
-                    for (var label : context.getIndex().withLockF(false, index -> index
-                            .getReferencedElementsOfType(EditorElementLabel.class, context.getReferencingScope()))) {
-                        candidates.add(new AutocompletionCandidate<>(
-                                label,
-                                label.getIdentifier(),
-                                label.getIdentifier(),
-                                Collections.emptyList(),
-                                Icons.AUTOCOMPLETION_LABEL
-                        ));
-                    }
+                    switch (partType) {
+                        case LABEL -> {
+                            if (hasLabels) break;
 
-                    context.getIndex().getGlobalIndex().ifPresent(files -> {
-                        for (var label : files.searchReferencedElementsOfType(EditorElementLabel.class)) {
-                            candidates.add(new AutocompletionCandidate<>(
-                                    label,
-                                    label.getIdentifier(),
-                                    label.getIdentifier(),
-                                    Collections.emptyList(),
-                                    Icons.AUTOCOMPLETION_LABEL
-                            ));
+                            for (var label : context.getIndex().withLockF(false, index -> index
+                                    .getReferencedElementsOfType(EditorElementLabel.class, context.getReferencingScope()))) {
+                                candidates.add(new AutocompletionCandidate<>(
+                                        label,
+                                        label.getIdentifier(),
+                                        label.getIdentifier(),
+                                        Collections.emptyList(),
+                                        Icons.AUTOCOMPLETION_LABEL
+                                ));
+                            }
+
+                            context.getIndex().getGlobalIndex().ifPresent(files -> {
+                                for (var label : files.searchReferencedElementsOfType(EditorElementLabel.class)) {
+                                    candidates.add(new AutocompletionCandidate<>(
+                                            label,
+                                            label.getIdentifier(),
+                                            label.getIdentifier(),
+                                            Collections.emptyList(),
+                                            Icons.AUTOCOMPLETION_LABEL
+                                    ));
+                                }
+                            });
+                            hasLabels = true;
                         }
-                    });
-                    hasLabels = true;
-                }
-                case REGISTER -> {
-                    if (hasRegisters) break;
-                    Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();
-                    Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
-                    var firstStart = starts.stream().findFirst().orElse('$');
-
-                    var preParts = parameter.getText().substring(0, partStartIndex.get());
-                    for (var name : names) {
-                        for (var start : starts) {
-                            var key = start + name;
-                            candidates.add(new AutocompletionCandidate<>(
-                                    key,
-                                    preParts + key,
-                                    preParts + key,
-                                    Collections.emptyList(),
-                                    Icons.AUTOCOMPLETION_REGISTER
-                            ));
+                        case REGISTER -> {
+                            if (hasRegisters) break;
+                            var preParts = parameter.getText().substring(0, partStartIndex.get());
+                            addRegisterCandidates(parameter, preParts);
+                            hasRegisters = true;
                         }
-                        candidates.add(new AutocompletionCandidate<>(
-                                name,
-                                preParts + name,
-                                preParts + firstStart + name,
-                                Collections.emptyList(),
-                                Icons.AUTOCOMPLETION_REGISTER
-                        ));
                     }
-                    hasRegisters = true;
                 }
             }
+        }
+
+    }
+
+    private void addRegisterCandidates(MIPSEditorInstructionParameter parameter, String preParts) {
+        Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();
+        Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
+        var firstStart = starts.stream().findFirst().orElse('$');
+
+        for (var name : names) {
+            for (var start : starts) {
+                var key = start + name;
+                candidates.add(new AutocompletionCandidate<>(
+                        key,
+                        preParts + key,
+                        preParts + key,
+                        Collections.emptyList(),
+                        Icons.AUTOCOMPLETION_REGISTER
+                ));
+            }
+            candidates.add(new AutocompletionCandidate<>(
+                    name,
+                    preParts + name,
+                    preParts + firstStart + name,
+                    Collections.emptyList(),
+                    Icons.AUTOCOMPLETION_REGISTER
+            ));
         }
     }
 
