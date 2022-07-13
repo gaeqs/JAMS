@@ -28,8 +28,12 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.paint.Paint;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
@@ -51,7 +55,9 @@ public class SingleCycleFlowTable extends FlowTable {
             simulation.registerListeners(this, true);
         } else {
             flows.setAlignment(Pos.CENTER);
-            flows.getChildren().add(new Label("Events are disabled."));
+            var label = new LanguageLabel(Messages.SIMULATION_EVENTS_DISABLED);
+            label.setAlignment(Pos.CENTER);
+            flows.getChildren().add(label);
         }
     }
 

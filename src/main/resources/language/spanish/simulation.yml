@@ -1,3 +1,4 @@
+SIMULATION_EVENTS_DISABLED: Esta herramienta necesita que los eventos estén habilitados.
 SIMULATION_BUTTON_TOOLTIP_EXECUTE_ALL: Ejecutar todas las instrucciones
 SIMULATION_BUTTON_TOOLTIP_STOP: Parar
 SIMULATION_BUTTON_TOOLTIP_EXECUTE_ONE: Ejecutar un paso

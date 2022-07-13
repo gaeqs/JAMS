@@ -27,7 +27,9 @@ package net.jamsimulator.jams.gui.mips.simulator.flow;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
@@ -93,6 +95,7 @@ public abstract class FlowTable extends AnchorPane implements ActionRegion {
         this.sizeSlider = new Slider();
 
         flows = new VBox();
+        flows.setFillWidth(true);
         cycleVisualizer = new FlowTableCycleVisualizer(this, scrollPane);
 
         var anchorScrollPane = new AnchorPane();
