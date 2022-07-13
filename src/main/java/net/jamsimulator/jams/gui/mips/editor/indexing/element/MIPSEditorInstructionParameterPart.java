@@ -72,6 +72,10 @@ public class MIPSEditorInstructionParameterPart extends EditorIndexedElementImpl
         }
     }
 
+    public Type getType() {
+        return type;
+    }
+
     @Override
     public Collection<String> getStyles() {
         if (type == Type.LABEL) {

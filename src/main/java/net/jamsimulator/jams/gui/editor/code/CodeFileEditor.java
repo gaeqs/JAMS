@@ -237,6 +237,17 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     /**
+     * Returns whether this editor will open the autocompletion after
+     * this editor finish indexing.
+     *
+     * @return whether this editor will open the autocompletion after
+     * this editor finish indexing.
+     */
+    public boolean willOpenAutocompletionAfterEdit() {
+        return shouldOpenAutocompletionAfterEdit;
+    }
+
+    /**
      * Returns the {@link Popup} showing the current documentation.
      *
      * @return the popup.
@@ -442,6 +453,8 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
 
     protected abstract EditorIndex generateIndex();
 
+    protected abstract boolean useTabCharacter();
+
     protected EditorIndex getOrGenerateIndex() {
         var data = getProject().getData();
         if (data instanceof GlobalIndexHolder holder) {
@@ -491,6 +504,12 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
                     }
                 }
             } else {
+
+                if (c == KeyCode.TAB && !useTabCharacter()) {
+                    event.consume();
+                    insert(getCaretPosition(), "    ", "");
+                }
+
                 shouldOpenAutocompletionAfterEdit = !event.getText().isBlank();
                 if (documentationPopup != null) documentationPopup.hide();
             }

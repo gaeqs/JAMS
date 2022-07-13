@@ -29,6 +29,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopup;
 import net.jamsimulator.jams.gui.editor.code.autocompletion.view.AutocompletionPopupBasicView;
@@ -43,6 +44,8 @@ import java.time.Duration;
 import java.util.Optional;
 
 public class MIPSFileEditor extends CodeFileEditor {
+
+    private static final String TAB_CONFIG_NODE = "editor.mips.use_tabs";
 
     private final Popup popup;
 
@@ -79,6 +82,11 @@ public class MIPSFileEditor extends CodeFileEditor {
     @Override
     protected EditorIndex generateIndex() {
         return new MIPSEditorIndex(getProject(), tab.getFile().getName());
+    }
+
+    @Override
+    protected boolean useTabCharacter() {
+        return Jams.getMainConfiguration().data().getOrElse(TAB_CONFIG_NODE, false);
     }
 
     protected void applyAutoIndent() {

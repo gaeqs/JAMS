@@ -50,8 +50,9 @@ public class TextEditorActionAutocomplete extends ContextAction {
     public boolean run(Object node) {
         if (node instanceof CodeFileEditor editor) {
             if (editor.getAutocompletionPopup() == null || !editor.getAutocompletionPopup().isShowing())
-                return false;
-            return editor.tryToAutocomplete();
+                return editor.willOpenAutocompletionAfterEdit(); // Cancel event if the autocompletion popup will open
+            editor.tryToAutocomplete();
+            return true;
         }
         return false;
     }
