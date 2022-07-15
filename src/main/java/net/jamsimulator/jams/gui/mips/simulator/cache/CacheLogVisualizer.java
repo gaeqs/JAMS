@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.mips.simulator.cache;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -63,6 +64,7 @@ public class CacheLogVisualizer extends AnchorPane {
     private Cache currentCache;
 
     public CacheLogVisualizer(CacheVisualizer visualizer) {
+
         currentCache = visualizer.getSelectedCache();
 
         contents = new ListView<>(FXCollections.observableArrayList());
@@ -90,9 +92,18 @@ public class CacheLogVisualizer extends AnchorPane {
         var buttonsHBox = new HBox(clearButton, clearAllButton);
         buttonsHBox.setSpacing(2);
 
-        AnchorUtils.setAnchor(buttonsHBox, 0, -1, 5, 5);
-        AnchorUtils.setAnchor(contents, 30, 0, 0, 0);
-        getChildren().addAll(contents, buttonsHBox);
+
+        if(!visualizer.getSimulation().canCallEvents()) {
+            var label = new LanguageLabel(Messages.SIMULATION_EVENTS_DISABLED);
+            label.setWrapText(true);
+            AnchorUtils.setAnchor(label, 5, 5, 5, 5);
+            label.setAlignment(Pos.CENTER);
+            getChildren().addAll(label);
+        } else {
+            AnchorUtils.setAnchor(buttonsHBox, 0, -1, 5, 5);
+            AnchorUtils.setAnchor(contents, 30, 0, 0, 0);
+            getChildren().addAll(contents, buttonsHBox);
+        }
     }
 
     /**
