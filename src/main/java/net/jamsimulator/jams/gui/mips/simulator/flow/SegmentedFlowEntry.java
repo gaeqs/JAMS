@@ -84,7 +84,16 @@ public class SegmentedFlowEntry extends FlowEntry {
      * @param status     the status of the step.
      */
     public void addStep(long cycle, MultiCycleStep step, double stepSize, long firstCycle, MultiALUPipelineSlotStatus status) {
-        var label = new Label(status == MultiALUPipelineSlotStatus.EXECUTED ? step.getTag() : status.getName());
+        if (step == MultiCycleStep.FETCH && status == MultiALUPipelineSlotStatus.STALL)
+            return;
+
+        var name = switch (status) {
+            case EXECUTED -> step.getTag();
+            case RUNNING -> step.getTag();
+            default -> status.getName();
+        };
+
+        var label = new Label(name);
         label.getStyleClass().add(step.getStyle());
         label.setPrefWidth(stepSize);
         label.setAlignment(Pos.CENTER);
