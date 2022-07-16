@@ -135,7 +135,6 @@ public class EditorHintBar extends Region {
     }
 
     private void queueClear() {
-        queue.clear();
         linesHints.forEach(it -> getChildren().remove(it.rectangle));
         linesHints.clear();
     }
