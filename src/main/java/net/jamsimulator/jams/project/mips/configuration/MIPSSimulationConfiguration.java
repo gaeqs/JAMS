@@ -26,7 +26,7 @@ package net.jamsimulator.jams.project.mips.configuration;
 
 import javafx.beans.property.Property;
 import net.jamsimulator.jams.configuration.Configuration;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
@@ -159,7 +159,8 @@ public class MIPSSimulationConfiguration {
                 Object value = rawValues.remove(node);
 
                 if (!preset.get().getType().isInstance(value)) {
-                    var optional = ValueConverters.getByType(preset.get().getType());
+                    var optional = Manager.get(ValueConverterManager.class)
+                            .getByType(preset.get().getType());
 
                     if (optional.isPresent()) {
                         value = optional.get().fromString(value.toString());

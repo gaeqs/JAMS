@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.util.value;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -32,13 +31,14 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.ActionValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundleManager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
+import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundleManager;
 
 import java.util.function.Consumer;
 
@@ -52,7 +52,7 @@ public class SyscallExecutionBuilderBundleValueEditor extends ComboBox<SyscallEx
 
     public SyscallExecutionBuilderBundleValueEditor() {
         getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
-        setConverter(ValueConverters.getByTypeUnsafe(SyscallExecutionBuilderBundle.class));
+        setConverter(Manager.get(ValueConverterManager.class).getByTypeUnsafe(SyscallExecutionBuilderBundle.class));
         getItems().addAll(SyscallExecutionBuilderBundleManager.INSTANCE);
         getSelectionModel().select(0);
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
@@ -90,7 +90,7 @@ public class SyscallExecutionBuilderBundleValueEditor extends ComboBox<SyscallEx
 
     @Override
     public ValueConverter<SyscallExecutionBuilderBundle> getLinkedConverter() {
-        return ValueConverters.getByTypeUnsafe(SyscallExecutionBuilderBundle.class);
+        return Manager.get(ValueConverterManager.class).getByTypeUnsafe(SyscallExecutionBuilderBundle.class);
     }
 
     @Listener
@@ -108,6 +108,21 @@ public class SyscallExecutionBuilderBundleValueEditor extends ComboBox<SyscallEx
     }
 
     public static class Builder implements ValueEditor.Builder<SyscallExecutionBuilderBundle> {
+
+        @Override
+        public Class<?> getManagedType() {
+            return SyscallExecutionBuilderBundle.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
 
         @Override
         public ValueEditor<SyscallExecutionBuilderBundle> build() {

@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.util.propertyeditor;
 import javafx.beans.property.Property;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 
@@ -43,7 +43,7 @@ public class InstructionSetPropertyEditor extends ComboBox<InstructionSet> imple
     public InstructionSetPropertyEditor(Property<InstructionSet> property) {
         this.property = property;
 
-        setConverter(ValueConverters.getByTypeUnsafe(InstructionSet.class));
+        setConverter(Manager.get(ValueConverterManager.class).getByTypeUnsafe(InstructionSet.class));
         getItems().addAll(Manager.of(InstructionSet.class));
         getSelectionModel().select(property.getValue());
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> {

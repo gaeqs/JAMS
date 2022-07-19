@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.alu.ALU;
 import org.json.JSONException;
 
@@ -52,5 +53,15 @@ public class ALUValueConverter extends ValueConverter<ALU> {
     @Override
     public Class<?> conversionClass() {
         return ALU.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }

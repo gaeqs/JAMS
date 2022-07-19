@@ -24,9 +24,10 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
-import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundleManager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
+import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundleManager;
 
 import java.util.Optional;
 
@@ -46,6 +47,16 @@ public class SyscallExecutionBuilderBundleValueConverter extends ValueConverter<
 
     @Override
     public Class<?> conversionClass() {
-        return SyscallExecutionBuilder.class;
+        return SyscallExecutionBuilderBundle.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }

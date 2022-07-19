@@ -37,7 +37,9 @@ import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.util.DraggableListCell;
 import net.jamsimulator.jams.gui.util.converter.ALUCollectionSnapshotValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.alu.ALU;
 import net.jamsimulator.jams.mips.instruction.alu.ALUCollectionSnapshot;
 import net.jamsimulator.jams.mips.instruction.alu.ALUType;
@@ -103,7 +105,7 @@ public class ALUCollectionSnapshotValueEditor extends ListView<ALU> implements V
 
     @Override
     public ValueConverter<ALUCollectionSnapshot> getLinkedConverter() {
-        return ValueConverters.getByTypeUnsafe(ALUCollectionSnapshot.class);
+        return Manager.get(ValueConverterManager.class).getByTypeUnsafe(ALUCollectionSnapshot.class);
     }
 
     private void refreshValues() {
@@ -112,6 +114,21 @@ public class ALUCollectionSnapshotValueEditor extends ListView<ALU> implements V
     }
 
     public static class Builder implements ValueEditor.Builder<ALUCollectionSnapshot> {
+
+        @Override
+        public Class<?> getManagedType() {
+            return ALUCollectionSnapshot.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
 
         @Override
         public ValueEditor<ALUCollectionSnapshot> build() {

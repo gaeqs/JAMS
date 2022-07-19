@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.util.converter;
 
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 
 import java.util.Optional;
@@ -46,5 +47,15 @@ public class ArchitectureValueConverter extends ValueConverter<Architecture> {
     @Override
     public Class<?> conversionClass() {
         return Architecture.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }

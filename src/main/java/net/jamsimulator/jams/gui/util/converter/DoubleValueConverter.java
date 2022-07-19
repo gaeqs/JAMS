@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
+
 import java.util.Optional;
 
 public class DoubleValueConverter extends ValueConverter<Double> {
@@ -47,5 +49,15 @@ public class DoubleValueConverter extends ValueConverter<Double> {
     @Override
     public Class<?> conversionClass() {
         return Double.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }

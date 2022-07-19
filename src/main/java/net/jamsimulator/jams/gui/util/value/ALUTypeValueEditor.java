@@ -31,9 +31,10 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.LanguageComboBox;
 import net.jamsimulator.jams.gui.util.converter.ALUTypeValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.mips.instruction.alu.ALUType;
@@ -51,7 +52,7 @@ public class ALUTypeValueEditor extends LanguageComboBox<ALUType> implements Val
     public ALUTypeValueEditor() {
         super(ALUType::languageNode);
         getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
-        setConverter(ValueConverters.getByTypeUnsafe(ALUType.class));
+        setConverter(Manager.get(ValueConverterManager.class).getByTypeUnsafe(ALUType.class));
         getItems().addAll(Manager.of(ALUType.class));
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
         Manager.of(Language.class).registerListeners(this, true);
@@ -99,10 +100,25 @@ public class ALUTypeValueEditor extends LanguageComboBox<ALUType> implements Val
 
     @Override
     public ValueConverter<ALUType> getLinkedConverter() {
-        return ValueConverters.getByTypeUnsafe(ALUType.class);
+        return Manager.get(ValueConverterManager.class).getByTypeUnsafe(ALUType.class);
     }
 
     public static class Builder implements ValueEditor.Builder<ALUType> {
+
+        @Override
+        public Class<?> getManagedType() {
+            return ALUType.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
 
         @Override
         public ValueEditor<ALUType> build() {

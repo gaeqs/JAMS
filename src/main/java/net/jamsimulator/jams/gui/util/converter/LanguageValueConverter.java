@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.util.converter;
 
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.Optional;
 
@@ -46,5 +47,15 @@ public class LanguageValueConverter extends ValueConverter<Language> {
     @Override
     public Class<?> conversionClass() {
         return Language.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }

@@ -31,7 +31,7 @@ import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
-import net.jamsimulator.jams.gui.util.value.ValueEditors;
+import net.jamsimulator.jams.gui.util.value.ValueEditorBuilderManager;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
@@ -139,7 +139,8 @@ public class MIPSConfigurationSyscallControls extends AnchorPane {
 
     private void generateBundleBox() {
 
-        var editor = ValueEditors.getByTypeUnsafe(SyscallExecutionBuilderBundle.class).build();
+        var editor = Manager.get(ValueEditorBuilderManager.class)
+                .getByTypeUnsafe(SyscallExecutionBuilderBundle.class).build();
 
         var button = new LanguageButton(Messages.SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB_LOAD_BUNDLE);
         button.setOnAction(event -> {

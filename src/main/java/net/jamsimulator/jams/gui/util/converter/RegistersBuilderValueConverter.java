@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.util.converter;
 
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 
 import java.util.Optional;
@@ -46,5 +47,15 @@ public class RegistersBuilderValueConverter extends ValueConverter<RegistersBuil
     @Override
     public Class<?> conversionClass() {
         return RegistersBuilder.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }

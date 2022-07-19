@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.util.converter;
 
 import net.jamsimulator.jams.gui.mips.editor.MIPSSpaces;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.Optional;
 
@@ -45,5 +46,15 @@ public class MIPSSpacesValueConverter extends ValueConverter<MIPSSpaces> {
     @Override
     public Class<?> conversionClass() {
         return MIPSSpaces.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }

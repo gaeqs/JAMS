@@ -24,13 +24,14 @@
 
 package net.jamsimulator.jams.gui.util.value;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.function.Consumer;
 
@@ -81,10 +82,25 @@ public class StringValueEditor extends TextField implements ValueEditor<String> 
 
     @Override
     public ValueConverter<String> getLinkedConverter() {
-        return ValueConverters.getByTypeUnsafe(String.class);
+        return Manager.get(ValueConverterManager.class).getByTypeUnsafe(String.class);
     }
 
     public static class Builder implements ValueEditor.Builder<String> {
+
+        @Override
+        public Class<?> getManagedType() {
+            return String.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
 
         @Override
         public ValueEditor<String> build() {

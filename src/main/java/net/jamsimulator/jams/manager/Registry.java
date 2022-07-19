@@ -33,6 +33,8 @@ import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModeManager;
 import net.jamsimulator.jams.gui.mips.editor.indexing.inspection.MIPSInspectorManager;
 import net.jamsimulator.jams.gui.mips.simulator.information.SimulationInformationBuilderManager;
 import net.jamsimulator.jams.gui.theme.ThemeManager;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
+import net.jamsimulator.jams.gui.util.value.ValueEditorBuilderManager;
 import net.jamsimulator.jams.language.LanguageManager;
 import net.jamsimulator.jams.manager.event.ProviderUnloadEvent;
 import net.jamsimulator.jams.mips.architecture.ArchitectureManager;
@@ -352,6 +354,8 @@ public class Registry {
 
     private void addDefaultManagers() {
         registerPrimary(PluginManager.INSTANCE);
+        registerPrimary(ValueEditorBuilderManager.INSTANCE);
+        registerPrimary(ValueConverterManager.INSTANCE);
         registerPrimary(ConfigurationFormatManager.INSTANCE);
         registerPrimary(ActionManager.INSTANCE);
         registerPrimary(ArchitectureManager.INSTANCE);

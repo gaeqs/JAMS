@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.util.value;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -33,7 +32,9 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.mips.editor.MIPSSpaces;
 import net.jamsimulator.jams.gui.util.converter.MIPSSpacesValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.function.Consumer;
 
@@ -49,7 +50,7 @@ public class MIPSSpacesValueEditor extends ComboBox<MIPSSpaces> implements Value
         getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         setCellFactory(param -> new MIPSSpacesListCell());
         setButtonCell(new MIPSSpacesListCell());
-        setConverter(ValueConverters.getByTypeUnsafe(MIPSSpaces.class));
+        setConverter(Manager.get(ValueConverterManager.class).getByTypeUnsafe(MIPSSpaces.class));
         getItems().addAll(MIPSSpaces.values());
         getSelectionModel().select(0);
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
@@ -85,10 +86,25 @@ public class MIPSSpacesValueEditor extends ComboBox<MIPSSpaces> implements Value
 
     @Override
     public ValueConverter<MIPSSpaces> getLinkedConverter() {
-        return ValueConverters.getByTypeUnsafe(MIPSSpaces.class);
+        return Manager.get(ValueConverterManager.class).getByTypeUnsafe(MIPSSpaces.class);
     }
 
     public static class Builder implements ValueEditor.Builder<MIPSSpaces> {
+
+        @Override
+        public Class<?> getManagedType() {
+            return MIPSSpaces.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
 
         @Override
         public ValueEditor<MIPSSpaces> build() {

@@ -31,11 +31,12 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.CacheBuilderValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.language.wrapper.CacheBuilderLanguageListCell;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
@@ -119,7 +120,7 @@ public class CacheBuilderValueEditor extends ComboBox<CacheBuilder<?>> implement
     @Override
     public ValueConverter<CacheBuilder<?>> getLinkedConverter() {
         return (ValueConverter<CacheBuilder<?>>)
-                (Object) ValueConverters.getByTypeUnsafe(CacheBuilder.class);
+                (Object) Manager.get(ValueConverterManager.class).getByTypeUnsafe(CacheBuilder.class);
     }
 
     @Listener
@@ -136,6 +137,21 @@ public class CacheBuilderValueEditor extends ComboBox<CacheBuilder<?>> implement
     }
 
     public static class Builder implements ValueEditor.Builder<CacheBuilder<?>> {
+
+        @Override
+        public Class<?> getManagedType() {
+            return CacheBuilder.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
 
         @Override
         public ValueEditor<CacheBuilder<?>> build() {

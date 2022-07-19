@@ -32,9 +32,9 @@ import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationMetadata;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.value.ValueEditor;
-import net.jamsimulator.jams.gui.util.value.ValueEditors;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.utils.Validate;
 
 public class ConfigurationWindowNode extends HBox {
@@ -56,7 +56,8 @@ public class ConfigurationWindowNode extends HBox {
         this.relativeNode = relativeNode;
         this.metadata = metadata;
 
-        editor = ValueEditors.getByName(metadata.getType()).map(ValueEditor.Builder::build).orElse(null);
+        editor = Manager.of(ValueEditor.Builder.class).get(metadata.getType())
+                .map(ValueEditor.Builder::build).orElse(null);
         Validate.notNull(editor, "Editor cannot be null! Type: " + metadata.getType());
         converter = editor.getLinkedConverter();
         Validate.notNull(converter, "Converter cannot be null! Type: " + metadata.getType());
