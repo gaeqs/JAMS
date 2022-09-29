@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.mips.simulator.register;
 
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import net.jamsimulator.jams.event.Listener;
@@ -33,75 +32,56 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
+import net.jamsimulator.jams.utils.NumberRepresentation;
 
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 public class RegistersTable extends TableView<RegisterPropertyWrapper> implements ActionRegion {
 
-    private final HashMap<Register, RegisterPropertyWrapper> registers;
+    private final List<RegisterPropertyWrapper> registers = new ArrayList<>();
 
-    @SuppressWarnings("unchecked")
-    public RegistersTable(MIPSSimulation<?> simulation, Set<Register> registers, boolean useDecimals) {
-        this.registers = new HashMap<>();
+    private NumberRepresentation representation;
+
+    public RegistersTable(Simulation<?> simulation, Set<Register> registers, NumberRepresentation representation) {
+        this.representation = representation;
+
         getStyleClass().add("table-view-horizontal-fit");
         setEditable(true);
         setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<RegisterPropertyWrapper, String> identifierColumn = new LanguageTableColumn<>(Messages.REGISTERS_ID);
-        TableColumn<RegisterPropertyWrapper, String> nameColumn = new LanguageTableColumn<>(Messages.REGISTERS_NAME);
-        TableColumn<RegisterPropertyWrapper, String> valueColumn = new LanguageTableColumn<>(Messages.REGISTERS_VALUE);
-        TableColumn<RegisterPropertyWrapper, String> hexColumn = new LanguageTableColumn<>(Messages.REGISTERS_HEX);
-        getColumns().setAll(identifierColumn, nameColumn, valueColumn, hexColumn);
+        var identifier = new LanguageTableColumn<RegisterPropertyWrapper, String>(Messages.REGISTERS_ID);
+        var name = new LanguageTableColumn<RegisterPropertyWrapper, String>(Messages.REGISTERS_NAME);
+        var value = new LanguageTableColumn<RegisterPropertyWrapper, String>(Messages.REGISTERS_VALUE);
+        getColumns().setAll(identifier, name, value);
 
-        identifierColumn.setCellValueFactory(p -> p.getValue().identifierProperty());
-        nameColumn.setCellValueFactory(p -> p.getValue().nameProperty());
+        identifier.setCellValueFactory(p -> p.getValue().identifierProperty());
+        name.setCellValueFactory(p -> p.getValue().nameProperty());
+        value.setCellValueFactory(p -> p.getValue().valueProperty());
 
-        valueColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        valueColumn.setCellValueFactory(p -> p.getValue().valueProperty());
+        value.setCellFactory(TextFieldTableCell.forTableColumn());
 
-        hexColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        hexColumn.setCellValueFactory(p -> p.getValue().hexProperty());
-
-        identifierColumn.setEditable(false);
-        nameColumn.setEditable(false);
-        valueColumn.setEditable(true);
-        hexColumn.setEditable(true);
-
-        valueColumn.setOnEditCommit(t -> {
-            if (!t.getRowValue().getRegister().isModifiable()) {
-                t.getRowValue().valueProperty().setValue(t.getOldValue());
-                return;
-            }
-            t.getRowValue().valueProperty().setValue(t.getNewValue());
-        });
-        hexColumn.setOnEditCommit(t -> {
-            if (!t.getRowValue().getRegister().isModifiable()) {
-                t.getRowValue().hexProperty().setValue(t.getOldValue());
-                return;
-            }
-            t.getRowValue().hexProperty().setValue(t.getNewValue());
-        });
+        identifier.setEditable(false);
+        name.setEditable(false);
+        value.setEditable(true);
 
         registers.stream()
                 .sorted((Comparator.comparingInt(Register::getIdentifier)))
-                .forEach(target -> getItems().add(new RegisterPropertyWrapper(target, useDecimals)));
+                .forEach(target -> this.registers.add(new RegisterPropertyWrapper(this, target)));
 
-
-        for (RegisterPropertyWrapper item : getItems()) {
-            this.registers.put(item.getRegister(), item);
-        }
+        this.registers.forEach(getItems()::add);
 
         simulation.registerListeners(this, true);
-        if (!simulation.isRunning()) {
-            simulation.getRegisters().registerListeners(this, true);
-        }
+    }
+
+    public NumberRepresentation getRepresentation() {
+        return representation;
     }
 
     @Override
@@ -109,31 +89,16 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> implement
         return RegionTags.MIPS_SIMULATION.equals(region);
     }
 
-    @Listener
-    private void onSimulationStart(SimulationStartEvent event) {
-        if (event.getSimulation() instanceof MIPSSimulation<?> simulation) {
-            simulation.getRegisters().unregisterListeners(this);
-        }
-    }
-
-    @Listener
+    @Listener(priority = Integer.MIN_VALUE)
     private void onSimulationStop(SimulationStopEvent event) {
         if (event.getSimulation() instanceof MIPSSimulation<?> simulation) {
             simulation.getRegisters().registerListeners(this, true);
-            registers.values().forEach(RegisterPropertyWrapper::updateRegister);
+            registers.forEach(RegisterPropertyWrapper::refresh);
         }
     }
 
-    @Listener
+    @Listener(priority = Integer.MIN_VALUE)
     private void onSimulationUndo(SimulationUndoStepEvent event) {
-        registers.values().forEach(RegisterPropertyWrapper::updateRegister);
-    }
-
-    @Listener
-    private void onRegisterValueChange(RegisterChangeValueEvent.After event) {
-        RegisterPropertyWrapper wrapper = registers.get(event.getRegister());
-        if (wrapper == null) return;
-        int value = event.getNewValue();
-        wrapper.updateRegister(value, event.getRegister().isLocked());
+        registers.forEach(RegisterPropertyWrapper::refresh);
     }
 }

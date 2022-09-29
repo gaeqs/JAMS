@@ -46,8 +46,8 @@ import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledCodeVie
 import net.jamsimulator.jams.gui.mips.simulator.lab.LabPane;
 import net.jamsimulator.jams.gui.mips.simulator.label.LabelTable;
 import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryPane;
-import net.jamsimulator.jams.gui.mips.simulator.register.COP0RegistersTable;
-import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
+import net.jamsimulator.jams.gui.mips.simulator.registerold.COP0RegistersTable;
+import net.jamsimulator.jams.gui.mips.simulator.registerold.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.SimulationHolder;
 import net.jamsimulator.jams.gui.project.WorkingPane;
@@ -62,6 +62,8 @@ import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.project.mips.MIPSProject;
+import net.jamsimulator.jams.utils.NumberRepresentation;
+import net.jamsimulator.jams.utils.NumberRepresentationManager;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 
@@ -148,7 +150,8 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
         Set<Register> general = new HashSet<>(simulation.getRegisters().getGeneralRegisters());
         general.add(simulation.getRegisters().getProgramCounter());
 
-        registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_GENERAL, new RegistersTable(simulation, general, false)));
+        registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_GENERAL,
+                new net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable(simulation, general, NumberRepresentationManager.DECIMAL)));
         registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_COP0, new COP0RegistersTable(simulation, simulation.getRegisters().getCoprocessor0Registers(), false)));
         registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_COP1, new RegistersTable(simulation, simulation.getRegisters().getCoprocessor1Registers(), true)));
 

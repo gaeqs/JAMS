@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -25,30 +25,36 @@
 package net.jamsimulator.jams.gui.mips.simulator.register;
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.utils.NumericUtils;
-import net.jamsimulator.jams.utils.StringUtils;
+import net.jamsimulator.jams.utils.Validate;
 
-import java.util.Set;
+import java.util.stream.Collectors;
 
-/**
- * This class wraps a {@link Register}, making it valid to be used in a {@link javafx.scene.control.TableView}.
- */
 public class RegisterPropertyWrapper {
 
-    private final Object lock = new Object();
+    public static final String PROPERTY_IDENTIFIER = "identifier";
+    public static final String PROPERTY_NAME = "name";
+    public static final String PROPERTY_VALUE = "value";
+
+    private final RegistersTable table;
     private final Register register;
-    private final boolean useDecimals;
-    private boolean updating;
+
     private SimpleStringProperty identifierProperty;
     private SimpleStringProperty nameProperty;
     private SimpleStringProperty valueProperty;
-    private SimpleStringProperty hexProperty;
 
-    public RegisterPropertyWrapper(Register register, boolean useDecimals) {
+    private boolean refreshing = false;
+
+    public RegisterPropertyWrapper(RegistersTable table, Register register) {
+        Validate.notNull(table, "Table cannot be null!");
+        Validate.notNull(register, "Register cannot be null!");
+        this.table = table;
         this.register = register;
-        this.useDecimals = useDecimals;
+    }
+
+    public RegistersTable getTable() {
+        return table;
     }
 
     public Register getRegister() {
@@ -57,110 +63,76 @@ public class RegisterPropertyWrapper {
 
     public SimpleStringProperty identifierProperty() {
         if (identifierProperty == null) {
-            identifierProperty = new SimpleStringProperty(this, "identifier");
-            identifierProperty.setValue(String.valueOf(register.getIdentifier()));
+            identifierProperty = new SimpleStringProperty(this, PROPERTY_IDENTIFIER);
+            refresh();
         }
         return identifierProperty;
     }
 
     public SimpleStringProperty nameProperty() {
         if (nameProperty == null) {
-            nameProperty = new SimpleStringProperty(this, "name");
+            nameProperty = new SimpleStringProperty(this, PROPERTY_NAME);
 
-            Set<String> names = register.getNames();
-            StringBuilder builder = new StringBuilder();
-            boolean first = true;
+            var names = register.getNames();
+            var start = register.getRegisters().getValidRegistersStarts().
+                    stream().findFirst().map(String::valueOf).orElse("");
+            var idAsString = String.valueOf(register.getIdentifier());
+            var name = names.stream()
+                    .filter(it -> !it.equals(idAsString))
+                    .map(it -> start + it)
+                    .collect(Collectors.joining(" / "));
 
-            String start = register.getRegisters().getValidRegistersStarts().stream()
-                    .findAny().map(String::valueOf).orElse("");
-            String idToString = String.valueOf(register.getIdentifier());
-
-            for (String name : names) {
-                if (name.equals(idToString)) continue;
-                if (first) first = false;
-                else builder.append(" / ");
-                builder.append(start).append(name);
-            }
-
-            nameProperty.setValue(builder.toString());
+            nameProperty.setValue(name);
         }
         return nameProperty;
     }
 
-    public synchronized SimpleStringProperty valueProperty() {
+    public SimpleStringProperty valueProperty() {
         if (valueProperty == null) {
-            valueProperty = new SimpleStringProperty(this, "value");
-
-            if (useDecimals) {
-                valueProperty.setValue(String.valueOf(Float.intBitsToFloat(register.getValue())));
-            } else {
-                valueProperty.setValue(String.valueOf(register.getValue()));
-            }
+            valueProperty = new SimpleStringProperty(this, PROPERTY_VALUE);
+            refresh();
 
             valueProperty.addListener((obs, old, val) -> {
-                synchronized (lock) {
-                    if (updating || val.equals(old) || !register.isModifiable()) return;
+                if (refreshing || val.equals(old)) return;
+                if (!register.isModifiable()) {
+                    refresh();
+                    return;
+                }
+                try {
+                    int to = NumericUtils.decodeInteger(val);
+                    if (register.getValue() != to) {
+                        register.setValue(to);
+                    }
+                } catch (NumberFormatException ex) {
                     try {
-                        int to = useDecimals ? Float.floatToIntBits(Float.parseFloat(val)) : NumericUtils.decodeInteger(val);
+                        int to = Float.floatToIntBits(Float.parseFloat(val));
                         if (register.getValue() != to) {
                             register.setValue(to);
                         }
-                    } catch (NumberFormatException ex) {
-                        valueProperty.setValue(old);
+                    } catch (NumberFormatException ignore) {
                     }
                 }
+
+                refresh();
             });
         }
+
         return valueProperty;
     }
 
-    public StringProperty hexProperty() {
-        if (hexProperty == null) {
-            hexProperty = new SimpleStringProperty(this, "hex");
-            hexProperty.setValue("0x" + StringUtils.addZeros(Integer.toHexString(register.getValue()), 8));
-            hexProperty.addListener((obs, old, val) -> {
-                synchronized (lock) {
-                    if (updating || !register.isModifiable()) return;
-                    if (old.equals(val)) return;
-                    int to = NumericUtils.decodeInteger(val);
-                    if (register.getValue() == to) return;
-                    try {
-                        register.setValue(to);
-                    } catch (NumberFormatException ex) {
-                        ex.printStackTrace();
-                        hexProperty.setValue(old);
-                    }
-                }
-            });
-        }
-        return hexProperty;
-    }
-
-    public void updateRegister() {
-        updateRegister(register.getValue(), register.isLocked());
-    }
-
-    public void updateRegister(int newValue, boolean locked) {
-        synchronized (lock) {
-            updating = true;
-            if (identifierProperty == null) identifierProperty();
-            if (valueProperty == null) valueProperty();
-            if (hexProperty == null) hexProperty();
-
-            if (locked) {
+    public void refresh() {
+        refreshing = true;
+        if (identifierProperty != null) {
+            if (register.isLocked()) {
                 identifierProperty.setValue(register.getIdentifier() + " \uD83D\uDD12");
             } else {
                 identifierProperty.setValue(String.valueOf(register.getIdentifier()));
             }
-
-            if (useDecimals) {
-                valueProperty.setValue(String.valueOf(Float.intBitsToFloat(newValue)));
-            } else {
-                valueProperty.setValue(String.valueOf(newValue));
-            }
-
-            hexProperty.set("0x" + StringUtils.addZeros(Integer.toHexString(newValue), 8));
-            updating = false;
         }
+
+        if (valueProperty != null) {
+            valueProperty.setValue(table.getRepresentation().represent(register.getValue(), 0));
+        }
+        refreshing = false;
     }
 }

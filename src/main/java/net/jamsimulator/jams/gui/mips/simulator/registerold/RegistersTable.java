@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.simulator.register;
+package net.jamsimulator.jams.gui.mips.simulator.registerold;
 
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -32,7 +32,6 @@ import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
-import net.jamsimulator.jams.mips.register.COP0Register;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
@@ -44,26 +43,24 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
 
-public class COP0RegistersTable extends TableView<COP0RegisterPropertyWrapper> implements ActionRegion {
+public class RegistersTable extends TableView<RegisterPropertyWrapper> implements ActionRegion {
 
-    private final HashMap<Register, COP0RegisterPropertyWrapper> registers;
+    private final HashMap<Register, RegisterPropertyWrapper> registers;
 
     @SuppressWarnings("unchecked")
-    public COP0RegistersTable(MIPSSimulation<?> simulation, Set<Register> registers, boolean useDecimals) {
+    public RegistersTable(MIPSSimulation<?> simulation, Set<Register> registers, boolean useDecimals) {
         this.registers = new HashMap<>();
         getStyleClass().add("table-view-horizontal-fit");
         setEditable(true);
         setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<COP0RegisterPropertyWrapper, String> identifierColumn = new LanguageTableColumn<>(Messages.REGISTERS_ID);
-        TableColumn<COP0RegisterPropertyWrapper, Number> selectionColumn = new LanguageTableColumn<>(Messages.REGISTERS_SELECTION);
-        TableColumn<COP0RegisterPropertyWrapper, String> nameColumn = new LanguageTableColumn<>(Messages.REGISTERS_NAME);
-        TableColumn<COP0RegisterPropertyWrapper, String> valueColumn = new LanguageTableColumn<>(Messages.REGISTERS_VALUE);
-        TableColumn<COP0RegisterPropertyWrapper, String> hexColumn = new LanguageTableColumn<>(Messages.REGISTERS_HEX);
-        getColumns().setAll(identifierColumn, selectionColumn, nameColumn, valueColumn, hexColumn);
+        TableColumn<RegisterPropertyWrapper, String> identifierColumn = new LanguageTableColumn<>(Messages.REGISTERS_ID);
+        TableColumn<RegisterPropertyWrapper, String> nameColumn = new LanguageTableColumn<>(Messages.REGISTERS_NAME);
+        TableColumn<RegisterPropertyWrapper, String> valueColumn = new LanguageTableColumn<>(Messages.REGISTERS_VALUE);
+        TableColumn<RegisterPropertyWrapper, String> hexColumn = new LanguageTableColumn<>(Messages.REGISTERS_HEX);
+        getColumns().setAll(identifierColumn, nameColumn, valueColumn, hexColumn);
 
         identifierColumn.setCellValueFactory(p -> p.getValue().identifierProperty());
-        selectionColumn.setCellValueFactory(p -> p.getValue().selectionProperty());
         nameColumn.setCellValueFactory(p -> p.getValue().nameProperty());
 
         valueColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -73,7 +70,6 @@ public class COP0RegistersTable extends TableView<COP0RegisterPropertyWrapper> i
         hexColumn.setCellValueFactory(p -> p.getValue().hexProperty());
 
         identifierColumn.setEditable(false);
-        selectionColumn.setEditable(false);
         nameColumn.setEditable(false);
         valueColumn.setEditable(true);
         hexColumn.setEditable(true);
@@ -95,10 +91,10 @@ public class COP0RegistersTable extends TableView<COP0RegisterPropertyWrapper> i
 
         registers.stream()
                 .sorted((Comparator.comparingInt(Register::getIdentifier)))
-                .forEach(target -> getItems().add(new COP0RegisterPropertyWrapper((COP0Register) target, useDecimals)));
+                .forEach(target -> getItems().add(new RegisterPropertyWrapper(target, useDecimals)));
 
 
-        for (COP0RegisterPropertyWrapper item : getItems()) {
+        for (RegisterPropertyWrapper item : getItems()) {
             this.registers.put(item.getRegister(), item);
         }
 
@@ -124,18 +120,18 @@ public class COP0RegistersTable extends TableView<COP0RegisterPropertyWrapper> i
     private void onSimulationStop(SimulationStopEvent event) {
         if (event.getSimulation() instanceof MIPSSimulation<?> simulation) {
             simulation.getRegisters().registerListeners(this, true);
-            registers.values().forEach(COP0RegisterPropertyWrapper::updateRegister);
+            registers.values().forEach(RegisterPropertyWrapper::updateRegister);
         }
     }
 
     @Listener
     private void onSimulationUndo(SimulationUndoStepEvent event) {
-        registers.values().forEach(COP0RegisterPropertyWrapper::updateRegister);
+        registers.values().forEach(RegisterPropertyWrapper::updateRegister);
     }
 
     @Listener
     private void onRegisterValueChange(RegisterChangeValueEvent.After event) {
-        COP0RegisterPropertyWrapper wrapper = registers.get(event.getRegister());
+        RegisterPropertyWrapper wrapper = registers.get(event.getRegister());
         if (wrapper == null) return;
         int value = event.getNewValue();
         wrapper.updateRegister(value, event.getRegister().isLocked());
