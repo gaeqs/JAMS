@@ -38,6 +38,14 @@ public class RegisterValueCell extends TextFieldTableCell<RegisterPropertyWrappe
     }
 
     @Override
+    public void cancelEdit() {
+        super.cancelEdit();
+        if (getTableRow().getItem().getTable().getRepresentation().isColor()) {
+            setText("");
+        }
+    }
+
+    @Override
     public void commitEdit(String newValue) {
         var wrapper = getTableRow().getItem();
         var register = wrapper.getRegister();

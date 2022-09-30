@@ -27,7 +27,6 @@ package net.jamsimulator.jams.gui.mips.simulator.register;
 import javafx.beans.property.SimpleStringProperty;
 import net.jamsimulator.jams.mips.register.COP0Register;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.stream.Collectors;
