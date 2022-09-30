@@ -25,12 +25,12 @@
 package net.jamsimulator.jams.gui.mips.simulator.register;
 
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.TextFieldTableCell;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
+import net.jamsimulator.jams.mips.register.COP0Register;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class RegistersTable extends TableView<RegisterPropertyWrapper> implements ActionRegion {
 
@@ -49,7 +50,8 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> implement
 
     private NumberRepresentation representation;
 
-    public RegistersTable(Simulation<?> simulation, Set<Register> registers, NumberRepresentation representation) {
+    public RegistersTable(Simulation<?> simulation, Set<Register> registers,
+                          NumberRepresentation representation, boolean showSelColumn) {
         this.representation = representation;
 
         getStyleClass().add("table-view-horizontal-fit");
@@ -59,21 +61,50 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> implement
         var identifier = new LanguageTableColumn<RegisterPropertyWrapper, String>(Messages.REGISTERS_ID);
         var name = new LanguageTableColumn<RegisterPropertyWrapper, String>(Messages.REGISTERS_NAME);
         var value = new LanguageTableColumn<RegisterPropertyWrapper, String>(Messages.REGISTERS_VALUE);
-        getColumns().setAll(identifier, name, value);
 
         identifier.setCellValueFactory(p -> p.getValue().identifierProperty());
         name.setCellValueFactory(p -> p.getValue().nameProperty());
         value.setCellValueFactory(p -> p.getValue().valueProperty());
 
-        value.setCellFactory(TextFieldTableCell.forTableColumn());
+        value.setCellFactory(t -> new RegisterValueCell());
 
         identifier.setEditable(false);
         name.setEditable(false);
         value.setEditable(true);
 
+        if (showSelColumn) {
+            var sel = new LanguageTableColumn<RegisterPropertyWrapper, String>(Messages.REGISTERS_SELECTION);
+            sel.setCellValueFactory(p -> p.getValue().selectionProperty());
+            sel.setEditable(false);
+            getColumns().setAll(identifier, sel, name, value);
+        } else {
+            getColumns().setAll(identifier, name, value);
+        }
+
+        var registersWithPositiveIds = registers.stream()
+                .filter(it -> it.getIdentifier() >= 0)
+                .collect(Collectors.toSet());
+
+        var comparator = registers.stream().allMatch(it -> it instanceof COP0Register)
+                ? Comparator.comparingInt(Register::getIdentifier)
+                .thenComparingInt(it -> ((COP0Register) it).getSelection())
+                : Comparator.comparingInt(Register::getIdentifier);
+
         registers.stream()
-                .sorted((Comparator.comparingInt(Register::getIdentifier)))
-                .forEach(target -> this.registers.add(new RegisterPropertyWrapper(this, target)));
+                .sorted(comparator)
+                .forEach(target -> {
+                    Register nextRegister;
+                    if (target.getIdentifier() < 0) {
+                        nextRegister = null;
+                    } else {
+                        int nextIdentifier = (target.getIdentifier() + 1) % registersWithPositiveIds.size();
+                        nextRegister = registersWithPositiveIds.stream()
+                                .filter(it -> it.getIdentifier() == nextIdentifier)
+                                .findAny()
+                                .orElse(null);
+                    }
+                    this.registers.add(new RegisterPropertyWrapper(this, target, nextRegister));
+                });
 
         this.registers.forEach(getItems()::add);
 
@@ -82,6 +113,16 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> implement
 
     public NumberRepresentation getRepresentation() {
         return representation;
+    }
+
+    public void setRepresentation(NumberRepresentation representation) {
+        this.representation = representation;
+        refreshRepresentation();
+    }
+
+    public void refreshRepresentation() {
+        registers.forEach(RegisterPropertyWrapper::refresh);
+
     }
 
     @Override
@@ -93,12 +134,12 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> implement
     private void onSimulationStop(SimulationStopEvent event) {
         if (event.getSimulation() instanceof MIPSSimulation<?> simulation) {
             simulation.getRegisters().registerListeners(this, true);
-            registers.forEach(RegisterPropertyWrapper::refresh);
+            refreshRepresentation();
         }
     }
 
     @Listener(priority = Integer.MIN_VALUE)
     private void onSimulationUndo(SimulationUndoStepEvent event) {
-        registers.forEach(RegisterPropertyWrapper::refresh);
+        refreshRepresentation();
     }
 }
