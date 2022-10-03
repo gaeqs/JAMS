@@ -35,6 +35,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.NumericMultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -119,8 +120,12 @@ public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDou
             int s = instruction.getSourceRegister();
             int d = instruction.getDestinationRegister();
             checkEvenRegister(t, s, d);
+
+            double target = doubleCOP1(t);
+            if(target == 0.0f) error(InterruptCause.FLOATING_POINT_EXCEPTION);
+
             NumericUtils.doubleToInts(
-                    doubleCOP1(s) / doubleCOP1(t),
+                    doubleCOP1(s) / target,
                     registerCOP1(d),
                     registerCOP1(d + 1)
             );
@@ -149,6 +154,9 @@ public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDou
         public void execute() {
             double target = doubleCOP1(instruction.getTargetRegister());
             double source = doubleCOP1(instruction.getSourceRegister());
+
+            if(target == 0.0f) error(InterruptCause.FLOATING_POINT_EXCEPTION);
+
             doubleToInts(source / target);
             forwardCOP1(instruction.getDestinationRegister(), lowResult);
             forwardCOP1(instruction.getDestinationRegister() + 1, highResult);

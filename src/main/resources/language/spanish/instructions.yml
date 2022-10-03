@@ -100,6 +100,8 @@ INSTRUCTION_MUL_S: Multiplicación (coma flotante)
 INSTRUCTION_MULU: Multiplicación sin signo devolviendo la parte menos significante
 INSTRUCTION_OR: Or
 INSTRUCTION_ORI: Or con inmediato
+INSTRUCTION_RSQRT_D: Aproximación de la inversa de la raíz cuadrada (coma flotante doble)
+INSTRUCTION_RSQRT_S:  Aproximación de la inversa de la raíz cuadrada (coma flotante)
 INSTRUCTION_SB: Guardar byte
 INSTRUCTION_SLL: Desplazar a la izquierda de manera lógica
 INSTRUCTION_SLLV: Desplazar a la izquierda de manera lógica dependiendo de una variable
@@ -2240,9 +2242,9 @@ INSTRUCTION_DIV_D_DOCUMENTATION: |-
   <b>Formato:</b>
   div.d fd, fs, ft
 
-  | COP1      fmt      0      fs      fd      DIV   |
-  |010001    10001   00000                   000011 |
-  |  6         5       5      5       5        6    |
+  | COP1      fmt      ft      fs      fd      DIV   |
+  |010001    10001                            000011 |
+  |  6         5       5       5       5        6    |
 
 
   <b>Descripción:</b>
@@ -2261,14 +2263,17 @@ INSTRUCTION_DIV_D_DOCUMENTATION: |-
 
   <b>Excepciones:</b>
   Ninguna
+  
+  <b>Excepciones de coma flotante</b>
+  División por cero
 INSTRUCTION_DIV_S_DOCUMENTATION: |-
   <u>Multiplicación en coma flotante</u>
 
   <b>Formato:</b>
   div.s fd, fs, ft
 
-  | COP1      fmt      0      fs      fd      MUL   |
-  |010001    10000   00000                   000010 |
+  | COP1      fmt      ft     fs      fd      DIV   |
+  |010001    10000                           000011 |
   |  6         5       5      5       5        6    |
 
 
@@ -2287,6 +2292,9 @@ INSTRUCTION_DIV_S_DOCUMENTATION: |-
 
   <b>Excepciones:</b>
   Ninguna
+  
+  <b>Excepciones de coma flotante</b>
+  División por cero
 INSTRUCTION_EI_DOCUMENTATION: |-
   <u>Habilitar interrupciones</u>
 
@@ -3090,9 +3098,9 @@ INSTRUCTION_MUL_D_DOCUMENTATION: |-
   <b>Formato:</b>
   mul.d fd, fs, ft
 
-  | COP1      fmt      0      fs      fd      MUL   |
-  |010001    10001   00000                   000010 |
-  |  6         5       5      5       5        6    |
+  | COP1      fmt      ft      fs      fd      MUL   |
+  |010001    10001                            000010 |
+  |  6         5       5       5       5        6    |
 
 
   <b>Descripción:</b>
@@ -3107,6 +3115,32 @@ INSTRUCTION_MUL_D_DOCUMENTATION: |-
 
   <b>Operación:</b>
   fmt ⇽ double
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_MUL_S_DOCUMENTATION: |-
+  <u>Multiplicación en coma flotante</u>
+
+  <b>Formato:</b>
+  mul.s fd, fs, ft
+
+  | COP1      fmt      ft      fs      fd      MUL   |
+  |010001    10000                            000010 |
+  |  6         5       5       5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ FRP[fs] * FPR[ft]
+
+  El valor en el registro <i>ft</i> es multiplicado por el valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+  El operando y el resultado son valores en coma flotante.
+
+  <b>Restricciones:</b>
+  Los operandos deben ser valores en coma flotant. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ float
   StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
 
   <b>Excepciones:</b>
@@ -3161,6 +3195,65 @@ INSTRUCTION_ORI_DOCUMENTATION: |-
 
   <b>Excepciones:</b>
   Ninguna
+INSTRUCTION_RSQRT_D_DOCUMENTATION: |-
+  <u>Aproximación de la inversa de la raíz cuadrada (coma flotante doble)</u>
+
+  <b>Formato:</b>
+  rsqrt.d fd, fs
+
+  | COP1      fmt      0      fs      fd     RSQRT  |
+  |010001    10001   00000                   010110 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ 1.0 / sqrt(FPR[fs])
+
+  Se calcula la inversa de la raíz cuadrada del valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+  El operando y el resultado son valores en coma flotante de precisión doble.
+
+  <b>Restricciones:</b>
+  Los registros <i>fs</i> y <i>fd</i> deben ser FPR pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+  Los operandos deben ser valores en coma flotante de precisión doble. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ double
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) /<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Excepciones:</b>
+  Ninguna
+  
+  <b>Excepciones de coma flotante</b>
+  Operación inválida, División por cero
+INSTRUCTION_RSQRT_S_DOCUMENTATION: |-
+  <u>Aproximación de la inversa de la raíz cuadrada (coma flotante)</u>
+
+  <b>Formato:</b>
+  rsqrt.s fd, fs
+
+  | COP1      fmt      0      fs      fd     RSQRT  |
+  |010001    10000   00000                   010110 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ 1.0 / sqrt(FPR[fs])
+
+  Se calcula la inversa de la raíz cuadrada del valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+  El operando y el resultado son valores en coma flotante.
+
+  <b>Restricciones:</b>
+  Los operandos deben ser valores en coma flotante. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ float
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) /<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Excepciones:</b>
+  Ninguna
+  
+  <b>Excepciones de coma flotante</b>
+  Operación inválida, División por cero
 INSTRUCTION_SB_DOCUMENTATION: |-
   <u>Guardar byte</u>
 

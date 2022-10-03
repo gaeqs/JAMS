@@ -35,6 +35,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -104,8 +105,10 @@ public class InstructionRsqrtSingle extends BasicRFPUInstruction<InstructionRsqr
 
         @Override
         public void execute() {
-            float threehalfs = 1.5f;
             float number = floatCOP1(instruction.getSourceRegister());
+            if(number <= 0.0) error(InterruptCause.FLOATING_POINT_EXCEPTION);
+
+            float threehalfs = 1.5f;
             float x2 = number * 0.5f;
             int i = Float.floatToIntBits(number); // evil floating point bit hack
             i = 0x5F3759DF - (i >> 1); // what the fuck?
