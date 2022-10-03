@@ -98,6 +98,8 @@ INSTRUCTION_MUL_S: Multiplication (single)
 INSTRUCTION_MULU: Unsigned multiplication and return low word
 INSTRUCTION_OR: Or
 INSTRUCTION_ORI: Immediate or
+INSTRUCTION_RSQRT_D: Reciprocal square root approximation (double)
+INSTRUCTION_RSQRT_S: Reciprocal square root approximation (single)
 INSTRUCTION_SB: Save byte
 INSTRUCTION_SLL: Shift word left logical
 INSTRUCTION_SLLV: Shift word left logical variable
@@ -2248,9 +2250,9 @@ INSTRUCTION_DIV_D_DOCUMENTATION: |-
   <b>Format:</b>
   div.d fd, fs, ft
 
-  | COP1      fmt      0      fs      fd      DIV   |
-  |010001    10001   00000                   000011 |
-  |  6         5       5      5       5        6    |
+  | COP1      fmt      ft      fs      fd      DIV   |
+  |010001    10001                            000011 |
+  |  6         5       5       5       5        6    |
 
 
   <b>Description:</b>
@@ -2269,14 +2271,17 @@ INSTRUCTION_DIV_D_DOCUMENTATION: |-
 
   <b>Exceptions:</b>
   None
+  
+  <b>Floating point exceptions</b>
+  Division-by-zero
 INSTRUCTION_DIV_S_DOCUMENTATION: |-
   <u>Floating point division</u>
 
   <b>Format:</b>
   div.s fd, fs, ft
 
-  | COP1      fmt      0      fs      fd      DIV   |
-  |010001    10000   00000                   000011 |
+  | COP1      fmt      ft     fs      fd      DIV   |
+  |010001    10000                           000011 |
   |  6         5       5      5       5        6    |
 
 
@@ -2295,6 +2300,9 @@ INSTRUCTION_DIV_S_DOCUMENTATION: |-
 
   <b>Exceptions:</b>
   None
+  
+  <b>Floating point exceptions</b>
+  Division-by-zero
 INSTRUCTION_EI_DOCUMENTATION: |-
   <u>Enable interrupts</u>
 
@@ -3088,9 +3096,9 @@ INSTRUCTION_MUL_D_DOCUMENTATION: |-
   <b>Format:</b>
   mul.d fd, fs, ft
 
-  | COP1      fmt      0      fs      fd      MUL   |
-  |010001    10001   00000                   000010 |
-  |  6         5       5      5       5        6    |
+  | COP1      fmt      ft      fs      fd      MUL   |
+  |010001    10001                            000010 |
+  |  6         5       5       5       5        6    |
 
 
   <b>Description:</b>
@@ -3115,9 +3123,9 @@ INSTRUCTION_MUL_S_DOCUMENTATION: |-
   <b>Format:</b>
   div.s fd, fs, ft
 
-  | COP1      fmt      0      fs      fd      MUL   |
-  |010001    10000   00000                   000010 |
-  |  6         5       5      5       5        6    |
+  | COP1      fmt      ft      fs      fd      MUL   |
+  |010001    10000                            000010 |
+  |  6         5       5       5       5        6    |
 
 
   <b>Description:</b>
@@ -3185,6 +3193,65 @@ INSTRUCTION_ORI_DOCUMENTATION: |-
 
   <b>Exceptions:</b>
   None
+INSTRUCTION_RSQRT_D_DOCUMENTATION: |-
+  <u>Double precision reciprocal square root approximation</u>
+
+  <b>Format:</b>
+  rsqrt.d fd, fs
+
+  | COP1      fmt      0      fs      fd     RSQRT  |
+  |010001    10001   00000                   010110 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ 1.0 / sqrt(FPR[fs])
+
+  The reciprocal of the positive square root of the value in FPR <i>fs</i> is approximated. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+  The operands and result are values in floating point.
+
+  <b>Restrictions:</b>
+  Operands must be values in floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ float
+  StoreFPR(fd, fmt, 1.0 / SquareRoot(ValueFPR(fs, fmt)))
+
+  <b>Exceptions:</b>
+  None
+  
+  <b>Floating point exceptions</b>
+  Invalid operation, Division-by-zero
+INSTRUCTION_RSQRT_S_DOCUMENTATION: |-
+  <u>Reciprocal square root approximation</u>
+
+  <b>Format:</b>
+  rsqrt.s fd, fs
+
+  | COP1      fmt      0      fs      fd     RSQRT  |
+  |010001    10000   00000                   010110 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ 1.0 / sqrt(FPR[fs])
+
+  The reciprocal of the positive square root of the value in FPR <i>fs</i> is approximated. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+  The operands and result are values in double precision floating point.
+
+  <b>Restrictions:</b>
+  The fields <i>fs</i>, and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+  Operands must be values in double precision floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ double
+  StoreFPR(fd, fmt, 1.0 / SquareRoot(ValueFPR(fs, fmt)))
+
+  <b>Exceptions:</b>
+  None
+  
+  <b>Floating point exceptions</b>
+  Invalid operation, Division-by-zero
 INSTRUCTION_SB_DOCUMENTATION: |-
   <u>Save byte</u>
 

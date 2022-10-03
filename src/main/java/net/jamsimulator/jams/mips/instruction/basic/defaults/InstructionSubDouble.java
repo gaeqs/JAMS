@@ -148,7 +148,7 @@ public class InstructionSubDouble extends BasicRFPUInstruction<InstructionSubDou
         public void execute() {
             double target = doubleCOP1(instruction.getTargetRegister());
             double source = doubleCOP1(instruction.getSourceRegister());
-            doubleToInts(source + target);
+            doubleToInts(source - target);
             forwardCOP1(instruction.getDestinationRegister(), lowResult);
             forwardCOP1(instruction.getDestinationRegister() + 1, highResult);
         }
