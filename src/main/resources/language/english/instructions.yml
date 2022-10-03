@@ -3215,7 +3215,7 @@ INSTRUCTION_RSQRT_D_DOCUMENTATION: |-
 
   <b>Operation:</b>
   fmt ⇽ float
-  StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
+  StoreFPR(fd, fmt, 1.0 / SquareRoot(ValueFPR(fs, fmt)))
 
   <b>Exceptions:</b>
   None
@@ -3245,7 +3245,7 @@ INSTRUCTION_RSQRT_S_DOCUMENTATION: |-
 
   <b>Operation:</b>
   fmt ⇽ double
-  StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
+  StoreFPR(fd, fmt, 1.0 / SquareRoot(ValueFPR(fs, fmt)))
 
   <b>Exceptions:</b>
   None
