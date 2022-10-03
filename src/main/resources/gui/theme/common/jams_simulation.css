@@ -169,6 +169,11 @@
     -fx-font-size: 13px;
 }
 
+.register-table-wrapper {
+    -fx-spacing: 5px;
+    -fx-fill-width: true;
+}
+
 /*LAB*/
 .segment {
     -fx-fill: -theme-background-pressed;
