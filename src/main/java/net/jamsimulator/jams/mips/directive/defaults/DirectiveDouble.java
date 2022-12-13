@@ -63,8 +63,8 @@ public class DirectiveDouble extends Directive {
             int low = (int) l;
             int high = (int) (l >> 32);
 
-            line.getAssembler().getMemory().setWord(data.getCurrent(), low);
-            line.getAssembler().getMemory().setWord(data.getCurrent() + 4, high);
+            line.getAssembler().getMemory().setWord(data.getCurrent(), low, false, true, true);
+            line.getAssembler().getMemory().setWord(data.getCurrent() + 4, high, false, true, true);
             data.addCurrent(8);
         }
         return OptionalInt.of(start);

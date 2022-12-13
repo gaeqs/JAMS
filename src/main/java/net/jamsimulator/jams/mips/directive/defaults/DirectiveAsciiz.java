@@ -56,10 +56,10 @@ public class DirectiveAsciiz extends Directive {
                 throw new AssemblerException(line.getIndex(), "." + NAME + " parameter '" + s + "' is not a string.");
             s = StringUtils.parseEscapeCharacters(s.substring(1, s.length() - 1));
             for (char c : s.toCharArray()) {
-                line.getAssembler().getMemory().setByte(data.getCurrent(), (byte) c);
+                line.getAssembler().getMemory().setByte(data.getCurrent(), (byte) c, false, true, true);
                 data.addCurrent(1);
             }
-            line.getAssembler().getMemory().setByte(data.getCurrent(), (byte) 0);
+            line.getAssembler().getMemory().setByte(data.getCurrent(), (byte) 0, false, true, true);
             data.addCurrent(1);
         }
         return OptionalInt.of(start);

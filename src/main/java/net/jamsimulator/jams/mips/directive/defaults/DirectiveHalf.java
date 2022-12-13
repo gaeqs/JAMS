@@ -56,7 +56,8 @@ public class DirectiveHalf extends Directive {
         data.align(1);
         int start = data.getCurrent();
         for (String parameter : parameters) {
-            line.getAssembler().getMemory().setWord(data.getCurrent(), Short.toUnsignedInt(Short.parseShort(parameter)));
+            line.getAssembler().getMemory().setWord(data.getCurrent(),
+                    Short.toUnsignedInt(Short.parseShort(parameter)), false, true, true);
             data.addCurrent(2);
         }
         return OptionalInt.of(start);

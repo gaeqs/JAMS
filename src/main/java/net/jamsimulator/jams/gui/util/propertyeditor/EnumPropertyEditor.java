@@ -49,7 +49,7 @@ public class EnumPropertyEditor extends ComboBox<Enum<?>> implements PropertyEdi
                 getItems().add(val);
             }
 
-            getSelectionModel().select(values[0]);
+            getSelectionModel().select(value);
 
             setConverter(new StringConverter<>() {
                 @Override
@@ -64,6 +64,7 @@ public class EnumPropertyEditor extends ComboBox<Enum<?>> implements PropertyEdi
             });
 
             setOnAction(event -> {
+                System.out.println(getSelectionModel().getSelectedItem());
                 property.setValue(getSelectionModel().getSelectedItem());
                 listener.accept(getSelectionModel().getSelectedItem());
             });

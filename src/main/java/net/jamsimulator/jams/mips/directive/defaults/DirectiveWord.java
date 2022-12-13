@@ -67,9 +67,9 @@ public class DirectiveWord extends Directive {
                 }
 
                 label.get().addReference(new LabelReference(address, line.getFile().getName(), line.getIndex()));
-                memory.setWord(address, label.get().getAddress());
+                memory.setWord(address, label.get().getAddress(), false, true, true);
             } else {
-                memory.setWord(address, optional.get());
+                memory.setWord(address, optional.get(), false, true, true);
             }
             address += 4;
         }

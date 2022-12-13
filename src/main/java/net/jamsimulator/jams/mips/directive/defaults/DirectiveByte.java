@@ -69,7 +69,8 @@ public class DirectiveByte extends Directive {
         int start = data.getCurrent();
 
         for (String finalParameter : parameters) {
-            line.getAssembler().getMemory().setByte(data.getCurrent(), (byte) NumericUtils.decodeInteger(finalParameter));
+            line.getAssembler().getMemory().setByte(data.getCurrent(),
+                    (byte) NumericUtils.decodeInteger(finalParameter), false, true, true);
             data.addCurrent(1);
         }
         return OptionalInt.of(start);

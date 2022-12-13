@@ -57,7 +57,8 @@ public class DirectiveFloat extends Directive {
         data.align(2);
         int start = data.getCurrent();
         for (String parameter : parameters) {
-            line.getAssembler().getMemory().setWord(data.getCurrent(), Float.floatToIntBits(Float.parseFloat(parameter)));
+            line.getAssembler().getMemory().setWord(data.getCurrent(),
+                    Float.floatToIntBits(Float.parseFloat(parameter)), false, true, true);
             data.addCurrent(4);
         }
         return OptionalInt.of(start);
