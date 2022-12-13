@@ -157,6 +157,9 @@ class MIPS32DefaultInstructions {
         basicInstructions.add(new InstructionOr());
         basicInstructions.add(new InstructionOri());
 
+        basicInstructions.add(new InstructionRsqrtSingle());
+        basicInstructions.add(new InstructionRsqrtDouble());
+
         basicInstructions.add(new InstructionSll());
         basicInstructions.add(new InstructionSllv());
 

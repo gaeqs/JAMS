@@ -40,7 +40,7 @@ def bundleLibs = false
 def winConsole = false
 
 group projectGroup
-version '0.4-BETA'
+version '0.5-BETA'
 
 repositories {
     mavenCentral()
@@ -66,7 +66,7 @@ application {
 dependencies {
     implementation group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
     implementation group: 'org.json', name: 'json', version: '20211205'
-    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.29'
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.32'
     implementation 'org.jetbrains:annotations:22.0.0'
 
     implementation 'com.github.gaeqs:RichTextFX:fcdb504a'
@@ -85,7 +85,7 @@ dependencies {
 
     jarLib group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
     jarLib group: 'org.json', name: 'json', version: '20211205'
-    jarLib group: 'org.yaml', name: 'snakeyaml', version: '1.29'
+    jarLib group: 'org.yaml', name: 'snakeyaml', version: '1.32'
 
 
     jarLib 'com.github.gaeqs:RichTextFX:fcdb504a'

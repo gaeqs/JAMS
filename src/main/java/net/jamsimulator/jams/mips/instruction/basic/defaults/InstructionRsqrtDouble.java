@@ -33,32 +33,30 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.NumericMultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
-import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.NumericUtils;
 
-public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDouble.Assembled> {
+public class InstructionRsqrtDouble extends BasicRFPUInstruction<InstructionRsqrtDouble.Assembled> {
 
-    public static final String MNEMONIC = "div.d";
-    public static final ALUType ALU_TYPE = ALUType.FLOAT_DIVISION;
+    public static final String MNEMONIC = "rsqrt.d";
+    public static final ALUType ALU_TYPE = ALUType.FLOAT_ADDTION;
     public static final int OPERATION_CODE = 0b010001;
     public static final int FMT = 0b10001;
-    public static final int FUNCTION_CODE = 0b000011;
+    public static final int FUNCTION_CODE = 0b010110;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
-            ParameterType.EVEN_FLOAT_REGISTER,
             ParameterType.EVEN_FLOAT_REGISTER,
             ParameterType.EVEN_FLOAT_REGISTER
     );
 
-    public InstructionDivDouble() {
+    public InstructionRsqrtDouble() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE, FMT);
-
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
         addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, MultiCycle::new);
@@ -66,13 +64,7 @@ public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDou
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(
-                parameters[2].getRegister(),
-                parameters[1].getRegister(),
-                parameters[0].getRegister(),
-                origin,
-                this
-        );
+        return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(), origin, this);
     }
 
     @Override
@@ -82,12 +74,12 @@ public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDou
 
     public static class Assembled extends AssembledRFPUInstruction {
 
-        public Assembled(int targetRegister, int sourceRegister, int destinationRegister,
+        public Assembled(int sourceRegister, int destinationRegister,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
             super(
                     OPERATION_CODE,
                     FMT,
-                    targetRegister,
+                    0,
                     sourceRegister,
                     destinationRegister,
                     FUNCTION_CODE,
@@ -102,9 +94,7 @@ public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDou
 
         @Override
         public String parametersToString(String registersStart) {
-            return registersStart + getDestinationRegister()
-                    + ", " + registersStart + getSourceRegister()
-                    + ", " + registersStart + getTargetRegister();
+            return registersStart + getDestinationRegister() + ", " + registersStart + getSourceRegister();
         }
     }
 
@@ -116,19 +106,18 @@ public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDou
 
         @Override
         public void execute() {
-            int t = instruction.getTargetRegister();
             int s = instruction.getSourceRegister();
             int d = instruction.getDestinationRegister();
-            checkEvenRegister(t, s, d);
+            checkEvenRegister(s, d);
 
-            double target = doubleCOP1(t);
-            if(target == 0.0f) error(InterruptCause.FLOATING_POINT_EXCEPTION);
-
-            NumericUtils.doubleToInts(
-                    doubleCOP1(s) / target,
-                    registerCOP1(d),
-                    registerCOP1(d + 1)
-            );
+            double threehalfs = 1.5;
+            double number = doubleCOP1(s);
+            double x2 = number * 0.5;
+            long i = Double.doubleToLongBits(number); // evil floating point bit hack
+            i = 0x5FE6EB50C7B537A9L - (i >> 1); // what the fuck?
+            double y = Double.longBitsToDouble(i);
+            y = y * (threehalfs - (x2 * y * y));
+            NumericUtils.doubleToInts(y, registerCOP1(d), registerCOP1(d + 1));
         }
     }
 
@@ -140,24 +129,24 @@ public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDou
 
         @Override
         public void decode() {
-            int t = instruction.getTargetRegister();
             int s = instruction.getSourceRegister();
             int d = instruction.getDestinationRegister();
-            checkEvenRegister(t, s, d);
-
-            requiresCOP1Double(t, false);
+            checkEvenRegister(s, d);
             requiresCOP1Double(s, false);
             lockCOP1Double(d);
         }
 
         @Override
         public void execute() {
-            double target = doubleCOP1(instruction.getTargetRegister());
-            double source = doubleCOP1(instruction.getSourceRegister());
+            double threehalfs = 1.5;
+            double number = doubleCOP1(instruction.getSourceRegister());
+            double x2 = number * 0.5;
+            long i = Double.doubleToLongBits(number); // evil floating point bit hack
+            i = 0x5FE6EB50C7B537A9L - (i >> 1); // what the fuck?
+            double y = Double.longBitsToDouble(i);
+            y = y * (threehalfs - (x2 * y * y));
 
-            if(target == 0.0f) error(InterruptCause.FLOATING_POINT_EXCEPTION);
-
-            doubleToInts(source / target);
+            doubleToInts(y);
             forwardCOP1(instruction.getDestinationRegister(), lowResult);
             forwardCOP1(instruction.getDestinationRegister() + 1, highResult);
         }

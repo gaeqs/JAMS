@@ -35,6 +35,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -113,8 +114,10 @@ public class InstructionDivSingle extends BasicRFPUInstruction<InstructionDivSin
 
         @Override
         public void execute() {
+            float target = floatCOP1(instruction.getTargetRegister());
+            if (target == 0.0) error(InterruptCause.FLOATING_POINT_EXCEPTION);
             registerCOP1(instruction.getDestinationRegister()).setValue(
-                    floatCOP1(instruction.getSourceRegister()) / floatCOP1(instruction.getTargetRegister())
+                    floatCOP1(instruction.getSourceRegister()) / target
             );
         }
     }
@@ -136,7 +139,9 @@ public class InstructionDivSingle extends BasicRFPUInstruction<InstructionDivSin
 
         @Override
         public void execute() {
-            result = floatCOP1(instruction.getSourceRegister()) / floatCOP1(instruction.getTargetRegister());
+            float target = floatCOP1(instruction.getTargetRegister());
+            if (target == 0.0) error(InterruptCause.FLOATING_POINT_EXCEPTION);
+            result = floatCOP1(instruction.getSourceRegister()) / target;
             forwardCOP1(instruction.getDestinationRegister(), result);
         }
 

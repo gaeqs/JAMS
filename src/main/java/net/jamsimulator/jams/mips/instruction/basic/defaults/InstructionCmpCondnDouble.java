@@ -167,23 +167,8 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
             double ft = doubleCOP1(t);
             double fs = doubleCOP1(s);
 
-            boolean less, equal, unordered;
+            boolean condition = checkCondition(fs, ft, instruction);
 
-            if (Double.isNaN(fs) || Double.isNaN(ft)) {
-                less = false;
-                equal = false;
-                unordered = true;
-                if (instruction.cond3()) {
-                    throw new MIPSInterruptException(InterruptCause.FLOATING_POINT_EXCEPTION);
-                }
-            } else {
-                less = fs < ft;
-                equal = fs == ft;
-                unordered = false;
-            }
-
-            boolean condition = instruction.cond4() ^ ((instruction.cond2() && less)
-                    || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
             registerCOP1(instruction.getDestinationRegister()).setValue(condition ? 0xFFFFFFFF : 0);
             registerCOP1(instruction.getDestinationRegister() + 1).setValue(condition ? 0xFFFFFFFF : 0);
         }
@@ -213,23 +198,7 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
             double ft = doubleCOP1(instruction.getTargetRegister());
             double fs = doubleCOP1(instruction.getSourceRegister());
 
-            boolean less, equal, unordered;
-
-            if (Double.isNaN(fs) || Double.isNaN(ft)) {
-                less = false;
-                equal = false;
-                unordered = true;
-                if (instruction.cond3()) {
-                    throw new MIPSInterruptException(InterruptCause.FLOATING_POINT_EXCEPTION);
-                }
-            } else {
-                less = fs < ft;
-                equal = fs == ft;
-                unordered = false;
-            }
-
-            boolean condition = instruction.cond4() ^ ((instruction.cond2() && less)
-                    || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
+            boolean condition = checkCondition(fs, ft, instruction);
             result = condition ? 0xFFFFFFFF : 0;
 
             forwardCOP1(instruction.getDestinationRegister(), result);
@@ -245,5 +214,25 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
             setAndUnlockCOP1(instruction.getDestinationRegister(), result);
             setAndUnlockCOP1(instruction.getDestinationRegister() + 1, result);
         }
+    }
+
+    private static boolean checkCondition(double fs, double ft, InstructionCmpCondnDouble.Assembled instruction) {
+        boolean less, equal, unordered;
+
+        if (Double.isNaN(fs) || Double.isNaN(ft)) {
+            less = false;
+            equal = false;
+            unordered = true;
+            if (instruction.cond3()) {
+                throw new MIPSInterruptException(InterruptCause.FLOATING_POINT_EXCEPTION);
+            }
+        } else {
+            less = fs < ft;
+            equal = fs == ft;
+            unordered = false;
+        }
+
+        return instruction.cond4() ^ ((instruction.cond2() && less)
+                || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
     }
 }
