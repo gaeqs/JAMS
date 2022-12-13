@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.util.propertyeditor;
 import javafx.beans.property.Property;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 
@@ -43,7 +43,7 @@ public class MemoryBuilderPropertyEditor extends ComboBox<MemoryBuilder> impleme
     public MemoryBuilderPropertyEditor(Property<MemoryBuilder> property) {
         this.property = property;
 
-        setConverter(ValueConverters.getByTypeUnsafe(MemoryBuilder.class));
+        setConverter(Manager.get(ValueConverterManager.class).getByTypeUnsafe(MemoryBuilder.class));
         getItems().addAll(Manager.of(MemoryBuilder.class));
         getSelectionModel().select(property.getValue());
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> {

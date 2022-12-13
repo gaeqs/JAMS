@@ -32,7 +32,8 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.util.value.ValueEditor;
-import net.jamsimulator.jams.gui.util.value.ValueEditors;
+import net.jamsimulator.jams.gui.util.value.ValueEditorBuilderManager;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 
 import java.util.ArrayList;
@@ -154,7 +155,7 @@ public class MIPSConfigurationCacheContents extends Explorer {
 
         @Override
         protected void loadElements() {
-            cacheEditor = ValueEditors.getByTypeUnsafe(CacheBuilder.class).build();
+            cacheEditor = Manager.get(ValueEditorBuilderManager.class).getByTypeUnsafe(CacheBuilder.class).build();
             var cacheNode = cacheEditor.getAsNode();
 
             label = new Label();

@@ -24,14 +24,15 @@
 
 package net.jamsimulator.jams.gui.util.value;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.util.converter.FloatValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.function.Consumer;
 
@@ -102,11 +103,26 @@ public class FloatValueEditor extends TextField implements ValueEditor<Float> {
 
     @Override
     public ValueConverter<Float> getLinkedConverter() {
-        return ValueConverters.getByTypeUnsafe(Float.class);
+        return Manager.get(ValueConverterManager.class).getByTypeUnsafe(Float.class);
     }
 
 
     public static class Builder implements ValueEditor.Builder<Float> {
+
+        @Override
+        public Class<?> getManagedType() {
+            return Float.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
 
         @Override
         public ValueEditor<Float> build() {

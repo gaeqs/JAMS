@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.util.Optional;
@@ -45,5 +46,15 @@ public class IntegerValueConverter extends ValueConverter<Integer> {
     @Override
     public Class<?> conversionClass() {
         return Integer.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }

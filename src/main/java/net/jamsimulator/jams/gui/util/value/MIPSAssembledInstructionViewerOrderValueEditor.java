@@ -34,10 +34,12 @@ import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledInstruc
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledInstructionViewerOrder;
 import net.jamsimulator.jams.gui.util.converter.MIPSAssembledInstructionViewerOrderValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.function.Consumer;
 
@@ -127,10 +129,25 @@ public class MIPSAssembledInstructionViewerOrderValueEditor extends VBox impleme
 
     @Override
     public ValueConverter<MIPSAssembledInstructionViewerOrder> getLinkedConverter() {
-        return ValueConverters.getByTypeUnsafe(MIPSAssembledInstructionViewerOrder.class);
+        return Manager.get(ValueConverterManager.class).getByTypeUnsafe(MIPSAssembledInstructionViewerOrder.class);
     }
 
     public static class Builder implements ValueEditor.Builder<MIPSAssembledInstructionViewerOrder> {
+
+        @Override
+        public Class<?> getManagedType() {
+            return MIPSAssembledInstructionViewerOrder.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
 
         @Override
         public ValueEditor<MIPSAssembledInstructionViewerOrder> build() {

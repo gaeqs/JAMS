@@ -24,21 +24,22 @@
 
 package net.jamsimulator.jams.gui.util.value;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.util.converter.BooleanValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.function.Consumer;
 
 public class BooleanValueEditor extends CheckBox implements ValueEditor<Boolean> {
 
     public static final String NAME = BooleanValueConverter.NAME;
-    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" +NAME;
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" + NAME;
 
     private Consumer<Boolean> listener = b -> {
     };
@@ -79,11 +80,26 @@ public class BooleanValueEditor extends CheckBox implements ValueEditor<Boolean>
 
     @Override
     public ValueConverter<Boolean> getLinkedConverter() {
-        return ValueConverters.getByTypeUnsafe(Boolean.class);
+        return Manager.get(ValueConverterManager.class).getByTypeUnsafe(Boolean.class);
     }
 
 
     public static class Builder implements ValueEditor.Builder<Boolean> {
+
+        @Override
+        public Class<?> getManagedType() {
+            return Boolean.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
 
         @Override
         public ValueEditor<Boolean> build() {

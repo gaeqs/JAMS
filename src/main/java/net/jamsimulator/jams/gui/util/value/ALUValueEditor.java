@@ -31,6 +31,7 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.util.converter.ALUValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.alu.ALU;
 import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 
@@ -106,6 +107,21 @@ public class ALUValueEditor extends HBox implements ValueEditor<ALU> {
     }
 
     public static class Builder implements ValueEditor.Builder<ALU> {
+
+        @Override
+        public Class<?> getManagedType() {
+            return ALU.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
 
         @Override
         public ValueEditor<ALU> build() {

@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.util.value;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -32,8 +31,9 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.ActionValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.mips.architecture.Architecture;
@@ -51,7 +51,7 @@ public class ArchitectureValueEditor extends ComboBox<Architecture> implements V
     public ArchitectureValueEditor() {
         getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         var manager = Manager.ofD(Architecture.class);
-        setConverter(ValueConverters.getByTypeUnsafe(Architecture.class));
+        setConverter(Manager.get(ValueConverterManager.class).getByTypeUnsafe(Architecture.class));
         getItems().addAll(manager);
         getSelectionModel().select(manager.getDefault());
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
@@ -88,7 +88,7 @@ public class ArchitectureValueEditor extends ComboBox<Architecture> implements V
 
     @Override
     public ValueConverter<Architecture> getLinkedConverter() {
-        return ValueConverters.getByTypeUnsafe(Architecture.class);
+        return Manager.get(ValueConverterManager.class).getByTypeUnsafe(Architecture.class);
     }
 
     @Listener
@@ -104,6 +104,21 @@ public class ArchitectureValueEditor extends ComboBox<Architecture> implements V
     }
 
     public static class Builder implements ValueEditor.Builder<Architecture> {
+
+        @Override
+        public Class<?> getManagedType() {
+            return Architecture.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
 
         @Override
         public ValueEditor<Architecture> build() {

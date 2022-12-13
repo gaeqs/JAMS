@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.util.converter;
 
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 
 import java.util.Optional;
@@ -46,5 +47,15 @@ public class AssemblerBuilderValueConverter extends ValueConverter<AssemblerBuil
     @Override
     public Class<?> conversionClass() {
         return AssemblerBuilder.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }

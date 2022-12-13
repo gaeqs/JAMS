@@ -27,7 +27,8 @@ package net.jamsimulator.jams.configuration;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.utils.CollectionUtils;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -186,7 +187,7 @@ public class Configuration {
      * @return the value, if present and matches the type.
      */
     public <T> Optional<T> getAndConvert(String key, String converter) {
-        var c = ValueConverters.getByName(converter);
+        var c = Manager.of(ValueConverter.class).get(converter);
         try {
             if (c.isEmpty()) {
                 Optional<Object> optional = get(key);
@@ -219,7 +220,7 @@ public class Configuration {
      * @return the value, if present and matches the type.
      */
     public <T> Optional<T> getAndConvert(String key, Class<?> type) {
-        var c = ValueConverters.getByType(type);
+        var c = Manager.get(ValueConverterManager.class).getByType(type);
         try {
             if (c.isEmpty()) {
                 System.err.println("Couldn't find converter for type " + type + "!");
@@ -521,7 +522,7 @@ public class Configuration {
             return true;
         }
 
-        var c = ValueConverters.getByType(converter);
+        var c = Manager.get(ValueConverterManager.class).getByType(converter);
         if (c.isEmpty() || !c.get().conversionClass().isInstance(value)) {
             if (isObjectSeondaryNativelySupported(value)) {
                 set(key, value);

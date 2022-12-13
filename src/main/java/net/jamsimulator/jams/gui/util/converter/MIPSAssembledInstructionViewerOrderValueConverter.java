@@ -24,9 +24,9 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
-import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledInstructionViewerElement;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledInstructionViewerOrder;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.Optional;
 
@@ -62,6 +62,16 @@ public class MIPSAssembledInstructionViewerOrderValueConverter extends ValueConv
 
     @Override
     public Class<?> conversionClass() {
-        return Action.class;
+        return MIPSAssembledInstructionViewerOrder.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }

@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
+
 import java.util.Optional;
 
 public class FloatValueConverter extends ValueConverter<Float> {
@@ -47,5 +49,15 @@ public class FloatValueConverter extends ValueConverter<Float> {
     @Override
     public Class<?> conversionClass() {
         return Float.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }

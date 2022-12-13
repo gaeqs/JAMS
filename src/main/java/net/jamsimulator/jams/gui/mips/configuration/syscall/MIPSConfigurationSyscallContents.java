@@ -31,7 +31,8 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.util.value.ValueEditor;
-import net.jamsimulator.jams.gui.util.value.ValueEditors;
+import net.jamsimulator.jams.gui.util.value.ValueEditorBuilderManager;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.ArrayList;
@@ -162,8 +163,9 @@ public class MIPSConfigurationSyscallContents extends Explorer {
 
         @Override
         protected void loadElements() {
-            idEditor = ValueEditors.getByTypeUnsafe(int.class).build();
-            syscallEditor = ValueEditors.getByTypeUnsafe(SyscallExecutionBuilder.class).build();
+            var manager = Manager.get(ValueEditorBuilderManager.class);
+            idEditor = manager.getByTypeUnsafe(Integer.class).build();
+            syscallEditor = manager.getByTypeUnsafe(SyscallExecutionBuilder.class).build();
             var idNode = idEditor.getAsNode();
             var syscallNode = syscallEditor.getAsNode();
 

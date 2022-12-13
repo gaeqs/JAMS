@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.util.converter;
 
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.theme.Theme;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.Optional;
 
@@ -46,5 +47,15 @@ public class ThemeValueConverter extends ValueConverter<Theme> {
     @Override
     public Class<?> conversionClass() {
         return Theme.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }

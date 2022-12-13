@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.util.value;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -32,9 +31,10 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.LanguageValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 
@@ -50,7 +50,7 @@ public class LanguageValueEditor extends ComboBox<Language> implements ValueEdit
 
     public LanguageValueEditor() {
         getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
-        setConverter(ValueConverters.getByTypeUnsafe(Language.class));
+        setConverter(Manager.get(ValueConverterManager.class).getByTypeUnsafe(Language.class));
         getItems().addAll(Manager.of(Language.class));
         getSelectionModel().select(Manager.ofS(Language.class).getSelected());
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
@@ -99,10 +99,25 @@ public class LanguageValueEditor extends ComboBox<Language> implements ValueEdit
 
     @Override
     public ValueConverter<Language> getLinkedConverter() {
-        return ValueConverters.getByTypeUnsafe(Language.class);
+        return Manager.get(ValueConverterManager.class).getByTypeUnsafe(Language.class);
     }
 
     public static class Builder implements ValueEditor.Builder<Language> {
+
+        @Override
+        public Class<?> getManagedType() {
+            return Language.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
 
         @Override
         public ValueEditor<Language> build() {

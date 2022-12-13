@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.util.value;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -32,15 +31,14 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.SyscallExecutionBuilderValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.language.wrapper.SyscallLanguageListCell;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
-import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionHandler;
 import net.jamsimulator.jams.utils.representation.NumericStringComparator;
@@ -123,7 +121,7 @@ public class SyscallExecutionBuilderValueEditor extends ComboBox<SyscallExecutio
     @Override
     public ValueConverter<SyscallExecutionBuilder<?>> getLinkedConverter() {
         return (ValueConverter<SyscallExecutionBuilder<?>>)
-                (Object) ValueConverters.getByTypeUnsafe(SyscallExecutionBuilder.class);
+                (Object) Manager.get(ValueConverterManager.class).getByTypeUnsafe(SyscallExecutionBuilder.class);
     }
 
     @Listener
@@ -142,6 +140,21 @@ public class SyscallExecutionBuilderValueEditor extends ComboBox<SyscallExecutio
     public static class Builder implements ValueEditor.Builder<SyscallExecutionBuilder<?>> {
 
         @Override
+        public Class<?> getManagedType() {
+            return SyscallExecutionBuilder.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
+
+        @Override
         public ValueEditor<SyscallExecutionBuilder<?>> build() {
             return new SyscallExecutionBuilderValueEditor();
         }
@@ -153,7 +166,7 @@ public class SyscallExecutionBuilderValueEditor extends ComboBox<SyscallExecutio
 
         @Listener(priority = Integer.MAX_VALUE)
         public void onRefresh(LanguageRefreshEvent event) {
-           sort();
+            sort();
         }
 
         @Listener(priority = Integer.MAX_VALUE)

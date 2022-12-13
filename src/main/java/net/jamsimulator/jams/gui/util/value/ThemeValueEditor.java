@@ -33,7 +33,9 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.gui.util.converter.ThemeValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 
@@ -49,7 +51,7 @@ public class ThemeValueEditor extends ComboBox<Theme> implements ValueEditor<The
 
     public ThemeValueEditor() {
         getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
-        setConverter(ValueConverters.getByTypeUnsafe(Theme.class));
+        setConverter(Manager.get(ValueConverterManager.class).getByTypeUnsafe(Theme.class));
         getItems().addAll(JamsApplication.getThemeManager());
         getSelectionModel().select(JamsApplication.getThemeManager().getSelected());
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
@@ -86,7 +88,7 @@ public class ThemeValueEditor extends ComboBox<Theme> implements ValueEditor<The
 
     @Override
     public ValueConverter<Theme> getLinkedConverter() {
-        return ValueConverters.getByTypeUnsafe(Theme.class);
+        return Manager.get(ValueConverterManager.class).getByTypeUnsafe(Theme.class);
     }
 
     @Listener
@@ -104,9 +106,23 @@ public class ThemeValueEditor extends ComboBox<Theme> implements ValueEditor<The
     public static class Builder implements ValueEditor.Builder<Theme> {
 
         @Override
+        public Class<?> getManagedType() {
+            return Theme.class;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
+
+        @Override
         public ValueEditor<Theme> build() {
             return new ThemeValueEditor();
         }
-
     }
 }

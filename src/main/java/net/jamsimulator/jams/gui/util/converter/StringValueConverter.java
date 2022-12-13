@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
+
 import java.util.Optional;
 
 public class StringValueConverter extends ValueConverter<String> {
@@ -43,5 +45,15 @@ public class StringValueConverter extends ValueConverter<String> {
     @Override
     public Class<?> conversionClass() {
         return String.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }

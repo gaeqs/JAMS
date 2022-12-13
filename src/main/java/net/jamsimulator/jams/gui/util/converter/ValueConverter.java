@@ -26,10 +26,11 @@ package net.jamsimulator.jams.gui.util.converter;
 
 import javafx.util.StringConverter;
 import net.jamsimulator.jams.configuration.Configuration;
+import net.jamsimulator.jams.manager.ManagerResource;
 
 import java.util.Optional;
 
-public abstract class ValueConverter<E> extends StringConverter<E> {
+public abstract class ValueConverter<E> extends StringConverter<E> implements ManagerResource {
 
     public void save(Configuration configuration, String node, Object value) {
         if (Configuration.isObjectNativelySupported(value)) {

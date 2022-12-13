@@ -24,13 +24,14 @@
 
 package net.jamsimulator.jams.gui.util.value;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.function.Consumer;
 
@@ -95,10 +96,25 @@ public class Pow2ValueEditor extends ComboBox<String> implements ValueEditor<Int
 
     @Override
     public ValueConverter<Integer> getLinkedConverter() {
-        return ValueConverters.getByTypeUnsafe(Integer.class);
+        return Manager.get(ValueConverterManager.class).getByTypeUnsafe(Integer.class);
     }
 
     public static class Builder implements ValueEditor.Builder<Integer> {
+
+        @Override
+        public Class<?> getManagedType() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ResourceProvider getResourceProvider() {
+            return ResourceProvider.JAMS;
+        }
 
         @Override
         public ValueEditor<Integer> build() {

@@ -28,10 +28,11 @@ import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.configuration.RegionDisplay;
 import net.jamsimulator.jams.gui.util.value.ValueEditor;
-import net.jamsimulator.jams.gui.util.value.ValueEditors;
+import net.jamsimulator.jams.gui.util.value.ValueEditorBuilderManager;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationNodePreset;
@@ -99,7 +100,7 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
             getStyleClass().add(REPRESENTATION_STYLE_CLASS);
             this.preset = preset;
 
-            editor = ValueEditors.getByTypeUnsafe(preset.getType()).build();
+            editor = Manager.get(ValueEditorBuilderManager.class).getByTypeUnsafe(preset.getType()).build();
             var languageNode = new LanguageLabel(preset.getLanguageNode());
             languageNode.setTooltip(new LanguageTooltip(preset.getLanguageNode() + "_TOOLTIP"));
             node = editor.buildConfigNode(languageNode);

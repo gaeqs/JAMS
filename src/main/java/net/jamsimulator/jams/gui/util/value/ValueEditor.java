@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.util.value;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
+import net.jamsimulator.jams.manager.ManagerResource;
 
 import java.util.function.Consumer;
 
@@ -50,7 +51,9 @@ public interface ValueEditor<E> {
 
     ValueConverter<E> getLinkedConverter();
 
-    interface Builder<E> {
+    interface Builder<E> extends ManagerResource {
+
+        Class<?> getManagedType();
 
         ValueEditor<E> build();
 

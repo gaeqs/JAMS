@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.util.propertyeditor;
 import javafx.beans.property.Property;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
-import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.converter.ValueConverterManager;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 
@@ -43,7 +43,7 @@ public class RegistersBuilderPropertyEditor extends ComboBox<RegistersBuilder> i
     public RegistersBuilderPropertyEditor(Property<RegistersBuilder> property) {
         this.property = property;
 
-        setConverter(ValueConverters.getByTypeUnsafe(RegistersBuilder.class));
+        setConverter(Manager.get(ValueConverterManager.class).getByTypeUnsafe(RegistersBuilder.class));
         getItems().addAll(Manager.of(RegistersBuilder.class));
         getSelectionModel().select(property.getValue());
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> {

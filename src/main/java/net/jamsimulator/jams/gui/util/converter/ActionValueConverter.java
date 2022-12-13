@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.util.converter;
 
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.Optional;
 
@@ -46,5 +47,15 @@ public class ActionValueConverter extends ValueConverter<Action> {
     @Override
     public Class<?> conversionClass() {
         return Action.class;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 }
