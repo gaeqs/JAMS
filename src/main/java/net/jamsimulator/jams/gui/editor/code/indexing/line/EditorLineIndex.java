@@ -196,9 +196,9 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         if (text == null) text = "";
         checkThread(true);
 
-        var oldGlobalReferences = globalIdentifiers == null
-                ? Stream.<EditorElementReference<?>>empty() :
-                referencedElements.keySet().stream().filter(it -> globalIdentifiers.contains(it.getIdentifier()));
+        var oldGlobalReferences = referencedElements.entrySet().stream().filter(it ->
+                        it.getValue().stream().anyMatch(r -> r.getReferencedScope() == ElementScope.GLOBAL))
+                .map(Map.Entry::getKey);
 
         try {
             getHintBar().ifPresent(EditorHintBar::clear);
@@ -258,8 +258,9 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         lines.forEach(EditorIndexedLine::recalculateInspectionLevel);
 
         if (globalIndex != null) {
-            var newGlobalReferences = referencedElements.keySet().stream().filter(it ->
-                    globalIdentifiers.contains(it.getIdentifier()));
+            var newGlobalReferences = referencedElements.entrySet().stream().filter(it ->
+                            it.getValue().stream().anyMatch(r -> r.getReferencedScope() == ElementScope.GLOBAL))
+                    .map(Map.Entry::getKey);
             var globalUpdates =
                     Stream.concat(oldGlobalReferences, newGlobalReferences).collect(Collectors.toSet());
             globalIndex.inspectElementsWithReferences(globalUpdates, Set.of(this));
@@ -750,7 +751,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                 .collect(Collectors.toSet());
 
         Collection<EditorElementReference<?>> referenced = elements.stream()
-                .map(it -> (EditorElementReference<?>) ((EditorReferencedElement) it).getReference())
+                .map(EditorReferencedElement::getReference)
                 .collect(Collectors.toSet());
 
         // Now we have all references that have been updated and needs refreshing.
@@ -778,7 +779,8 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         // Now let's update the global elements and the marked references:
         getGlobalIndex().ifPresent(global -> {
             var toUpdate = Stream.concat(
-                            referenced.stream().filter(it -> isIdentifierGlobal(it.getIdentifier())),
+                            elements.stream().filter(it -> it.getReferencedScope() == ElementScope.GLOBAL)
+                                    .map(EditorReferencedElement::getReference),
                             localReferences.stream())
                     .collect(Collectors.toSet());
             global.inspectElementsWithReferences(toUpdate, Set.of(this));
