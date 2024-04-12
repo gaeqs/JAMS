@@ -19,7 +19,7 @@ jobs:
       - name: Creating fatjar...
         run: gradle bundle
       - name: Uploading assets...
-        if: ${{ matrix.os != 'macos-latest' }}
+        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'macos-13' }}
         uses: AButler/upload-release-assets@v2.0
         with:
           files: 'build/libs/*'
