@@ -5,14 +5,14 @@ name: JPackage build
 
 on:
   release:
-    branches: [master]
-    types: [published]
+    branches: [ master ]
+    types: [ published ]
 
 jobs:
   jpackage:
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest, macos-13]
+        os: [ windows-latest, ubuntu-latest, macos-latest, macos-13 ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -28,16 +28,25 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         run: tar -cf build/jpackage/JAMS-standalone-windows.zip build/jpackage/JAMS
       - name: Compressing installer (macos)...
-        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'macos-13' }}
+        if: ${{ matrix.os == 'macos-latest' }}
         run: zip -r build/JAMS-macos.zip build/jpackage
       - name: Uploading assets (macos)...
-        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'macos-13' }}
+        if: ${{ matrix.os == 'macos-latest' }}
         uses: AButler/upload-release-assets@v2.0
         with:
           files: 'build/JAMS-macos.zip'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Compressing installer (macos-13)...
+        if: ${{ matrix.os == 'macos-13' }}
+        run: zip -r build/JAMS-macos-intel.zip build/jpackage
+      - name: Uploading assets (macos-12)...
+        if: ${{ matrix.os == 'macos-13' }}
+        uses: AButler/upload-release-assets@v2.0
+        with:
+          files: 'build/JAMS-macos-intel.zip'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}  
       - name: Uploading assets (windows and linux)...
-        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'macos-13' }}
+        if: ${{ matrix.os != 'macos-latest' && matrix.os != 'macos-13' }}
         uses: AButler/upload-release-assets@v2.0
         with:
           files: 'build/jpackage/*'
