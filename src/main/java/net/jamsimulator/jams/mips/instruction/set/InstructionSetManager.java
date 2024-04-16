@@ -47,6 +47,7 @@ public final class InstructionSetManager extends DefaultValuableManager<Instruct
     @Override
     protected void loadDefaultElements() {
         add(new MIPS32r6InstructionSet(ResourceProvider.JAMS));
+        add(new MIPS32r5InstructionSet(ResourceProvider.JAMS));
     }
 
     @Override
