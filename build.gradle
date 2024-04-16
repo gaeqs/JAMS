@@ -25,8 +25,9 @@
 plugins {
     id 'java'
     id 'java-library'
-    id 'org.openjfx.javafxplugin' version '0.0.10'
-    id 'org.beryx.runtime' version '1.12.4'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.23'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'org.beryx.runtime' version '1.13.1'
     id 'maven-publish'
 }
 
@@ -34,7 +35,7 @@ def projectGroup = 'net.jamsimulator'
 def projectId = "JAMS"
 def projectMainClass = "net.jamsimulator.jams.Jams"
 
-def javafxVersion = '18.0.1'
+def javafxVersion = '22'
 def javafxDependencies = ['javafx-base', 'javafx-controls', 'javafx-media', 'javafx-graphics', 'javafx-fxml', 'javafx-swing']
 def bundleLibs = false
 def winConsole = false
@@ -65,8 +66,8 @@ application {
 
 dependencies {
     implementation group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
-    implementation group: 'org.json', name: 'json', version: '20211205'
-    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.32'
+    implementation group: 'org.json', name: 'json', version: '20231013'
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '2.2'
     implementation 'org.jetbrains:annotations:22.0.0'
 
     implementation 'com.github.gaeqs:RichTextFX:fcdb504a'
@@ -84,8 +85,8 @@ dependencies {
     }
 
     jarLib group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
-    jarLib group: 'org.json', name: 'json', version: '20211205'
-    jarLib group: 'org.yaml', name: 'snakeyaml', version: '1.32'
+    jarLib group: 'org.json', name: 'json', version: '7.0.2'
+    jarLib group: 'org.yaml', name: 'snakeyaml', version: '7.0.3'
 
 
     jarLib 'com.github.gaeqs:RichTextFX:fcdb504a'
@@ -154,7 +155,7 @@ artifacts {
     archives javadocJar
 }
 
-task bundle {
+tasks.register('bundle') {
     dependsOn clean
     group = "build"
 
