@@ -70,7 +70,7 @@ dependencies {
     implementation group: 'org.yaml', name: 'snakeyaml', version: '2.2'
     implementation 'org.jetbrains:annotations:22.0.0'
 
-    implementation 'com.github.gaeqs:RichTextFX:fcdb504a'
+    implementation 'com.github.gaeqs:RichTextFX:-SNAPSHOT'
     implementation group: 'org.reactfx', name: 'reactfx', version: '2.0-M4u1'
     implementation group: 'org.fxmisc.undo', name: 'undofx', version: '2.1.1'
     implementation group: 'org.fxmisc.flowless', name: 'flowless', version: '0.6.8'
