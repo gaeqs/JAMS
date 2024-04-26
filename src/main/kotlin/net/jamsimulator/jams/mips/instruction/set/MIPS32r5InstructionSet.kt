@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.set
 
 import net.jamsimulator.jams.manager.ResourceProvider
-import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAbsDouble
+import net.jamsimulator.jams.mips.instruction.basic.defaults.*
 import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionBL
 
 class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provider, NAME) {
@@ -40,7 +40,21 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
 
         val basicInstructions by lazy {
             hashSetOf(
-                InstructionAbsDouble()
+                InstructionAbsDouble(),
+                InstructionAbsSingle(),
+                InstructionAdd(),
+                InstructionAddDouble(),
+                InstructionAddSingle(),
+                R5InstructionAddi(),
+                InstructionAddiu(),
+                InstructionAddu(),
+                InstructionAnd(),
+                InstructionAndi(),
+
+                R5InstructionBC1F(),
+                R5InstructionBC1T(),
+                InstructionBeq(),
+                InstructionBgez(),
             )
         }
 

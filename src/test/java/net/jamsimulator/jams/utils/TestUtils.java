@@ -49,7 +49,7 @@ public class TestUtils {
     private static final DirectiveSet DIRECTIVE_SET = new MIPS32DirectiveSet(ResourceProvider.JAMS);
 
     public static void assemble(String text) {
-        var registers = new MIPS32Registers();
+        var registers = new MIPS32Registers(set);
         var memory = new MIPS32Memory();
         var rawFiles = new RawFileData("test", text);
 
@@ -65,7 +65,7 @@ public class TestUtils {
     }
 
     public static MIPSSimulation<?> generateSimulation(Architecture architecture, String text) {
-        var registers = new MIPS32Registers();
+        var registers = new MIPS32Registers(set);
         var memory = new MIPS32Memory();
         var rawFiles = new RawFileData("test", text);
 

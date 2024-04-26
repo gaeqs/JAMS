@@ -26,12 +26,13 @@ package net.jamsimulator.jams.mips.instruction.assembled;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.utils.StringUtils;
 
 /**
  * Represents a compiled I-Type Imm16 instruction. An I-Type Imm16 instruction is composed of an 16-bit immediate,
  * one target register, one source register and one operation code.
  */
-public abstract class AssembledI16Instruction extends AssembledInstruction {
+public class AssembledI16Instruction extends AssembledInstruction {
 
     /**
      * The mask used by the immediate.
@@ -88,10 +89,10 @@ public abstract class AssembledI16Instruction extends AssembledInstruction {
      * Calculates the integer representing the instruction using the given
      * operation code, source register, target register and immediate.
      *
-     * @param operationCode       the operation code.
-     * @param sourceRegister      the source register.
-     * @param targetRegister      the target register.
-     * @param immediate           the immediate.
+     * @param operationCode  the operation code.
+     * @param sourceRegister the source register.
+     * @param targetRegister the target register.
+     * @param immediate      the immediate.
      * @return the integer representing the instruction.
      */
     static int calculateValue(int operationCode, int sourceRegister, int targetRegister, int immediate) {
@@ -138,5 +139,12 @@ public abstract class AssembledI16Instruction extends AssembledInstruction {
      */
     public int getSourceRegister() {
         return value >> SOURCE_REGISTER_SHIFT & SOURCE_REGISTER_MASK;
+    }
+
+    @Override
+    public String parametersToString(String registersStart) {
+        return registersStart + getTargetRegister() + ", " +
+                registersStart + getSourceRegister() + ", 0x" +
+                StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
     }
 }

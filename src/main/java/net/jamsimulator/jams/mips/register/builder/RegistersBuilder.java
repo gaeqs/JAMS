@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.register.builder;
 
 import net.jamsimulator.jams.manager.ManagerResource;
 import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -151,5 +152,5 @@ public abstract class RegistersBuilder implements ManagerResource {
      *
      * @return the instance.
      */
-    public abstract Registers createRegisters();
+    public abstract Registers createRegisters(InstructionSet set);
 }

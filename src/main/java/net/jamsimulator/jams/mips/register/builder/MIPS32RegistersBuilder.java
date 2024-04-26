@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.register.builder;
 
 import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Registers;
 
@@ -87,7 +88,7 @@ public class MIPS32RegistersBuilder extends RegistersBuilder {
     }
 
     @Override
-    public Registers createRegisters() {
-        return new MIPS32Registers();
+    public Registers createRegisters(InstructionSet set) {
+        return new MIPS32Registers(set);
     }
 }

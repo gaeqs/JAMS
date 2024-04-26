@@ -45,6 +45,7 @@ public enum ParameterType {
     REGISTER("$t1", new ParameterMatcherRegister(), SimpleParameterSplitter.INSTANCE, ParameterPartType.REGISTER, false),
     EVEN_FLOAT_REGISTER("$f2", new ParameterMatcherEvenFloatRegister(), SimpleParameterSplitter.INSTANCE, ParameterPartType.REGISTER, false),
     FLOAT_REGISTER("$f1", new ParameterMatcherFloatRegister(), SimpleParameterSplitter.INSTANCE, ParameterPartType.REGISTER, false),
+    UNSIGNED_3_BIT("3", new ParameterMatcherUnsigned3Bit(), SimpleParameterSplitter.INSTANCE, ParameterPartType.IMMEDIATE, false),
     UNSIGNED_5_BIT("5", new ParameterMatcherUnsigned5Bit(), SimpleParameterSplitter.INSTANCE, ParameterPartType.IMMEDIATE, false),
     UNSIGNED_5_BIT_SUB_ONE("5", new ParameterMatcherUnsigned5BitSubOne(), SimpleParameterSplitter.INSTANCE, ParameterPartType.IMMEDIATE, false),
     SIGNED_16_BIT("-16000", new ParameterMatcherSigned16Bit(), SimpleParameterSplitter.INSTANCE, ParameterPartType.IMMEDIATE, false),

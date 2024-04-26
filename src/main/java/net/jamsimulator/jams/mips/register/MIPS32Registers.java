@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.mips.register;
 
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.instruction.set.MIPS32r5InstructionSet;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 
 import java.util.Collections;
@@ -39,12 +41,21 @@ public class MIPS32Registers extends Registers {
     /**
      * Creates a default MIPS32 {@link Registers} set.
      */
-    public MIPS32Registers() {
-        super(VALID_REGISTERS_START, null, null, null);
+    public MIPS32Registers(InstructionSet set) {
+        super(
+                VALID_REGISTERS_START,
+                null,
+                null,
+                new Register[set instanceof MIPS32r5InstructionSet ? 40 : 32]
+        );
         loadPrincipalRegisters();
         loadCoprocessor0Registers();
         loadCoprocessor1Registers();
         loadEssentialRegisters();
+
+        if (set instanceof MIPS32r5InstructionSet) {
+            loadR5Coprocessor1Registers();
+        }
     }
 
     protected void loadPrincipalRegisters() {
@@ -219,6 +230,12 @@ public class MIPS32Registers extends Registers {
     protected void loadCoprocessor1Registers() {
         for (int i = 0; i < 32; i++) {
             coprocessor1Registers[i] = new Register(this, i, "f" + i, String.valueOf(i));
+        }
+    }
+
+    protected void loadR5Coprocessor1Registers() {
+        for (int i = 0; i < 8; i++) {
+            coprocessor1Registers[i + 32] = new Register(this, 32 + i, "fc" + i, String.valueOf(i));
         }
     }
 }

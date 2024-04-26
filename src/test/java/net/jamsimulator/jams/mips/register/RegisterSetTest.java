@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RegisterSetTest {
 
-	static Registers registerSet = new MIPS32Registers();
+	static Registers registerSet = new MIPS32Registers(set);
 
 	@Test
 	void getProgramCounter() {

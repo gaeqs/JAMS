@@ -84,7 +84,7 @@ class WriteBackDirectCacheTest {
 	void testSimpleProblem() {
 		InstructionSet inst = new MIPS32r6InstructionSet(ResourceProvider.JAMS);
 		DirectiveSet dir = new MIPS32DirectiveSet(ResourceProvider.JAMS);
-		Registers reg = new MIPS32Registers();
+		Registers reg = new MIPS32Registers(set);
 		Cache mem = new WriteBackDirectCache(null, new MIPS32Memory(), 4, 8);
 
 		MIPS32Assembler assembler = new MIPS32Assembler(Collections.singleton(

@@ -113,7 +113,7 @@ public class MIPSProject extends BasicProject {
                 files,
                 getData().getDirectiveSet(),
                 getData().getInstructionSet(),
-                getData().getRegistersBuilder().createRegisters(),
+                getData().getRegistersBuilder().createRegisters(getData().getInstructionSet()),
                 configuration.generateNewMemory(),
                 log);
 

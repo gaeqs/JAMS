@@ -34,7 +34,7 @@ class ParameterTypeTest {
 
 	@Test
 	void testParameterTypes() {
-		Registers set = new MIPS32Registers();
+		Registers set = new MIPS32Registers(set);
 		for (ParameterType value : ParameterType.values()) {
 			assertTrue(value.match(value.getExample(), set), "Example for parameter type " + value + " doesn't match.");
 			assertTrue(ParameterType.getCompatibleParameterTypes(value.getExample(), set).contains(value),
