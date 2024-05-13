@@ -155,8 +155,8 @@ public class InstructionBalc extends BasicInstruction<InstructionBalc.Assembled>
         public void memory() {
             if (!solveBranchOnDecode()) {
                 jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
-                forward(31, getAddress() + 4);
             }
+            forward(31, getAddress() + 4);
         }
 
         @Override

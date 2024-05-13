@@ -24,6 +24,9 @@
 
 package net.jamsimulator.jams.mips.parameter;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.instruction.set.MIPS32r6InstructionSet;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Registers;
 import org.junit.jupiter.api.Test;
@@ -34,7 +37,8 @@ class ParameterTypeTest {
 
 	@Test
 	void testParameterTypes() {
-		Registers set = new MIPS32Registers(set);
+		InstructionSet inst = new MIPS32r6InstructionSet(ResourceProvider.JAMS);
+		Registers set = new MIPS32Registers(inst);
 		for (ParameterType value : ParameterType.values()) {
 			assertTrue(value.match(value.getExample(), set), "Example for parameter type " + value + " doesn't match.");
 			assertTrue(ParameterType.getCompatibleParameterTypes(value.getExample(), set).contains(value),

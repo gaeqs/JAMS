@@ -84,7 +84,7 @@ class WriteThroughDirectCacheTest {
     void testSimpleProblem() {
         InstructionSet inst = new MIPS32r6InstructionSet(ResourceProvider.JAMS);
         DirectiveSet dir = new MIPS32DirectiveSet(ResourceProvider.JAMS);
-        Registers reg = new MIPS32Registers(set);
+        Registers reg = new MIPS32Registers(inst);
         Cache mem = new WriteThroughDirectCache(null, new MIPS32Memory(), 4, 8);
 
         MIPS32Assembler assembler = new MIPS32Assembler(Collections.singleton(

@@ -76,7 +76,7 @@ class R5InstructionAddi : BasicInstruction<AssembledI16Instruction>(
         override fun execute() {
 
             val x = value(instruction.sourceRegister)
-            val y = instruction.immediate
+            val y = instruction.immediateAsSigned
             val r: Int = x + y
 
             if (((x xor r) and (y xor r)) < 0) {
@@ -102,7 +102,7 @@ class R5InstructionAddi : BasicInstruction<AssembledI16Instruction>(
 
         override fun execute() {
             val x = value(instruction.sourceRegister)
-            val y = instruction.immediate
+            val y = instruction.immediateAsSigned
             result = x + y
 
             if (((x xor result) and (y xor result)) < 0) {

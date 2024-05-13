@@ -24,6 +24,9 @@
 
 package net.jamsimulator.jams.mips.register;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.instruction.set.MIPS32r6InstructionSet;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -34,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RegisterSetTest {
 
-	static Registers registerSet = new MIPS32Registers(set);
+	static Registers registerSet = new MIPS32Registers(new MIPS32r6InstructionSet(ResourceProvider.JAMS));
 
 	@Test
 	void getProgramCounter() {

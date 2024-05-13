@@ -26,12 +26,13 @@ package net.jamsimulator.jams.mips.instruction.assembled;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.utils.StringUtils;
 
 /**
  * Represents a compiled REGIMM instruction. A REGIMM instruction is composed of an 16-bit immediate,
  * one function code, one source register and one operation code.
  */
-public abstract class AssembledRIInstruction extends AssembledInstruction {
+public class AssembledRIInstruction extends AssembledInstruction {
 
     /**
      * The mask used by the immediate.
@@ -138,6 +139,12 @@ public abstract class AssembledRIInstruction extends AssembledInstruction {
      */
     public int getSourceRegister() {
         return value >> SOURCE_REGISTER_SHIFT & SOURCE_REGISTER_MASK;
+    }
+
+    @Override
+    public String parametersToString(String registersStart) {
+        return registersStart + getSourceRegister() + ", 0x" +
+                StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
     }
 
 }

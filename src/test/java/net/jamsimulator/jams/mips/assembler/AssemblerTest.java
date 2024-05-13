@@ -28,6 +28,7 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.instruction.set.MIPS32r6InstructionSet;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
@@ -78,11 +79,13 @@ class AssemblerTest {
         program.add("lw $t1, sum");
         program.add("lw $s0, wordTest2");
 
+        InstructionSet inst = new MIPS32r6InstructionSet(ResourceProvider.JAMS);
+
         MIPS32Assembler assembler = new MIPS32Assembler(
                 Collections.singletonList(new RawFileData("test.asm", String.join("\n", program))),
-                new MIPS32r6InstructionSet(ResourceProvider.JAMS),
+                inst,
                 new MIPS32DirectiveSet(ResourceProvider.JAMS),
-                new MIPS32Registers(set), new MIPS32Memory(), null);
+                new MIPS32Registers(inst), new MIPS32Memory(), null);
         assembler.assemble();
 
         var configuration = new MIPSSimulationConfiguration("default");

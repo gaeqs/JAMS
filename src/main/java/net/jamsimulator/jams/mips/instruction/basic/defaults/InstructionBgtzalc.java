@@ -194,6 +194,8 @@ public class InstructionBgtzalc extends BasicInstruction<InstructionBgtzalc.Asse
                 } else {
                     unlock(pc());
                 }
+            } else if(jumped) {
+                forward(31, getAddress() + 4);
             }
         }
 
