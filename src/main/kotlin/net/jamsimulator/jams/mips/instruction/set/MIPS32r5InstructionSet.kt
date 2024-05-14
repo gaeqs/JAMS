@@ -63,6 +63,7 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
                 R5InstructionBltzal(),
                 InstructionBne(),
                 InstructionBreak(),
+                R5InstructionCCondD(R5InstructionCCondD.Condition.FALSE)
             )
         }
 
