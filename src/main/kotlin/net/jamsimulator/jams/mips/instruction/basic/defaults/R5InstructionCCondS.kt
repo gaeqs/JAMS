@@ -40,7 +40,7 @@ import net.jamsimulator.jams.mips.parameter.ParameterType
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation
 
-class R5InstructionCCondD(val condition: R5CCondCondition) : BasicRFPUInstruction<R5InstructionCCondD.Assembled>(
+class R5InstructionCCondS(val condition: R5CCondCondition) : BasicRFPUInstruction<R5InstructionCCondS.Assembled>(
     MNEMONIC.replace(REPLACEMENT, condition.mnemonic),
     PARAMETER_TYPES,
     ALU_TYPE,
@@ -54,11 +54,11 @@ class R5InstructionCCondD(val condition: R5CCondCondition) : BasicRFPUInstructio
         const val MNEMONIC = "c.$REPLACEMENT.d"
         val ALU_TYPE = ALUType.FLOAT_ADDTION
         const val OPERATION_CODE = 0b010001
-        const val FMT = 0b10001
+        const val FMT = 0b10000
         const val FUNCTION_CODE = 0b110000
 
         val PARAMETER_TYPES = InstructionParameterTypes(
-            ParameterType.UNSIGNED_3_BIT, ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER
+            ParameterType.UNSIGNED_3_BIT, ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER
         )
     }
 
@@ -122,8 +122,8 @@ class R5InstructionCCondD(val condition: R5CCondCondition) : BasicRFPUInstructio
 
         override fun execute() {
             val condition = instruction.condition
-            val fs = doubleCOP1(instruction.sourceRegister)
-            val ft = doubleCOP1(instruction.targetRegister)
+            val fs = floatCOP1(instruction.sourceRegister)
+            val ft = floatCOP1(instruction.targetRegister)
 
             val less: Boolean
             val equal: Boolean
@@ -162,8 +162,8 @@ class R5InstructionCCondD(val condition: R5CCondCondition) : BasicRFPUInstructio
 
         override fun execute() {
             val condition = instruction.condition
-            val fs = doubleCOP1(instruction.sourceRegister)
-            val ft = doubleCOP1(instruction.targetRegister)
+            val fs = floatCOP1(instruction.sourceRegister)
+            val ft = floatCOP1(instruction.targetRegister)
 
             val less: Boolean
             val equal: Boolean
