@@ -72,6 +72,7 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
                 InstructionClz(),
 
                 InstructionDi(),
+                R5InstructionDiv(),
             )
 
             R5CCondCondition.entries.forEach { set.add(R5InstructionCCondD(it)) }

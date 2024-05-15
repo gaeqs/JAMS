@@ -38,6 +38,9 @@ public class MIPS32Registers extends Registers {
 
     public static final Set<Character> VALID_REGISTERS_START = Collections.singleton('$');
 
+    public static final int HI = 32;
+    public static final int LO = 33;
+
     /**
      * Creates a default MIPS32 {@link Registers} set.
      */
@@ -235,8 +238,8 @@ public class MIPS32Registers extends Registers {
     }
 
     protected void loadR5Registers() {
-        registers[32] = new Register(this, 32, "hi", "32");
-        registers[33] = new Register(this, 33, "lo", "33");
+        registers[HI] = new Register(this, HI, "hi", String.valueOf(HI));
+        registers[LO] = new Register(this, LO, "lo", String.valueOf(LO));
     }
 
     protected void loadR5Coprocessor1Registers() {
