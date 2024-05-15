@@ -40,7 +40,7 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
         const val NAME = "MIPS32r5"
 
         val basicInstructions by lazy {
-            hashSetOf(
+            val set = hashSetOf(
                 InstructionAbsDouble(),
                 InstructionAbsSingle(),
                 InstructionAdd(),
@@ -62,8 +62,14 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
                 InstructionBltz(),
                 R5InstructionBltzal(),
                 InstructionBne(),
-                InstructionBreak(),
+                InstructionBreak()
             )
+
+            R5CCondCondition.entries.forEach { set.add(R5InstructionCCondD(it)) }
+            R5CCondCondition.entries.forEach { set.add(R5InstructionCCondS(it)) }
+
+
+            set
         }
 
         val pseudoInstructions by lazy {
