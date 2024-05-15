@@ -44,7 +44,7 @@ public class MIPS32Registers extends Registers {
     public MIPS32Registers(InstructionSet set) {
         super(
                 VALID_REGISTERS_START,
-                null,
+                new Register[set instanceof MIPS32r5InstructionSet ? 34 : 32],
                 null,
                 new Register[set instanceof MIPS32r5InstructionSet ? 40 : 32]
         );
@@ -54,6 +54,7 @@ public class MIPS32Registers extends Registers {
         loadEssentialRegisters();
 
         if (set instanceof MIPS32r5InstructionSet) {
+            loadR5Registers();
             loadR5Coprocessor1Registers();
         }
     }
@@ -231,6 +232,11 @@ public class MIPS32Registers extends Registers {
         for (int i = 0; i < 32; i++) {
             coprocessor1Registers[i] = new Register(this, i, "f" + i, String.valueOf(i));
         }
+    }
+
+    protected void loadR5Registers() {
+        registers[32] = new Register(this, 32, "hi", "32");
+        registers[33] = new Register(this, 33, "lo", "33");
     }
 
     protected void loadR5Coprocessor1Registers() {

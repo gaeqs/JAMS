@@ -62,11 +62,27 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
                 InstructionBltz(),
                 R5InstructionBltzal(),
                 InstructionBne(),
-                InstructionBreak()
+                InstructionBreak(),
+
+                InstructionCeilLDouble(),
+                InstructionCeilLSingle(),
+                InstructionCeilWDouble(),
+                InstructionCeilWSingle(),
+                InstructionClo(),
+                InstructionClz(),
+
+                InstructionDi(),
             )
 
             R5CCondCondition.entries.forEach { set.add(R5InstructionCCondD(it)) }
             R5CCondCondition.entries.forEach { set.add(R5InstructionCCondS(it)) }
+
+            for (to in FmtNumbers.entries) {
+                for (from in FmtNumbers.entries) {
+                    if (to == from) continue
+                    MIPS32DefaultInstructions.basicInstructions.add(InstructionCvtNN(to, from))
+                }
+            }
 
 
             set
