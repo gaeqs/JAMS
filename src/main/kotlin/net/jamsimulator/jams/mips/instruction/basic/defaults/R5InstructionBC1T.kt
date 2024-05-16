@@ -116,7 +116,7 @@ class R5InstructionBC1T : BasicIFPUInstruction<R5InstructionBC1T.Assembled>(
     class MultiCycle(
         simulation: MIPSSimulation<out MultiCycleArchitecture>, instruction: Assembled, address: Int
     ) : MultiCycleExecution<MultiCycleArchitecture, Assembled>(
-        simulation, instruction, address, false, true
+        simulation, instruction, address, false, false
     ) {
 
         override fun decode() {

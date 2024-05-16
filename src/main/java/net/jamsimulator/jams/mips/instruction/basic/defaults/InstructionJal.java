@@ -156,8 +156,8 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> i
         public void memory() {
             if (!solveBranchOnDecode()) {
                 jump(instruction.getAbsoluteAddress(getAddress() + 4));
-                forward(31, getAddress() + 4);
             }
+            forward(31, getAddress() + 4);
         }
 
         @Override

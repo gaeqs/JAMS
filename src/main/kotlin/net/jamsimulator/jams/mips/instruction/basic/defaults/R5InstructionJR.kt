@@ -29,8 +29,9 @@ import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture
 import net.jamsimulator.jams.mips.instruction.Instruction
 import net.jamsimulator.jams.mips.instruction.alu.ALUType
-import net.jamsimulator.jams.mips.instruction.assembled.AssembledRIInstruction
-import net.jamsimulator.jams.mips.instruction.basic.BasicRIInstruction
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction
+import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution
@@ -39,19 +40,17 @@ import net.jamsimulator.jams.mips.parameter.ParameterType
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation
 
-class R5InstructionBgezal : BasicRIInstruction<AssembledRIInstruction>(
+class R5InstructionJR : BasicRInstruction<R5InstructionJR.Assembled>(
     MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE
 ), ControlTransferInstruction {
 
     companion object {
-        const val MNEMONIC = "bgezal"
+        const val MNEMONIC = "jr"
         val ALU_TYPE = ALUType.INTEGER
-        const val OPERATION_CODE = 0b000001
-        const val FUNCTION_CODE = 0b10001
+        const val OPERATION_CODE = 0b000000
+        const val FUNCTION_CODE = 0b001000
 
-        val PARAMETER_TYPES = InstructionParameterTypes(
-            ParameterType.REGISTER, ParameterType.SIGNED_16_BIT
-        )
+        val PARAMETER_TYPES = InstructionParameterTypes(ParameterType.REGISTER)
     }
 
     init {
@@ -60,111 +59,89 @@ class R5InstructionBgezal : BasicRIInstruction<AssembledRIInstruction>(
         addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE) { s, i, a -> Pipelined(s, i, a) }
     }
 
-    override fun assembleFromCode(instructionCode: Int) = AssembledRIInstruction(instructionCode, this, this)
+    override fun assembleFromCode(instructionCode: Int) = Assembled(instructionCode, this, this)
 
     override fun assembleBasic(
         parameters: Array<ParameterParseResult>, origin: Instruction
-    ) = AssembledRIInstruction(
-        OPERATION_CODE, parameters[0].register, FUNCTION_CODE, parameters[1].immediate, origin, this
-    )
+    ) = Assembled(parameters[0].register, 0, origin, this)
 
     override fun isCompact() = false
 
+    class Assembled : AssembledRInstruction {
+
+        constructor(value: Int, origin: Instruction, basicOrigin: BasicInstruction<*>) : super(
+            value,
+            origin,
+            basicOrigin
+        )
+
+        constructor(
+            sourceRegister: Int,
+            hint: Int,
+            origin: Instruction, basicOrigin: BasicInstruction<*>
+        ) : super(
+            OPERATION_CODE, sourceRegister, 0, 0, hint, FUNCTION_CODE, origin, basicOrigin
+        )
+
+        override fun parametersToString(registersStart: String?): String {
+            return "$registersStart$sourceRegister"
+        }
+
+    }
+
+
     class SingleCycle(
-        simulation: MIPSSimulation<SingleCycleArchitecture>, instruction: AssembledRIInstruction, address: Int
-    ) : SingleCycleExecution<AssembledRIInstruction>(simulation, instruction, address) {
+        simulation: MIPSSimulation<SingleCycleArchitecture>, instruction: Assembled, address: Int
+    ) : SingleCycleExecution<Assembled>(simulation, instruction, address) {
 
         override fun execute() {
-            if (value(instruction.sourceRegister) < 0) return
-            val pc = pc()
-            register(31).value = pc.value
-            pc.value += (instruction.immediateAsSigned shl 2)
+            pc().value = value(instruction.sourceRegister)
         }
 
     }
 
     class MultiCycle(
-        simulation: MIPSSimulation<out MultiCycleArchitecture>, instruction: AssembledRIInstruction, address: Int
-    ) : MultiCycleExecution<MultiCycleArchitecture, AssembledRIInstruction>(
-        simulation, instruction, address, false, true
+        simulation: MIPSSimulation<out MultiCycleArchitecture>, instruction: Assembled, address: Int
+    ) : MultiCycleExecution<MultiCycleArchitecture, Assembled>(
+        simulation, instruction, address, false, false
     ) {
-        private var jumped = false
 
         override fun decode() {
             requires(instruction.sourceRegister, false)
             lock(pc())
-            lock(31)
         }
 
         override fun execute() {
-            jumped = value(instruction.sourceRegister) >= 0
-            if (jumped) {
-                jump(getAddress() + 4 + (instruction.immediateAsSigned shl 2))
-            } else {
-                unlock(pc())
-            }
+            jump(value(instruction.sourceRegister))
         }
 
         override fun memory() {}
-        override fun writeBack() {
-            if (jumped) {
-                setAndUnlock(31, getAddress() + 4)
-            } else {
-                unlock(31)
-            }
-        }
+        override fun writeBack() {}
     }
 
     class Pipelined(
-        simulation: MIPSSimulation<out MultiALUPipelinedArchitecture>, instruction: AssembledRIInstruction, address: Int
-    ) : MultiCycleExecution<MultiALUPipelinedArchitecture, AssembledRIInstruction>(
-        simulation, instruction, address, true, true
+        simulation: MIPSSimulation<out MultiALUPipelinedArchitecture>, instruction: Assembled, address: Int
+    ) : MultiCycleExecution<MultiALUPipelinedArchitecture, Assembled>(
+        simulation, instruction, address, true, false
     ) {
-
-        private var jumped = false
 
         override fun decode() {
             requires(instruction.sourceRegister, false)
             lock(pc())
-            lock(31)
 
             if (solveBranchOnDecode()) {
-                jumped = value(instruction.sourceRegister) >= 0
-                if (jumped) {
-                    jump(getAddress() + 4 + (instruction.immediateAsSigned shl 2))
-                } else {
-                    unlock(pc())
-                }
+                jump(value(instruction.sourceRegister))
             }
         }
 
-        override fun execute() {
-            if (solveBranchOnDecode() && jumped) {
-                forward(31, getAddress() + 4)
-            }
-        }
+        override fun execute() {}
 
         override fun memory() {
             if (!solveBranchOnDecode()) {
-                jumped = value(instruction.sourceRegister) >= 0
-                if (jumped) {
-                    jump(getAddress() + 4 + (instruction.immediateAsSigned shl 2))
-                    forward(31, getAddress() + 4)
-                } else {
-                    unlock(pc())
-                }
-            } else if (jumped) {
-                forward(31, getAddress() + 4)
+                jump(value(instruction.sourceRegister))
             }
         }
 
-        override fun writeBack() {
-            if (jumped) {
-                setAndUnlock(31, getAddress() + 4)
-            } else {
-                unlock(31)
-            }
-        }
+        override fun writeBack() {}
     }
-
 }

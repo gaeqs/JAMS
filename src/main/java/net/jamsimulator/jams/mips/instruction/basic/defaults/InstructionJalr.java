@@ -171,8 +171,8 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
         public void memory() {
             if (!solveBranchOnDecode()) {
                 jump(value(instruction.getSourceRegister()));
-                forward(instruction.getDestinationRegister(), getAddress() + 4);
             }
+            forward(instruction.getDestinationRegister(), getAddress() + 4);
         }
 
         @Override

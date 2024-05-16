@@ -118,7 +118,7 @@ class R5InstructionBltzal : BasicRIInstruction<AssembledRIInstruction>(
     class Pipelined(
         simulation: MIPSSimulation<out MultiALUPipelinedArchitecture>, instruction: AssembledRIInstruction, address: Int
     ) : MultiCycleExecution<MultiALUPipelinedArchitecture, AssembledRIInstruction>(
-        simulation, instruction, address, true, false
+        simulation, instruction, address, true, true
     ) {
 
         private var jumped = false

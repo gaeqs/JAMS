@@ -29,86 +29,93 @@ import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture
 import net.jamsimulator.jams.mips.instruction.Instruction
 import net.jamsimulator.jams.mips.instruction.alu.ALUType
-import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction
-import net.jamsimulator.jams.mips.instruction.basic.BasicIFPUInstruction
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction
-import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction
+import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes
 import net.jamsimulator.jams.mips.parameter.ParameterType
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult
+import net.jamsimulator.jams.mips.register.MIPS32Registers
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation
-import net.jamsimulator.jams.utils.StringUtils
 
-class R5InstructionBC1F : BasicIFPUInstruction<R5InstructionBC1F.Assembled>(
-    MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, SUBCODE
-), ControlTransferInstruction {
+class R5InstructionDivu : BasicRInstruction<R5InstructionDivu.Assembled>(
+    MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE
+) {
+
 
     companion object {
-        const val MNEMONIC = "bc1f"
+        const val MNEMONIC = "divu"
         val ALU_TYPE = ALUType.INTEGER
-        const val OPERATION_CODE = 0b010001
-        const val SUBCODE = 0b01000
+        const val OPERATION_CODE = 0b000000
+        const val FUNCTION_CODE = 0b011011
 
         val PARAMETER_TYPES = InstructionParameterTypes(
-            ParameterType.UNSIGNED_3_BIT, ParameterType.SIGNED_16_BIT
+            ParameterType.REGISTER, ParameterType.REGISTER
         )
     }
 
     init {
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE) { s, i, a -> SingleCycle(s, i, a) }
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE) { s, i, a -> MultiCycle(s, i, a) }
-        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE) { s, i, a -> Pipelined(s, i, a) }
-    }
-
-    override fun match(instructionCode: Int): Boolean {
-        return super.match(instructionCode) && ((instructionCode shr 16) and 0b11) == 0
+        addExecutionBuilder<MultiCycleArchitecture>(MultiALUPipelinedArchitecture.INSTANCE) { s, i, a ->
+            MultiCycle(s, i, a)
+        }
     }
 
     override fun assembleFromCode(instructionCode: Int) = Assembled(instructionCode, this, this)
 
     override fun assembleBasic(
         parameters: Array<ParameterParseResult>, origin: Instruction
-    ) = Assembled(
-        parameters[0].immediate, parameters[1].immediate, origin, this
-    )
+    ) = Assembled(parameters[0].register, parameters[1].register, origin, this)
 
-    override fun isCompact() = false
-
-    class Assembled : AssembledI16Instruction {
-
-        constructor(value: Int, origin: Instruction, basicOrigin: BasicInstruction<*>) : super(
+    class Assembled : AssembledRInstruction {
+        constructor(value: Int, origin: Instruction?, basicOrigin: BasicInstruction<*>?) : super(
             value,
             origin,
             basicOrigin
         )
 
         constructor(
-            conditionalCode: Int, immediate: Int, origin: Instruction, basicOrigin: BasicInstruction<*>
+            sourceRegister: Int,
+            targetRegister: Int,
+            origin: Instruction?,
+            basicOrigin: BasicInstruction<*>?
         ) : super(
-            OPERATION_CODE, SUBCODE, conditionalCode shl 2, immediate, origin, basicOrigin
+            OPERATION_CODE,
+            sourceRegister,
+            targetRegister,
+            0,
+            0,
+            FUNCTION_CODE,
+            origin,
+            basicOrigin
         )
 
-        val conditionalCode: Int
-            get() = targetRegister ushr 2
-
         override fun parametersToString(registersStart: String?): String {
-            return "$conditionalCode, ${StringUtils.addZeros(Integer.toHexString(immediate), 4)}"
+            return "$registersStart$sourceRegister, $registersStart$targetRegister"
         }
 
     }
-
 
     class SingleCycle(
         simulation: MIPSSimulation<SingleCycleArchitecture>, instruction: Assembled, address: Int
     ) : SingleCycleExecution<Assembled>(simulation, instruction, address) {
 
         override fun execute() {
-            val value = valueCOP1(32 + instruction.conditionalCode) and 0b1
-            if (value == 0) {
-                pc().value += (instruction.immediateAsSigned shl 2)
+            val rs = value(instruction.sourceRegister)
+            val rt = value(instruction.targetRegister)
+
+            if (rt == 0) {
+                //MIP rev 5: If the divisor in GPR rt is zero, the result value is UNPREDICTABLE.
+                register(MIPS32Registers.HI).value = 0
+                register(MIPS32Registers.LO).value = 0
+            } else {
+                register(MIPS32Registers.HI).value = Integer.remainderUnsigned(rs, rt)
+                register(MIPS32Registers.LO).value = Integer.divideUnsigned(rs, rt)
             }
+
         }
 
     }
@@ -116,60 +123,43 @@ class R5InstructionBC1F : BasicIFPUInstruction<R5InstructionBC1F.Assembled>(
     class MultiCycle(
         simulation: MIPSSimulation<out MultiCycleArchitecture>, instruction: Assembled, address: Int
     ) : MultiCycleExecution<MultiCycleArchitecture, Assembled>(
-        simulation, instruction, address, false, false
+        simulation, instruction, address, false, true
     ) {
+        private var hi = 0
+        private var lo = 0
 
         override fun decode() {
-            requiresCOP1(32 + instruction.conditionalCode, false)
-            lock(pc())
+            requires(instruction.sourceRegister, false)
+            requires(instruction.targetRegister, false)
+            lock(MIPS32Registers.HI)
+            lock(MIPS32Registers.LO)
         }
 
         override fun execute() {
-            val value = valueCOP1(32 + instruction.conditionalCode) and 0b1
-            if (value == 0) {
-                jump(getAddress() + 4 + (instruction.immediateAsSigned shl 2))
+            val rs = value(instruction.sourceRegister)
+            val rt = value(instruction.targetRegister)
+
+            if (rt == 0) {
+                //MIP rev 5: If the divisor in GPR rt is zero, the result value is UNPREDICTABLE.
+                hi = 0
+                lo = 0
             } else {
-                unlock(pc())
+                hi = Integer.remainderUnsigned(rs, rt)
+                lo = Integer.divideUnsigned(rs, rt)
             }
+            forward(MIPS32Registers.HI, hi)
+            forward(MIPS32Registers.LO, lo)
         }
-
-        override fun memory() {}
-        override fun writeBack() {}
-    }
-
-    class Pipelined(
-        simulation: MIPSSimulation<out MultiALUPipelinedArchitecture>, instruction: Assembled, address: Int
-    ) : MultiCycleExecution<MultiALUPipelinedArchitecture, Assembled>(
-        simulation, instruction, address, true, false
-    ) {
-
-        override fun decode() {
-            requiresCOP1(32 + instruction.conditionalCode, false)
-            lock(pc())
-
-            if (solveBranchOnDecode()) {
-                solve()
-            }
-        }
-
-        override fun execute() {}
 
         override fun memory() {
-            if (!solveBranchOnDecode()) {
-                solve()
-            }
+            forward(MIPS32Registers.HI, hi)
+            forward(MIPS32Registers.LO, lo)
         }
 
-        override fun writeBack() {}
-
-
-        private fun solve() {
-            val value = valueCOP1(32 + instruction.conditionalCode) and 0b1
-            if (value == 0) {
-                jump(getAddress() + 4 + (instruction.immediateAsSigned shl 2))
-            } else {
-                unlock(pc())
-            }
+        override fun writeBack() {
+            setAndUnlock(MIPS32Registers.HI, hi)
+            setAndUnlock(MIPS32Registers.LO, lo)
         }
     }
+
 }

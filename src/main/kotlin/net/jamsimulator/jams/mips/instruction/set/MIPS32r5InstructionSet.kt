@@ -28,6 +28,7 @@ import net.jamsimulator.jams.manager.ResourceProvider
 import net.jamsimulator.jams.mips.instruction.basic.defaults.*
 import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionBI
 import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionBL
+import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionLuiRI
 
 class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provider, NAME) {
 
@@ -73,6 +74,28 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
 
                 InstructionDi(),
                 R5InstructionDiv(),
+                InstructionDivDouble(),
+                InstructionDivSingle(),
+                R5InstructionDivu(),
+                InstructionEi(),
+                InstructionEret(),
+                InstructionExt(),
+                InstructionFloorLDouble(),
+                InstructionFloorLSingle(),
+                InstructionCeilWDouble(),
+                InstructionCeilWSingle(),
+                InstructionIns(),
+                InstructionJ(),
+                InstructionJal(),
+                InstructionJalr(),
+                R5InstructionJR(),
+                InstructionLb(),
+                InstructionLbu(),
+                InstructionLdc1(),
+                InstructionLh(),
+                InstructionLhu(),
+                R5InstructionLui(),
+                InstructionLw(),
             )
 
             R5CCondCondition.entries.forEach { set.add(R5InstructionCCondD(it)) }
