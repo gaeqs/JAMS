@@ -29,7 +29,6 @@ import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture
 import net.jamsimulator.jams.mips.instruction.Instruction
 import net.jamsimulator.jams.mips.instruction.alu.ALUType
-import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction
@@ -40,20 +39,19 @@ import net.jamsimulator.jams.mips.parameter.ParameterType
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult
 import net.jamsimulator.jams.mips.register.MIPS32Registers
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation
-import net.jamsimulator.jams.utils.NumericUtils
 
-class R5InstructionMadd : BasicRInstruction<R5InstructionMadd.Assembled>(
+class R5InstructionMfhi : BasicRInstruction<R5InstructionMfhi.Assembled>(
     MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE
 ) {
 
     companion object {
-        const val MNEMONIC = "madd"
+        const val MNEMONIC = "mfhi"
         val ALU_TYPE = ALUType.INTEGER
-        const val OPERATION_CODE = 0b011100
-        const val FUNCTION_CODE = 0b000000
+        const val OPERATION_CODE = 0b000000
+        const val FUNCTION_CODE = 0b010000
 
         val PARAMETER_TYPES = InstructionParameterTypes(
-            ParameterType.REGISTER, ParameterType.REGISTER
+            ParameterType.REGISTER
         )
     }
 
@@ -69,7 +67,7 @@ class R5InstructionMadd : BasicRInstruction<R5InstructionMadd.Assembled>(
 
     override fun assembleBasic(
         parameters: Array<ParameterParseResult>, origin: Instruction
-    ) = Assembled(parameters[0].register, parameters[1].register, origin, this)
+    ) = Assembled(parameters[0].register, 0, origin, this)
 
     class Assembled : AssembledRInstruction {
         constructor(value: Int, origin: Instruction?, basicOrigin: BasicInstruction<*>?) : super(
@@ -79,23 +77,23 @@ class R5InstructionMadd : BasicRInstruction<R5InstructionMadd.Assembled>(
         )
 
         constructor(
-            sourceRegister: Int,
-            targetRegister: Int,
+            destinationRegister: Int,
+            shift: Int,
             origin: Instruction?,
             basicOrigin: BasicInstruction<*>?
         ) : super(
             OPERATION_CODE,
-            sourceRegister,
-            targetRegister,
             0,
             0,
+            destinationRegister,
+            shift,
             FUNCTION_CODE,
             origin,
             basicOrigin
         )
 
         override fun parametersToString(registersStart: String): String {
-            return "$registersStart$sourceRegister, $registersStart$targetRegister"
+            return "$registersStart$destinationRegister"
         }
 
     }
@@ -105,15 +103,7 @@ class R5InstructionMadd : BasicRInstruction<R5InstructionMadd.Assembled>(
     ) : SingleCycleExecution<Assembled>(simulation, instruction, address) {
 
         override fun execute() {
-            val lo = register(MIPS32Registers.LO)
-            val hi = register(MIPS32Registers.HI)
-
-            val hilo = NumericUtils.intsToLong(lo.value, hi.value)
-
-            val rs = register(instruction.sourceRegister).value.toLong()
-            val rt = register(instruction.targetRegister).value.toLong()
-            val result = hilo + rs * rt
-            NumericUtils.longToInts(result, lo, hi)
+            register(instruction.destinationRegister).value = value(MIPS32Registers.HI)
         }
 
     }
@@ -123,37 +113,23 @@ class R5InstructionMadd : BasicRInstruction<R5InstructionMadd.Assembled>(
     ) : MultiCycleExecution<MultiCycleArchitecture, Assembled>(
         simulation, instruction, address, false, true
     ) {
-        private var result = IntArray(2)
+        private var result = 0
 
         override fun decode() {
-            requires(MIPS32Registers.LO, false)
             requires(MIPS32Registers.HI, false)
-            requires(instruction.sourceRegister, false)
-            requires(instruction.targetRegister, false)
-            lock(MIPS32Registers.LO)
-            lock(MIPS32Registers.HI)
+            lock(instruction.destinationRegister)
         }
 
         override fun execute() {
-            val lo = register(MIPS32Registers.LO)
-            val hi = register(MIPS32Registers.HI)
-
-            val hilo = NumericUtils.intsToLong(lo.value, hi.value)
-
-            val rs = register(instruction.sourceRegister).value.toLong()
-            val rt = register(instruction.targetRegister).value.toLong()
-            val long = hilo + rs * rt
-            NumericUtils.longToInts(long, result)
-            forward(MIPS32Registers.LO, result[0])
-            forward(MIPS32Registers.HI, result[1])
+            result = value(MIPS32Registers.HI)
+            forward(instruction.destinationRegister, result)
         }
 
         override fun memory() {
         }
 
         override fun writeBack() {
-            setAndUnlock(MIPS32Registers.LO, result[0])
-            setAndUnlock(MIPS32Registers.HI, result[1])
+            setAndUnlock(instruction.destinationRegister, result)
         }
     }
 
