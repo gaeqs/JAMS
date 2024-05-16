@@ -31,34 +31,36 @@ import net.jamsimulator.jams.mips.instruction.Instruction
 import net.jamsimulator.jams.mips.instruction.alu.ALUType
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction
-import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction
+import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution
+import net.jamsimulator.jams.mips.instruction.execution.NumericMultiCycleExecution
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution
-import net.jamsimulator.jams.mips.interrupt.InterruptCause
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes
 import net.jamsimulator.jams.mips.parameter.ParameterType
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation
+import net.jamsimulator.jams.utils.NumericUtils
 
-class R5InstructionCCondD(val condition: R5CCondCondition) : BasicRFPUInstruction<R5InstructionCCondD.Assembled>(
-    MNEMONIC.replace(REPLACEMENT, condition.mnemonic),
+class R5InstructionMaddSingle : BasicRInstruction<R5InstructionMaddSingle.Assembled>(
+    MNEMONIC,
     PARAMETER_TYPES,
     ALU_TYPE,
     OPERATION_CODE,
-    FUNCTION_CODE + condition.ordinal,
-    FMT
+    FUNCTION_CODE + FMT
 ) {
 
     companion object {
-        const val REPLACEMENT = "{COND}"
-        const val MNEMONIC = "c.$REPLACEMENT.d"
-        val ALU_TYPE = ALUType.FLOAT_ADDTION
-        const val OPERATION_CODE = 0b010001
-        const val FMT = 0b10001
-        const val FUNCTION_CODE = 0b110000
+        const val MNEMONIC = "madd.s"
+        val ALU_TYPE = ALUType.FLOAT_MULTIPLICATION
+        const val OPERATION_CODE = 0b010011
+        const val FMT = 0b000
+        const val FUNCTION_CODE = 0b100000
 
         val PARAMETER_TYPES = InstructionParameterTypes(
-            ParameterType.UNSIGNED_3_BIT, ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER
+            ParameterType.FLOAT_REGISTER,
+            ParameterType.FLOAT_REGISTER,
+            ParameterType.FLOAT_REGISTER,
+            ParameterType.FLOAT_REGISTER
         )
     }
 
@@ -75,7 +77,11 @@ class R5InstructionCCondD(val condition: R5CCondCondition) : BasicRFPUInstructio
     override fun assembleBasic(
         parameters: Array<ParameterParseResult>, origin: Instruction
     ) = Assembled(
-        parameters[2].register, parameters[1].register, parameters[0].immediate, functionCode, origin, this
+        parameters[1].register,
+        parameters[3].register,
+        parameters[2].register,
+        parameters[0].register,
+        origin, this
     )
 
 
@@ -88,30 +94,28 @@ class R5InstructionCCondD(val condition: R5CCondCondition) : BasicRFPUInstructio
         )
 
         constructor(
+            extraRegister: Int,
             targetRegister: Int,
-            sourceRegiser: Int,
-            conditionalCode: Int,
-            condition: Int,
+            sourceRegister: Int,
+            destinationRegister: Int,
             origin: Instruction,
             basicOrigin: BasicInstruction<*>
         ) : super(
             OPERATION_CODE,
-            FMT,
+            extraRegister,
             targetRegister,
-            sourceRegiser,
-            conditionalCode shl 2,
-            condition,
+            sourceRegister,
+            destinationRegister,
+            FUNCTION_CODE + FMT,
             origin,
             basicOrigin
         )
 
-        val conditionalCode: Int
-            get() = destinationRegister ushr 2
+        val extraRegister: Int
+            get() = fmt
 
-        val condition get() = R5CCondCondition.entries[functionCode ushr 2]
-
-        override fun parametersToString(registersStart: String?): String {
-            return "$conditionalCode, $registersStart$sourceRegister, $registersStart$targetRegister"
+        override fun parametersToString(r: String?): String {
+            return "$r$destinationRegister, $r$extraRegister, $r$sourceRegister, $r$targetRegister"
         }
 
     }
@@ -121,29 +125,12 @@ class R5InstructionCCondD(val condition: R5CCondCondition) : BasicRFPUInstructio
     ) : SingleCycleExecution<Assembled>(simulation, instruction, address) {
 
         override fun execute() {
-            checkEvenRegister(instruction.sourceRegister, instruction.targetRegister)
-            val condition = instruction.condition
-            val fs = doubleCOP1(instruction.sourceRegister)
-            val ft = doubleCOP1(instruction.targetRegister)
+            val fs = floatCOP1(instruction.sourceRegister)
+            val ft = floatCOP1(instruction.targetRegister)
+            val fr = floatCOP1(instruction.extraRegister)
 
-            val less: Boolean
-            val equal: Boolean
-            val unordered: Boolean
-
-            if (ft.isNaN() || fs.isNaN()) {
-                if (condition.signal) {
-                    error(InterruptCause.FLOATING_POINT_EXCEPTION)
-                }
-                less = false
-                equal = false
-                unordered = true
-            } else {
-                less = fs < ft
-                equal = fs == ft
-                unordered = false
-            }
-            val result = less && condition.less || equal && condition.equal || unordered && condition.unordered
-            registerCOP1(32 + instruction.conditionalCode).value = if (result) 1 else 0
+            val result = fs * ft + fr
+            registerCOP1(instruction.destinationRegister).setValue(result)
         }
 
     }
@@ -153,43 +140,31 @@ class R5InstructionCCondD(val condition: R5CCondCondition) : BasicRFPUInstructio
     ) : MultiCycleExecution<MultiCycleArchitecture, Assembled>(
         simulation, instruction, address, false, true
     ) {
-        private var result = 0
+
+        var result = 0.0f
 
         override fun decode() {
-            checkEvenRegister(instruction.sourceRegister, instruction.targetRegister)
-            requiresCOP1Double(instruction.sourceRegister, false)
-            requiresCOP1Double(instruction.targetRegister, false)
-            lockCOP1Double(32 + instruction.conditionalCode)
+            requiresCOP1(instruction.sourceRegister, false)
+            requiresCOP1(instruction.targetRegister, false)
+            requiresCOP1(instruction.extraRegister, false)
+            lockCOP1(instruction.destinationRegister)
         }
 
         override fun execute() {
-            val condition = instruction.condition
-            val fs = doubleCOP1(instruction.sourceRegister)
-            val ft = doubleCOP1(instruction.targetRegister)
+            val fs = floatCOP1(instruction.sourceRegister)
+            val ft = floatCOP1(instruction.targetRegister)
+            val fr = floatCOP1(instruction.extraRegister)
 
-            val less: Boolean
-            val equal: Boolean
-            val unordered: Boolean
-
-            if (ft.isNaN() || fs.isNaN()) {
-                if (condition.signal) {
-                    error(InterruptCause.FLOATING_POINT_EXCEPTION)
-                }
-                less = false
-                equal = false
-                unordered = true
-            } else {
-                less = fs < ft
-                equal = fs == ft
-                unordered = false
-            }
-            val bool = less && condition.less || equal && condition.equal || unordered && condition.unordered
-            result = if (bool) 1 else 0
-            forwardCOP1(32 + instruction.conditionalCode, result)
+            result = fs * ft + fr
+            forwardCOP1(instruction.destinationRegister, result)
         }
 
-        override fun memory() = forwardCOP1(32 + instruction.conditionalCode, result)
-        override fun writeBack() = setAndUnlockCOP1(32 + instruction.conditionalCode, result)
+        override fun memory() {
+        }
+
+        override fun writeBack() {
+            setAndUnlockCOP1(instruction.destinationRegister, result)
+        }
     }
 
 }

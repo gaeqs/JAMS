@@ -28,6 +28,8 @@ import net.jamsimulator.jams.manager.ResourceProvider
 import net.jamsimulator.jams.mips.instruction.basic.defaults.*
 import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionBI
 import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionBL
+import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionLidRD
+import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionLisRF
 import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionLuiRI
 
 class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provider, NAME) {
@@ -96,6 +98,9 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
                 InstructionLhu(),
                 R5InstructionLui(),
                 InstructionLw(),
+                R5InstructionMadd(),
+                R5InstructionMaddDouble(),
+                R5InstructionMaddSingle(),
             )
 
             R5CCondCondition.entries.forEach { set.add(R5InstructionCCondD(it)) }
@@ -115,7 +120,9 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
         val pseudoInstructions by lazy {
             hashSetOf(
                 PseudoInstructionBL(),
-                PseudoInstructionBI()
+                PseudoInstructionBI(),
+                PseudoInstructionLidRD(),
+                PseudoInstructionLisRF()
             )
         }
     }
