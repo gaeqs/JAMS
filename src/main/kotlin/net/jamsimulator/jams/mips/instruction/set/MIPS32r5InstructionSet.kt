@@ -101,6 +101,7 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
                 R5InstructionMadd(),
                 R5InstructionMaddDouble(),
                 R5InstructionMaddSingle(),
+                R5InstructionMaddu()
             )
 
             R5CCondCondition.entries.forEach { set.add(R5InstructionCCondD(it)) }
