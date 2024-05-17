@@ -104,7 +104,9 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
                 R5InstructionMflo(),
                 R5InstructionMthi(),
                 R5InstructionMtlo(),
-
+                R5InstructionMul(),
+                InstructionMulDouble(),
+                InstructionMulSingle(),
 
                 InstructionOr(),
                 InstructionOri(),
