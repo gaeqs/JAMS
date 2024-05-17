@@ -33,7 +33,6 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution
-import net.jamsimulator.jams.mips.interrupt.InterruptCause
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes
 import net.jamsimulator.jams.mips.parameter.ParameterType
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult
@@ -45,9 +44,12 @@ class R5InstructionLui : BasicInstruction<AssembledI16Instruction>(
 
     companion object {
         const val MNEMONIC = "lui"
-        val ALU_TYPE = ALUType.INTEGER
         const val OPERATION_CODE = 0b001111
 
+        @JvmField
+        val ALU_TYPE = ALUType.INTEGER
+
+        @JvmField
         val PARAMETER_TYPES = InstructionParameterTypes(
             ParameterType.REGISTER, ParameterType.SIGNED_16_BIT
         )

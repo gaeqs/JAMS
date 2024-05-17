@@ -26,11 +26,7 @@ package net.jamsimulator.jams.mips.instruction.set
 
 import net.jamsimulator.jams.manager.ResourceProvider
 import net.jamsimulator.jams.mips.instruction.basic.defaults.*
-import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionBI
-import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionBL
-import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionLidRD
-import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionLisRF
-import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionLuiRI
+import net.jamsimulator.jams.mips.instruction.pseudo.defaults.*
 
 class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provider, NAME) {
 
@@ -107,7 +103,11 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
                 R5InstructionMfhi(),
                 R5InstructionMflo(),
                 R5InstructionMthi(),
-                R5InstructionMtlo()
+                R5InstructionMtlo(),
+
+
+                InstructionOr(),
+                InstructionOri(),
             )
 
             R5CCondCondition.entries.forEach { set.add(R5InstructionCCondD(it)) }
@@ -120,7 +120,6 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
                 }
             }
 
-
             set
         }
 
@@ -128,6 +127,8 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
             hashSetOf(
                 PseudoInstructionBL(),
                 PseudoInstructionBI(),
+                PseudoInstructionLiRI16(),
+                R5PseudoInstructionLiRI32(),
                 PseudoInstructionLidRD(),
                 PseudoInstructionLisRF()
             )
