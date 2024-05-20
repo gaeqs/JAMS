@@ -44,16 +44,23 @@ public class InstructionClo extends BasicRInstruction<InstructionClo.Assembled> 
 
     public static final String MNEMONIC = "clo";
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
-    public static final int OPERATION_CODE = 0;
-    public static final int FUNCTION_CODE = 0b010001;
+    public static final int OPERATION_CODE_R6 = 0;
+    public static final int FUNCTION_CODE_R6 = 0b010001;
+    public static final int OPERATION_CODE_R5 = 0b011100;
+    public static final int FUNCTION_CODE_R5 = 0b100001;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
             ParameterType.REGISTER,
             ParameterType.REGISTER
     );
 
-    public InstructionClo() {
-        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
+    private final boolean r6;
+
+    public InstructionClo(boolean r6) {
+        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE,
+                r6 ? OPERATION_CODE_R6 : OPERATION_CODE_R5,
+                r6 ? FUNCTION_CODE_R6 : FUNCTION_CODE_R5);
+        this.r6 = r6;
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
         addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, MultiCycle::new);
@@ -61,7 +68,7 @@ public class InstructionClo extends BasicRInstruction<InstructionClo.Assembled> 
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(), origin, this);
+        return new Assembled(r6, parameters[1].getRegister(), parameters[0].getRegister(), origin, this);
     }
 
     @Override
@@ -71,15 +78,15 @@ public class InstructionClo extends BasicRInstruction<InstructionClo.Assembled> 
 
     public static class Assembled extends AssembledRInstruction {
 
-        public Assembled(int sourceRegister, int destinationRegister,
+        public Assembled(boolean r6, int sourceRegister, int destinationRegister,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
             super(
-                    OPERATION_CODE,
+                    r6 ? OPERATION_CODE_R6 : OPERATION_CODE_R5,
                     sourceRegister,
-                    0,
+                    r6 ? 0 : destinationRegister,
                     destinationRegister,
-                    1,
-                    FUNCTION_CODE,
+                    r6 ? 1 : 0,
+                    r6 ? FUNCTION_CODE_R6 : FUNCTION_CODE_R5,
                     origin,
                     basicOrigin
             );

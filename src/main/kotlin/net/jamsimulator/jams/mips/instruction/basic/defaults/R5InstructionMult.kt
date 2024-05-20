@@ -37,20 +37,22 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes
 import net.jamsimulator.jams.mips.parameter.ParameterType
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult
+import net.jamsimulator.jams.mips.register.MIPS32Registers
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation
+import net.jamsimulator.jams.utils.NumericUtils
 
-class R5InstructionMul : BasicRInstruction<R5InstructionMul.Assembled>(
+class R5InstructionMult : BasicRInstruction<R5InstructionMult.Assembled>(
     MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE
 ) {
 
     companion object {
-        const val MNEMONIC = "mul"
+        const val MNEMONIC = "mult"
         val ALU_TYPE = ALUType.INTEGER
-        const val OPERATION_CODE = 0b011100
-        const val FUNCTION_CODE = 0b000010
+        const val OPERATION_CODE = 0b000000
+        const val FUNCTION_CODE = 0b011000
 
         val PARAMETER_TYPES = InstructionParameterTypes(
-            ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER
+            ParameterType.REGISTER, ParameterType.REGISTER
         )
     }
 
@@ -66,7 +68,7 @@ class R5InstructionMul : BasicRInstruction<R5InstructionMul.Assembled>(
 
     override fun assembleBasic(
         parameters: Array<ParameterParseResult>, origin: Instruction
-    ) = Assembled(parameters[1].register, parameters[2].register, parameters[0].register, origin, this)
+    ) = Assembled(parameters[0].register, parameters[1].register, origin, this)
 
     class Assembled : AssembledRInstruction {
         constructor(value: Int, origin: Instruction?, basicOrigin: BasicInstruction<*>?) : super(
@@ -78,14 +80,13 @@ class R5InstructionMul : BasicRInstruction<R5InstructionMul.Assembled>(
         constructor(
             sourceRegister: Int,
             targetRegister: Int,
-            destinationRegister: Int,
             origin: Instruction?,
             basicOrigin: BasicInstruction<*>?
         ) : super(
             OPERATION_CODE,
             sourceRegister,
             targetRegister,
-            destinationRegister,
+            0,
             0,
             FUNCTION_CODE,
             origin,
@@ -93,7 +94,7 @@ class R5InstructionMul : BasicRInstruction<R5InstructionMul.Assembled>(
         )
 
         override fun parametersToString(registersStart: String): String {
-            return "$registersStart$destinationRegister $registersStart$sourceRegister, $registersStart$targetRegister"
+            return "$registersStart$sourceRegister, $registersStart$targetRegister"
         }
 
     }
@@ -103,8 +104,8 @@ class R5InstructionMul : BasicRInstruction<R5InstructionMul.Assembled>(
     ) : SingleCycleExecution<Assembled>(simulation, instruction, address) {
 
         override fun execute() {
-            register(instruction.destinationRegister).value =
-                value(instruction.sourceRegister) * value(instruction.targetRegister)
+            val result = value(instruction.sourceRegister).toLong() * value(instruction.targetRegister).toLong()
+            NumericUtils.longToInts(result, register(MIPS32Registers.LO), register(MIPS32Registers.HI))
         }
 
     }
@@ -114,24 +115,28 @@ class R5InstructionMul : BasicRInstruction<R5InstructionMul.Assembled>(
     ) : MultiCycleExecution<MultiCycleArchitecture, Assembled>(
         simulation, instruction, address, false, true
     ) {
-        private var result = 0
+        private var result = IntArray(2)
 
         override fun decode() {
             requires(instruction.sourceRegister, false)
             requires(instruction.targetRegister, false)
-            lock(instruction.destinationRegister)
+            lock(MIPS32Registers.LO)
+            lock(MIPS32Registers.HI)
         }
 
         override fun execute() {
-            result = value(instruction.sourceRegister) * value(instruction.targetRegister)
-            forward(instruction.destinationRegister, result)
+            val long = value(instruction.sourceRegister).toLong() * value(instruction.targetRegister).toLong()
+            NumericUtils.longToInts(long, result)
+            forward(MIPS32Registers.LO, result[0])
+            forward(MIPS32Registers.HI, result[1])
         }
 
         override fun memory() {
         }
 
         override fun writeBack() {
-            setAndUnlock(instruction.destinationRegister, result)
+            setAndUnlock(MIPS32Registers.LO, result[0])
+            setAndUnlock(MIPS32Registers.HI, result[1])
         }
     }
 

@@ -67,8 +67,8 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
                 InstructionCeilLSingle(),
                 InstructionCeilWDouble(),
                 InstructionCeilWSingle(),
-                //InstructionClo(),
-                //InstructionClz(),
+                InstructionClo(false),
+                InstructionClz(false),
 
                 InstructionDi(),
                 R5InstructionDiv(),
@@ -107,6 +107,8 @@ class MIPS32r5InstructionSet(provider: ResourceProvider) : InstructionSet(provid
                 R5InstructionMul(),
                 InstructionMulDouble(),
                 InstructionMulSingle(),
+                R5InstructionMult(),
+                R5InstructionMultu(),
 
                 InstructionOr(),
                 InstructionOri(),

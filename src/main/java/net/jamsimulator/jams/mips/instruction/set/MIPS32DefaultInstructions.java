@@ -91,8 +91,8 @@ class MIPS32DefaultInstructions {
         basicInstructions.add(new InstructionCeilWSingle());
         basicInstructions.add(new InstructionClassDouble());
         basicInstructions.add(new InstructionClassSingle());
-        basicInstructions.add(new InstructionClo());
-        basicInstructions.add(new InstructionClz());
+        basicInstructions.add(new InstructionClo(true));
+        basicInstructions.add(new InstructionClz(true));
 
         for (var condition : FloatCondition.values()) {
             basicInstructions.add(new InstructionCmpCondnSingle(condition));
